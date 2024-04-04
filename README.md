@@ -44,3 +44,4 @@ Personnaly, I used the vrml.mac but you can create another one. Just to remember
 - Suppression des fichiers Materials.cc & hh
 - Définition des matériaux se fait directement dans le fichier Geometry.cc avec l'aide de la base NIST
 - Continuité du nettoyage du code
+- Ajout d'un fichier .gitignore
