@@ -17,11 +17,8 @@ PALLAS_CollSimGeometry::~PALLAS_CollSimGeometry()
 {
 }
 
-// Main Function: Builds Full block, coupling, and PMT geometries
 G4VPhysicalVolume* PALLAS_CollSimGeometry::Construct( ){
-// Initialize scint classes
-scintProp = new PALLAS_CollSimMaterials(path_bin+"Materials.cfg");
-Vacuum = scintProp->GetMaterial("Vacuum");
+Vacuum = G4NistManager::Instance()->FindOrBuildMaterial("G4_Galactic");
 theScint = new Geometry(path_bin+"PALLAS_CollSim.cfg");
 
 
@@ -166,9 +163,6 @@ LogicalHolder,false,0);
 #else
 
 #endif
-
-
-
 
 
 // Returns world with everything in it and all properties set

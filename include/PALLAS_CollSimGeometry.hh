@@ -5,10 +5,6 @@
 #ifndef PALLAS_CollSimGeometry_h
 #define PALLAS_CollSimGeometry_h 1
 
-class Geometry;
-class PALLAS_CollSimMaterials;
-
-#include "PALLAS_CollSimMaterials.hh"
 #include "Geometry.hh"
 #include "G4VUserDetectorConstruction.hh"
 #include "G4LogicalVolume.hh"

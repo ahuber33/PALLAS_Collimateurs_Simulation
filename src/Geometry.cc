@@ -103,23 +103,12 @@ Geometry::Geometry(G4String buildfile)
 // Destructor
 // ***********************
 Geometry::~Geometry()
-{
-  if (scintProp)
-  {
-    delete scintProp;
-    scintProp = 0;
-  }
-  if (clear)
-  {
-    delete clear;
-    clear = 0;
-  }
-}
+{}
 
 G4LogicalVolume *Geometry::GetSc()
 {
 
-  Material = scintProp->GetMaterial("EJ212");
+  Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_BRASS");
 
   G4Box *Box = new G4Box("Box",                                                                     // its name
                          ScintillatorLength / 2, ScintillatorWidth / 2, ScintillatorThickness / 2); // its size
@@ -128,3 +117,13 @@ G4LogicalVolume *Geometry::GetSc()
 
   return LogicalVolume;
 }
+
+// Alu = G4NistManager::Instance()->FindOrBuildMaterial("G4_Al");
+// Inox = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
+// Water = G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER");
+// Laiton = G4NistManager::Instance()->FindOrBuildMaterial("G4_BRASS");
+// Kapton = G4NistManager::Instance()->FindOrBuildMaterial("G4_KAPTON");
+// Air = G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
+// Cuivre = G4NistManager::Instance()->FindOrBuildMaterial("G4_Cu");
+// Fer = G4NistManager::Instance()->FindOrBuildMaterial("G4_Fe");
+// Polystyrene = G4NistManager::Instance()->FindOrBuildMaterial("G4_POLYSTYRENE");

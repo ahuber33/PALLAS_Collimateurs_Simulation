@@ -1,7 +1,7 @@
 # PALLAS_CollSim for PALLAS_Coll Experiment [huber@cenbg.in2p3.fr, huberarnaud@gmail.com]
 
 ## INSTRUCTIONS TO USE THE SIMULATION
-- Download the VMWare [Geant4.11.0.2](https://heberge.lp2ib.in2p3.fr/G4VM/index.html)
+- Download the VMWare [Geant4.11.2.1](https://heberge.lp2ib.in2p3.fr/G4VM/index.html)
 
 - Copy all the files from PALLAS_Coll_Simulation folder [ici](https://github.com/ahuber33/PALLAS_Coll_Simulation)
 
@@ -40,3 +40,7 @@ Personnaly, I used the vrml.mac but you can create another one. Just to remember
 - Nettoyage complet de toutes les fonctions/variables non nécessaires à cette simulation
 - Base de travail pour la simulation des collimateurs du projet PALLAS situés avant le spectromètre
 
+## Commit #2 le 04/04/2024 [PALLAS_CollSim.0.1.0]
+- Suppression des fichiers Materials.cc & hh
+- Définition des matériaux se fait directement dans le fichier Geometry.cc avec l'aide de la base NIST
+- Continuité du nettoyage du code

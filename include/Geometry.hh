@@ -7,7 +7,6 @@
 #ifndef Geometry_h
 #define Geometry_h
 
-#include "PALLAS_CollSimMaterials.hh"
 #include "G4Tubs.hh"
 #include "G4Box.hh"
 #include "G4Cons.hh"
@@ -19,6 +18,8 @@
 #include "G4SubtractionSolid.hh"
 #include "G4VisAttributes.hh"
 #include "G4UnionSolid.hh"
+#include "G4NistManager.hh"
+#include "G4UnitsTable.hh"
 
 //#ifndef disable_gdml
 #include "G4GDMLParser.hh"

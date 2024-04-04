@@ -270,30 +270,6 @@ src/PALLAS_CollSimGeometry.cc.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/PALLAS_CollSim.dir/build.make CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimGeometry.cc.s
 .PHONY : src/PALLAS_CollSimGeometry.cc.s
 
-src/PALLAS_CollSimMaterials.o: src/PALLAS_CollSimMaterials.cc.o
-.PHONY : src/PALLAS_CollSimMaterials.o
-
-# target to build an object file
-src/PALLAS_CollSimMaterials.cc.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/PALLAS_CollSim.dir/build.make CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimMaterials.cc.o
-.PHONY : src/PALLAS_CollSimMaterials.cc.o
-
-src/PALLAS_CollSimMaterials.i: src/PALLAS_CollSimMaterials.cc.i
-.PHONY : src/PALLAS_CollSimMaterials.i
-
-# target to preprocess a source file
-src/PALLAS_CollSimMaterials.cc.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/PALLAS_CollSim.dir/build.make CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimMaterials.cc.i
-.PHONY : src/PALLAS_CollSimMaterials.cc.i
-
-src/PALLAS_CollSimMaterials.s: src/PALLAS_CollSimMaterials.cc.s
-.PHONY : src/PALLAS_CollSimMaterials.s
-
-# target to generate assembly for a file
-src/PALLAS_CollSimMaterials.cc.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/PALLAS_CollSim.dir/build.make CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimMaterials.cc.s
-.PHONY : src/PALLAS_CollSimMaterials.cc.s
-
 src/PALLAS_CollSimPhysics.o: src/PALLAS_CollSimPhysics.cc.o
 .PHONY : src/PALLAS_CollSimPhysics.o
 
@@ -439,9 +415,6 @@ help:
 	@echo "... src/PALLAS_CollSimGeometry.o"
 	@echo "... src/PALLAS_CollSimGeometry.i"
 	@echo "... src/PALLAS_CollSimGeometry.s"
-	@echo "... src/PALLAS_CollSimMaterials.o"
-	@echo "... src/PALLAS_CollSimMaterials.i"
-	@echo "... src/PALLAS_CollSimMaterials.s"
 	@echo "... src/PALLAS_CollSimPhysics.o"
 	@echo "... src/PALLAS_CollSimPhysics.i"
 	@echo "... src/PALLAS_CollSimPhysics.s"

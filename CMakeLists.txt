@@ -59,28 +59,22 @@ set(PROJECT_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/src/PALLAS_CollSimPhysics.cc
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Geometry.cc
 	${CMAKE_CURRENT_SOURCE_DIR}/src/PALLAS_CollSimEventAction.cc
-	#${CMAKE_CURRENT_SOURCE_DIR}/src/PALLAS_CollSimTrackingAction.cc
 	${CMAKE_CURRENT_SOURCE_DIR}/src/PALLAS_CollSimVisManager.cc
 	${CMAKE_CURRENT_SOURCE_DIR}/src/PALLAS_CollSimGeometry.cc
-	${CMAKE_CURRENT_SOURCE_DIR}/src/PALLAS_CollSimMaterials.cc
 	${CMAKE_CURRENT_SOURCE_DIR}/src/PALLAS_CollSimPrimaryGeneratorAction.cc
 	${CMAKE_CURRENT_SOURCE_DIR}/src/PALLAS_CollSimRunAction.cc
 	${CMAKE_CURRENT_SOURCE_DIR}/src/PALLAS_CollSimSteppingAction.cc
-	#${CMAKE_CURRENT_SOURCE_DIR}/src/PALLAS_CollSimTrackInformation.cc
     )
 
 set(PROJECT_HEADER
   ${CMAKE_CURRENT_SOURCE_DIR}/include/PALLAS_CollSimPhysics.hh
 	${CMAKE_CURRENT_SOURCE_DIR}/include/Geometry.hh
 	${CMAKE_CURRENT_SOURCE_DIR}/include/PALLAS_CollSimEventAction.hh
-	#${CMAKE_CURRENT_SOURCE_DIR}/include/PALLAS_CollSimTrackingAction.hh
 	${CMAKE_CURRENT_SOURCE_DIR}/include/PALLAS_CollSimVisManager.hh
 	${CMAKE_CURRENT_SOURCE_DIR}/include/PALLAS_CollSimGeometry.hh
-	${CMAKE_CURRENT_SOURCE_DIR}/include/PALLAS_CollSimMaterials.hh
 	${CMAKE_CURRENT_SOURCE_DIR}/include/PALLAS_CollSimPrimaryGeneratorAction.hh
 	${CMAKE_CURRENT_SOURCE_DIR}/include/PALLAS_CollSimRunAction.hh
 	${CMAKE_CURRENT_SOURCE_DIR}/include/PALLAS_CollSimSteppingAction.hh
-	#${CMAKE_CURRENT_SOURCE_DIR}/include/PALLAS_CollSimTrackInformation.hh
     )
 
 #----------------------------------------------------------------------------
