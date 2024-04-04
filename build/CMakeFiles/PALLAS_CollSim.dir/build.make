@@ -153,24 +153,10 @@ CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimGeometry.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimGeometry.cc.s"
 	/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /data/PALLAS_Collimateurs_Simulation/src/PALLAS_CollSimGeometry.cc -o CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimGeometry.cc.s
 
-CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimMaterials.cc.o: CMakeFiles/PALLAS_CollSim.dir/flags.make
-CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimMaterials.cc.o: ../src/PALLAS_CollSimMaterials.cc
-CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimMaterials.cc.o: CMakeFiles/PALLAS_CollSim.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/data/PALLAS_Collimateurs_Simulation/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimMaterials.cc.o"
-	/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimMaterials.cc.o -MF CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimMaterials.cc.o.d -o CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimMaterials.cc.o -c /data/PALLAS_Collimateurs_Simulation/src/PALLAS_CollSimMaterials.cc
-
-CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimMaterials.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimMaterials.cc.i"
-	/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /data/PALLAS_Collimateurs_Simulation/src/PALLAS_CollSimMaterials.cc > CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimMaterials.cc.i
-
-CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimMaterials.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimMaterials.cc.s"
-	/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /data/PALLAS_Collimateurs_Simulation/src/PALLAS_CollSimMaterials.cc -o CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimMaterials.cc.s
-
 CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimPrimaryGeneratorAction.cc.o: CMakeFiles/PALLAS_CollSim.dir/flags.make
 CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimPrimaryGeneratorAction.cc.o: ../src/PALLAS_CollSimPrimaryGeneratorAction.cc
 CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimPrimaryGeneratorAction.cc.o: CMakeFiles/PALLAS_CollSim.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/data/PALLAS_Collimateurs_Simulation/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimPrimaryGeneratorAction.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/data/PALLAS_Collimateurs_Simulation/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimPrimaryGeneratorAction.cc.o"
 	/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimPrimaryGeneratorAction.cc.o -MF CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimPrimaryGeneratorAction.cc.o.d -o CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimPrimaryGeneratorAction.cc.o -c /data/PALLAS_Collimateurs_Simulation/src/PALLAS_CollSimPrimaryGeneratorAction.cc
 
 CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimPrimaryGeneratorAction.cc.i: cmake_force
@@ -184,7 +170,7 @@ CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimPrimaryGeneratorAction.cc.s: cma
 CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimRunAction.cc.o: CMakeFiles/PALLAS_CollSim.dir/flags.make
 CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimRunAction.cc.o: ../src/PALLAS_CollSimRunAction.cc
 CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimRunAction.cc.o: CMakeFiles/PALLAS_CollSim.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/data/PALLAS_Collimateurs_Simulation/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimRunAction.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/data/PALLAS_Collimateurs_Simulation/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimRunAction.cc.o"
 	/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimRunAction.cc.o -MF CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimRunAction.cc.o.d -o CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimRunAction.cc.o -c /data/PALLAS_Collimateurs_Simulation/src/PALLAS_CollSimRunAction.cc
 
 CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimRunAction.cc.i: cmake_force
@@ -198,7 +184,7 @@ CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimRunAction.cc.s: cmake_force
 CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimSteppingAction.cc.o: CMakeFiles/PALLAS_CollSim.dir/flags.make
 CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimSteppingAction.cc.o: ../src/PALLAS_CollSimSteppingAction.cc
 CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimSteppingAction.cc.o: CMakeFiles/PALLAS_CollSim.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/data/PALLAS_Collimateurs_Simulation/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimSteppingAction.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/data/PALLAS_Collimateurs_Simulation/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimSteppingAction.cc.o"
 	/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimSteppingAction.cc.o -MF CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimSteppingAction.cc.o.d -o CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimSteppingAction.cc.o -c /data/PALLAS_Collimateurs_Simulation/src/PALLAS_CollSimSteppingAction.cc
 
 CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimSteppingAction.cc.i: cmake_force
@@ -217,7 +203,6 @@ PALLAS_CollSim_OBJECTS = \
 "CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimEventAction.cc.o" \
 "CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimVisManager.cc.o" \
 "CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimGeometry.cc.o" \
-"CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimMaterials.cc.o" \
 "CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimPrimaryGeneratorAction.cc.o" \
 "CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimRunAction.cc.o" \
 "CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimSteppingAction.cc.o"
@@ -231,7 +216,6 @@ PALLAS_CollSim_EXTERNAL_OBJECTS =
 ../bin/PALLAS_CollSim: CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimEventAction.cc.o
 ../bin/PALLAS_CollSim: CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimVisManager.cc.o
 ../bin/PALLAS_CollSim: CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimGeometry.cc.o
-../bin/PALLAS_CollSim: CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimMaterials.cc.o
 ../bin/PALLAS_CollSim: CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimPrimaryGeneratorAction.cc.o
 ../bin/PALLAS_CollSim: CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimRunAction.cc.o
 ../bin/PALLAS_CollSim: CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimSteppingAction.cc.o
@@ -305,7 +289,7 @@ PALLAS_CollSim_EXTERNAL_OBJECTS =
 ../bin/PALLAS_CollSim: /usr/local/geant4.11.2.1/lib64/libG4ptl.so.2.3.3
 ../bin/PALLAS_CollSim: /usr/local/clhep/2.4.7.1/lib/libCLHEP-2.4.7.1.so
 ../bin/PALLAS_CollSim: CMakeFiles/PALLAS_CollSim.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/data/PALLAS_Collimateurs_Simulation/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Linking CXX executable ../bin/PALLAS_CollSim"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/data/PALLAS_Collimateurs_Simulation/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Linking CXX executable ../bin/PALLAS_CollSim"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/PALLAS_CollSim.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

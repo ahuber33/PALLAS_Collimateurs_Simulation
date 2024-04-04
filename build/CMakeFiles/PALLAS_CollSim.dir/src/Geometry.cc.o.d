@@ -2,11 +2,17 @@ CMakeFiles/PALLAS_CollSim.dir/src/Geometry.cc.o: \
  /data/PALLAS_Collimateurs_Simulation/src/Geometry.cc \
  /usr/include/stdc-predef.h \
  /data/PALLAS_Collimateurs_Simulation/include/Geometry.hh \
- /data/PALLAS_Collimateurs_Simulation/include/PALLAS_CollSimMaterials.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4Material.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4Element.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4ElementTable.hh \
- /usr/include/c++/11/vector /usr/include/c++/11/bits/stl_algobase.h \
+ /usr/local/geant4.11.2.1/include/Geant4/G4Tubs.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4GeomTypes.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4GeomConfig.hh \
+ /usr/local/clhep/2.4.7.1/include/CLHEP/Units/PhysicalConstants.h \
+ /usr/local/clhep/2.4.7.1/include/CLHEP/Units/defs.h \
+ /usr/local/clhep/2.4.7.1/include/CLHEP/Units/SystemOfUnits.h \
+ /usr/local/geant4.11.2.1/include/Geant4/G4CSGSolid.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4VSolid.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4Types.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4GlobalConfig.hh \
+ /usr/include/c++/11/complex \
  /usr/include/c++/11/x86_64-redhat-linux/bits/c++config.h \
  /usr/include/bits/wordsize.h \
  /usr/include/c++/11/x86_64-redhat-linux/bits/os_defines.h \
@@ -16,42 +22,8 @@ CMakeFiles/PALLAS_CollSim.dir/src/Geometry.cc.o: \
  /usr/include/gnu/stubs-64.h \
  /usr/include/c++/11/x86_64-redhat-linux/bits/cpu_defines.h \
  /usr/include/c++/11/pstl/pstl_config.h \
- /usr/include/c++/11/bits/functexcept.h \
- /usr/include/c++/11/bits/exception_defines.h \
  /usr/include/c++/11/bits/cpp_type_traits.h \
- /usr/include/c++/11/ext/type_traits.h \
- /usr/include/c++/11/ext/numeric_traits.h \
- /usr/include/c++/11/bits/stl_pair.h /usr/include/c++/11/bits/move.h \
- /usr/include/c++/11/type_traits \
- /usr/include/c++/11/bits/stl_iterator_base_types.h \
- /usr/include/c++/11/bits/stl_iterator_base_funcs.h \
- /usr/include/c++/11/bits/concept_check.h \
- /usr/include/c++/11/debug/assertions.h \
- /usr/include/c++/11/bits/stl_iterator.h \
- /usr/include/c++/11/bits/ptr_traits.h /usr/include/c++/11/debug/debug.h \
- /usr/include/c++/11/bits/predefined_ops.h \
- /usr/include/c++/11/bits/allocator.h \
- /usr/include/c++/11/x86_64-redhat-linux/bits/c++allocator.h \
- /usr/include/c++/11/ext/new_allocator.h /usr/include/c++/11/new \
- /usr/include/c++/11/bits/exception.h \
- /usr/include/c++/11/bits/memoryfwd.h \
- /usr/include/c++/11/bits/stl_construct.h \
- /usr/include/c++/11/bits/stl_uninitialized.h \
- /usr/include/c++/11/ext/alloc_traits.h \
- /usr/include/c++/11/bits/alloc_traits.h \
- /usr/include/c++/11/bits/stl_vector.h \
- /usr/include/c++/11/initializer_list \
- /usr/include/c++/11/bits/stl_bvector.h \
- /usr/include/c++/11/bits/functional_hash.h \
- /usr/include/c++/11/bits/hash_bytes.h \
- /usr/include/c++/11/bits/range_access.h \
- /usr/include/c++/11/bits/vector.tcc \
- /usr/local/geant4.11.2.1/include/Geant4/G4ElementVector.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4IonisParamElm.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4ios.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4Types.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4GlobalConfig.hh \
- /usr/include/c++/11/complex /usr/include/c++/11/cmath \
+ /usr/include/c++/11/ext/type_traits.h /usr/include/c++/11/cmath \
  /usr/include/math.h /usr/include/bits/libc-header-start.h \
  /usr/include/bits/types.h /usr/include/bits/typesizes.h \
  /usr/include/bits/time64.h /usr/include/bits/math-vector.h \
@@ -79,7 +51,20 @@ CMakeFiles/PALLAS_CollSim.dir/src/Geometry.cc.o: \
  /usr/include/bits/pthreadtypes-arch.h /usr/include/bits/struct_mutex.h \
  /usr/include/bits/struct_rwlock.h /usr/include/alloca.h \
  /usr/include/bits/stdlib-float.h /usr/include/c++/11/bits/specfun.h \
- /usr/include/c++/11/limits /usr/include/c++/11/tr1/gamma.tcc \
+ /usr/include/c++/11/bits/stl_algobase.h \
+ /usr/include/c++/11/bits/functexcept.h \
+ /usr/include/c++/11/bits/exception_defines.h \
+ /usr/include/c++/11/ext/numeric_traits.h \
+ /usr/include/c++/11/bits/stl_pair.h /usr/include/c++/11/bits/move.h \
+ /usr/include/c++/11/type_traits \
+ /usr/include/c++/11/bits/stl_iterator_base_types.h \
+ /usr/include/c++/11/bits/stl_iterator_base_funcs.h \
+ /usr/include/c++/11/bits/concept_check.h \
+ /usr/include/c++/11/debug/assertions.h \
+ /usr/include/c++/11/bits/stl_iterator.h \
+ /usr/include/c++/11/bits/ptr_traits.h /usr/include/c++/11/debug/debug.h \
+ /usr/include/c++/11/bits/predefined_ops.h /usr/include/c++/11/limits \
+ /usr/include/c++/11/tr1/gamma.tcc \
  /usr/include/c++/11/tr1/special_function_util.h \
  /usr/include/c++/11/tr1/bessel_function.tcc \
  /usr/include/c++/11/tr1/beta_function.tcc \
@@ -93,16 +78,18 @@ CMakeFiles/PALLAS_CollSim.dir/src/Geometry.cc.o: \
  /usr/include/c++/11/tr1/riemann_zeta.tcc /usr/include/c++/11/sstream \
  /usr/include/c++/11/istream /usr/include/c++/11/ios \
  /usr/include/c++/11/iosfwd /usr/include/c++/11/bits/stringfwd.h \
- /usr/include/c++/11/bits/postypes.h /usr/include/c++/11/cwchar \
- /usr/include/wchar.h \
+ /usr/include/c++/11/bits/memoryfwd.h /usr/include/c++/11/bits/postypes.h \
+ /usr/include/c++/11/cwchar /usr/include/wchar.h \
  /usr/lib/gcc/x86_64-redhat-linux/11/include/stdarg.h \
  /usr/include/bits/wchar.h /usr/include/bits/types/wint_t.h \
  /usr/include/bits/types/mbstate_t.h \
  /usr/include/bits/types/__mbstate_t.h /usr/include/bits/types/__FILE.h \
  /usr/include/bits/types/FILE.h /usr/include/c++/11/exception \
+ /usr/include/c++/11/bits/exception.h \
  /usr/include/c++/11/bits/exception_ptr.h \
  /usr/include/c++/11/bits/cxxabi_init_exception.h \
- /usr/include/c++/11/typeinfo /usr/include/c++/11/bits/nested_exception.h \
+ /usr/include/c++/11/typeinfo /usr/include/c++/11/bits/hash_bytes.h \
+ /usr/include/c++/11/new /usr/include/c++/11/bits/nested_exception.h \
  /usr/include/c++/11/bits/char_traits.h /usr/include/c++/11/cstdint \
  /usr/lib/gcc/x86_64-redhat-linux/11/include/stdint.h \
  /usr/include/stdint.h /usr/include/bits/stdint-uintn.h \
@@ -124,11 +111,20 @@ CMakeFiles/PALLAS_CollSim.dir/src/Geometry.cc.o: \
  /usr/include/c++/11/x86_64-redhat-linux/bits/atomic_word.h \
  /usr/include/sys/single_threaded.h \
  /usr/include/c++/11/bits/locale_classes.h /usr/include/c++/11/string \
+ /usr/include/c++/11/bits/allocator.h \
+ /usr/include/c++/11/x86_64-redhat-linux/bits/c++allocator.h \
+ /usr/include/c++/11/ext/new_allocator.h \
  /usr/include/c++/11/bits/ostream_insert.h \
  /usr/include/c++/11/bits/cxxabi_forced.h \
  /usr/include/c++/11/bits/stl_function.h \
  /usr/include/c++/11/backward/binders.h \
- /usr/include/c++/11/bits/basic_string.h /usr/include/c++/11/string_view \
+ /usr/include/c++/11/bits/range_access.h \
+ /usr/include/c++/11/initializer_list \
+ /usr/include/c++/11/bits/basic_string.h \
+ /usr/include/c++/11/ext/alloc_traits.h \
+ /usr/include/c++/11/bits/alloc_traits.h \
+ /usr/include/c++/11/bits/stl_construct.h /usr/include/c++/11/string_view \
+ /usr/include/c++/11/bits/functional_hash.h \
  /usr/include/c++/11/bits/string_view.tcc \
  /usr/include/c++/11/ext/string_conversions.h /usr/include/c++/11/cstdlib \
  /usr/include/c++/11/cstdio /usr/include/stdio.h \
@@ -158,8 +154,7 @@ CMakeFiles/PALLAS_CollSim.dir/src/Geometry.cc.o: \
  /usr/include/c++/11/bits/istream.tcc \
  /usr/include/c++/11/bits/sstream.tcc \
  /usr/local/geant4.11.2.1/include/Geant4/tls.hh \
- /usr/include/c++/11/iostream \
- /usr/local/geant4.11.2.1/include/Geant4/globals.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4String.hh \
  /usr/include/c++/11/algorithm /usr/include/c++/11/utility \
  /usr/include/c++/11/bits/stl_relops.h \
  /usr/include/c++/11/bits/stl_algo.h \
@@ -179,11 +174,18 @@ CMakeFiles/PALLAS_CollSim.dir/src/Geometry.cc.o: \
  /usr/include/c++/11/bits/enable_special_members.h \
  /usr/include/c++/11/bits/node_handle.h \
  /usr/include/c++/11/bits/unordered_map.h \
- /usr/include/c++/11/bits/erase_if.h \
- /usr/include/c++/11/pstl/execution_defs.h \
- /usr/local/geant4.11.2.1/include/Geant4/G4String.hh \
- /usr/include/c++/11/cstring /usr/include/string.h /usr/include/strings.h \
+ /usr/include/c++/11/bits/erase_if.h /usr/include/c++/11/vector \
+ /usr/include/c++/11/bits/stl_uninitialized.h \
+ /usr/include/c++/11/bits/stl_vector.h \
+ /usr/include/c++/11/bits/stl_bvector.h \
+ /usr/include/c++/11/bits/vector.tcc \
+ /usr/include/c++/11/pstl/execution_defs.h /usr/include/c++/11/cstring \
+ /usr/include/string.h /usr/include/strings.h \
+ /usr/include/c++/11/iostream \
  /usr/local/geant4.11.2.1/include/Geant4/G4String.icc \
+ /usr/local/geant4.11.2.1/include/Geant4/geomdefs.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/globals.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4ios.hh \
  /usr/local/geant4.11.2.1/include/Geant4/templates.hh \
  /usr/include/c++/11/climits \
  /usr/lib/gcc/x86_64-redhat-linux/11/include/limits.h \
@@ -210,50 +212,10 @@ CMakeFiles/PALLAS_CollSim.dir/src/Geometry.cc.o: \
  /usr/include/c++/11/bits/parse_numbers.h \
  /usr/include/c++/11/bits/std_mutex.h \
  /usr/include/c++/11/bits/unique_lock.h \
- /usr/local/geant4.11.2.1/include/Geant4/G4Isotope.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4IsotopeVector.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4IonisParamMat.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4DensityEffectCalculator.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4MaterialPropertiesTable.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4MaterialPropertiesIndex.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4MaterialPropertyVector.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4PhysicsFreeVector.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4PhysicsVector.hh \
- /usr/include/c++/11/fstream \
- /usr/include/c++/11/x86_64-redhat-linux/bits/basic_file.h \
- /usr/include/c++/11/x86_64-redhat-linux/bits/c++io.h \
- /usr/include/c++/11/bits/fstream.tcc \
- /usr/local/geant4.11.2.1/include/Geant4/G4Log.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4PhysicsVectorType.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4PhysicsVector.icc \
- /usr/local/geant4.11.2.1/include/Geant4/G4MaterialTable.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4SandiaTable.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4OrderedTable.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4DataVector.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4DataVector.icc \
- /usr/local/clhep/2.4.7.1/include/CLHEP/Units/PhysicalConstants.h \
- /usr/local/clhep/2.4.7.1/include/CLHEP/Units/defs.h \
- /usr/local/clhep/2.4.7.1/include/CLHEP/Units/SystemOfUnits.h \
- /usr/include/assert.h \
- /usr/local/geant4.11.2.1/include/Geant4/G4NistManager.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4ICRU90StoppingData.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4Material.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4NistElementBuilder.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4NistMaterialBuilder.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4Pow.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4Exp.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4UnitsTable.hh \
  /usr/local/geant4.11.2.1/include/Geant4/G4ThreeVector.hh \
  /usr/local/clhep/2.4.7.1/include/CLHEP/Vector/ThreeVector.h \
  /usr/local/clhep/2.4.7.1/include/CLHEP/Vector/defs.h \
  /usr/local/clhep/2.4.7.1/include/CLHEP/Vector/ThreeVector.icc \
- /usr/local/geant4.11.2.1/include/Geant4/G4UnitsTable.icc \
- /usr/local/geant4.11.2.1/include/Geant4/G4Tubs.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4GeomTypes.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4GeomConfig.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4CSGSolid.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4VSolid.hh \
- /usr/local/geant4.11.2.1/include/Geant4/geomdefs.hh \
  /usr/local/geant4.11.2.1/include/Geant4/G4VSolid.icc \
  /usr/local/geant4.11.2.1/include/Geant4/G4Polyhedron.hh \
  /usr/local/geant4.11.2.1/include/Geant4/HepPolyhedron.h \
@@ -336,6 +298,41 @@ CMakeFiles/PALLAS_CollSim.dir/src/Geometry.cc.o: \
  /usr/local/geant4.11.2.1/include/Geant4/G4Color.hh \
  /usr/local/geant4.11.2.1/include/Geant4/G4VisAttributes.icc \
  /usr/local/geant4.11.2.1/include/Geant4/G4UnionSolid.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4NistManager.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4ICRU90StoppingData.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4Material.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4Element.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4ElementTable.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4ElementVector.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4IonisParamElm.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4Isotope.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4IsotopeVector.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4IonisParamMat.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4DensityEffectCalculator.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4MaterialPropertiesTable.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4MaterialPropertiesIndex.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4MaterialPropertyVector.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4PhysicsFreeVector.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4PhysicsVector.hh \
+ /usr/include/c++/11/fstream \
+ /usr/include/c++/11/x86_64-redhat-linux/bits/basic_file.h \
+ /usr/include/c++/11/x86_64-redhat-linux/bits/c++io.h \
+ /usr/include/c++/11/bits/fstream.tcc \
+ /usr/local/geant4.11.2.1/include/Geant4/G4Log.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4PhysicsVectorType.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4PhysicsVector.icc \
+ /usr/local/geant4.11.2.1/include/Geant4/G4MaterialTable.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4SandiaTable.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4OrderedTable.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4DataVector.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4DataVector.icc \
+ /usr/include/assert.h \
+ /usr/local/geant4.11.2.1/include/Geant4/G4NistElementBuilder.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4NistMaterialBuilder.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4Pow.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4Exp.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4UnitsTable.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4UnitsTable.icc \
  /usr/local/geant4.11.2.1/include/Geant4/G4GDMLParser.hh \
  /usr/local/geant4.11.2.1/include/Geant4/G4GDMLReadStructure.hh \
  /usr/local/geant4.11.2.1/include/Geant4/G4GDMLReadParamvol.hh \

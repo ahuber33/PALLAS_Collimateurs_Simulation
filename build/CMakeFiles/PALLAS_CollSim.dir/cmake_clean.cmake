@@ -9,8 +9,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimEventAction.cc.o.d"
   "CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimGeometry.cc.o"
   "CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimGeometry.cc.o.d"
-  "CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimMaterials.cc.o"
-  "CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimMaterials.cc.o.d"
   "CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimPhysics.cc.o"
   "CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimPhysics.cc.o.d"
   "CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimPrimaryGeneratorAction.cc.o"
