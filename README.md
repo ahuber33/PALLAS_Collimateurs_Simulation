@@ -46,7 +46,7 @@ Personnaly, I used the vrml.mac but you can create another one. Just to remember
 - Continuité du nettoyage du code
 - Ajout d'un fichier .gitignore
 
-## Commit #3 le 04/04/2024 [PALLAS_CollSim.0.1.1]
+## Commit #3 le 05/04/2024 [PALLAS_CollSim.0.1.1]
 - Continuité nettoyage code
 - Ajout de fonctions dans le fichier PALLAS_CollSimGeometry pour définir les couleurs ainsi que le World & Holder afin de gagner en visibilité et compression du code.
 - Définition de volumes basiques d'intérêts (FrontOutput, BackOutput entourant le collimateur) permettant une étude préliminaire
