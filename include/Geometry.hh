@@ -35,17 +35,16 @@ public:
   ~Geometry();
 
 public:
-  G4LogicalVolume *GetSc();
+  G4LogicalVolume *GetCollimator();
+  G4LogicalVolume *GetOutputCollimator();
+  G4LogicalVolume *GetRoundCollimator();
+
   //****************COMMON********************
-  G4double GetAirGap() { return AirGap; }
-  G4double GetScintillatorThickness() { return ScintillatorThickness; }
-  G4double GetZnSThickness() { return ZnSThickness; }
-  G4double GetDetectorThickness() { return DetectorThickness; }
-  G4double GetWorkingDistance() { return WorkingDistance; }
-  G4double GetGlassThickness() { return GlassThickness; }
+  G4double GetCollimatorThickness() { return CollimatorThickness; }
+  G4double GetOutputThickness() { return OutputThickness; }
 
 private:
-  Geometry *theScint;
+  Geometry *Geom;
   PALLAS_CollSimMaterials *scintProp;
 
   static const G4String path_bin;
@@ -57,17 +56,13 @@ private:
   G4LogicalVolume *LogicalVolume;
 
   // Physical Dimensions
-  G4double ScintillatorLength;
-  G4double ScintillatorWidth;
-  G4double ScintillatorThickness;
-  G4double ZnSThickness;
-  G4double DetectorLength;
-  G4double DetectorWidth;
-  G4double DetectorThickness;
-  G4double WorkingDistance;
-  G4double GlassThickness;
-  G4double AirGap;
-
+  G4double CollimatorInternalRadius;
+  G4double CollimatorExternalRadius;
+  G4double CollimatorThickness;
+  G4double CollimatorLength;
+  G4double CollimatorWidth;
+  G4double OutputThickness;
+  
   // Other
   G4VisAttributes *clear;
 };

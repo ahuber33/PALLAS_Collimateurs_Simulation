@@ -25,6 +25,8 @@ public:
   ~PALLAS_CollSimGeometry();
 
 public:
+  void SetLogicalVolumeColor(G4LogicalVolume* LogicalVolume, G4String color);
+  void CreateWorldAndHolder();
   G4VPhysicalVolume *Construct();
   
 
@@ -32,22 +34,18 @@ private:
   static const G4String path_bin;
   static const G4String path;
   PALLAS_CollSimMaterials *scintProp;
-  Geometry *theScint;
+  Geometry *Geom;
   G4Material *Vacuum;
 
   // Colors for visualizations
   G4VisAttributes *invis;
   G4VisAttributes *white;
   G4VisAttributes *gray;
-  G4VisAttributes *gray_bis;
   G4VisAttributes *black;
-  G4VisAttributes *black_bis;
   G4VisAttributes *red;
-  G4VisAttributes *red_hot;
   G4VisAttributes *orange;
   G4VisAttributes *yellow;
   G4VisAttributes *green;
-  G4VisAttributes *green_hot;
   G4VisAttributes *cyan;
   G4VisAttributes *blue;
   G4VisAttributes *magenta;
@@ -55,23 +53,29 @@ private:
   // Logical Volumes
   G4LogicalVolume *LogicalWorld;
   G4LogicalVolume *LogicalHolder;
-  G4LogicalVolume *LogicalSc;
+  G4LogicalVolume *LogicalCollimator;
+  G4LogicalVolume *LogicalFrontOutput;
+  G4LogicalVolume *LogicalBackOutput;
 
   // Physical volumes
   G4VPhysicalVolume *PhysicalWorld;
   G4VPhysicalVolume *PhysicalHolder;
-  G4VPhysicalVolume *PhysicalSc;
+  G4VPhysicalVolume *PhysicalCollimator;
+  G4VPhysicalVolume *PhysicalFrontOutput;
+  G4VPhysicalVolume *PhysicalBackOutput;
   
   // Dimension values
-  G4double ScintillatorThickness;
-  G4double AirGap;
-  G4double ZnSThickness;
-  G4double DetectorThickness;
-  G4double WorkingDistance;
-  G4double GlassThickness;
+  G4double CollimatorThickness;
+  G4double OutputThickness;
 
   // Dimensions PLACEMENTS
-  G4double Z_Position_Sc;
+  G4double Z_FrontOutput;
+  G4double Z_BackOutput;
+  G4double Z_Collimator;
+
+  //Rotation Matrix
+  G4RotationMatrix DontRotate;
+  G4RotationMatrix Flip;
 
 };
 #endif

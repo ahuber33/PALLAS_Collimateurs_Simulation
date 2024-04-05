@@ -19,27 +19,43 @@ void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
 
   start = time(NULL);     //start the timer clock to calculate run times
 
-  Tree_TP = new TTree("TP","TP Information");  //Tree to access position of energy deposition
+  Tree_Collimator = new TTree("Collimator","Collimator Information");  //Tree to access Collimator information
+  Tree_FrontCollimator = new TTree("FrontCollimator","FrontCollimator Information");  //Tree to access Front Collimator infos
+  Tree_BackCollimator = new TTree("BackCollimator","BackCollimator Information");  //Tree to access Back Collimator infos
 
-  //*****************************INFORMATION FROM THE TP**************************************
-  //RunBranch = Tree_TP->Branch("ParticuleID", &StatsTP.ParticuleID, "ParticuleID/I" );
-  RunBranch = Tree_TP->Branch("E_start", &StatsTP.E_start, "E_start/F" );
-  RunBranch = Tree_TP->Branch("E_dep", &StatsTP.E_dep, "E_dep/F" );
-  //RunBranch = Tree_TP->Branch("Charge", &StatsTP.Charge, "Charge/F" );
-  RunBranch = Tree_TP->Branch("PositionX", &StatsTP.PositionX, "PositionX/F" );
-  RunBranch = Tree_TP->Branch("PositionY", &StatsTP.PositionY, "PositionY/F" );
-  RunBranch = Tree_TP->Branch("PositionZ", &StatsTP.PositionZ, "PositionZ/F" );
-  //RunBranch = Tree_TP->Branch("Time", &StatsTP.Time, "Time/F" );
-  //RunBranch = Tree_TP->Branch("TotalLength", &StatsTP.TotalLength, "TotalLength/F" );
-  //RunBranch = Tree_TP->Branch("InteractionDepth", &StatsTP.InteractionDepth, "InteractionDepth/F" );
+  //*****************************INFORMATION FROM THE COLLIMATOR**************************************
+  RunBranch = Tree_Collimator->Branch("E_start", &StatsCollimator.E_start, "E_start/F" );
+  RunBranch = Tree_Collimator->Branch("E_dep", &StatsCollimator.E_dep, "E_dep/F" );
+  RunBranch = Tree_Collimator->Branch("E_dep_e", &StatsCollimator.E_dep_e, "E_dep_e/F" );
+  RunBranch = Tree_Collimator->Branch("E_dep_g", &StatsCollimator.E_dep_g, "E_dep_g/F" );
+  RunBranch = Tree_Collimator->Branch("E_gamma_Brem", "vector<float>" , &StatsCollimator.E_gamma_Brem);
 
+  //*****************************INFORMATION FROM THE FRONT SURFACE**************************************
+  RunBranch = Tree_FrontCollimator->Branch("ParticuleID", "vector<int>" , &StatsFrontCollimator.ParticuleID);
+  RunBranch = Tree_FrontCollimator->Branch("E_exit", "vector<float>" , &StatsFrontCollimator.E_exit);
+  RunBranch = Tree_FrontCollimator->Branch("x_exit", "vector<float>" , &StatsFrontCollimator.x_exit);
+  RunBranch = Tree_FrontCollimator->Branch("y_exit", "vector<float>" , &StatsFrontCollimator.y_exit);
+  RunBranch = Tree_FrontCollimator->Branch("z_exit", "vector<float>" , &StatsFrontCollimator.z_exit);
+  RunBranch = Tree_FrontCollimator->Branch("px_exit", "vector<float>" , &StatsFrontCollimator.px_exit);
+  RunBranch = Tree_FrontCollimator->Branch("py_exit", "vector<float>" , &StatsFrontCollimator.py_exit);
+  RunBranch = Tree_FrontCollimator->Branch("pz_exit", "vector<float>" , &StatsFrontCollimator.pz_exit);
+
+  //*****************************INFORMATION FROM THE BACK SURFACE**************************************
+  RunBranch = Tree_BackCollimator->Branch("ParticuleID", "vector<int>" , &StatsBackCollimator.ParticuleID);
+  RunBranch = Tree_BackCollimator->Branch("E_exit", "vector<float>" , &StatsBackCollimator.E_exit);
+  RunBranch = Tree_BackCollimator->Branch("x_exit", "vector<float>" , &StatsBackCollimator.x_exit);
+  RunBranch = Tree_BackCollimator->Branch("y_exit", "vector<float>" , &StatsBackCollimator.y_exit);
+  RunBranch = Tree_BackCollimator->Branch("z_exit", "vector<float>" , &StatsBackCollimator.z_exit);
+  RunBranch = Tree_BackCollimator->Branch("px_exit", "vector<float>" , &StatsBackCollimator.px_exit);
+  RunBranch = Tree_BackCollimator->Branch("py_exit", "vector<float>" , &StatsBackCollimator.py_exit);
+  RunBranch = Tree_BackCollimator->Branch("pz_exit", "vector<float>" , &StatsBackCollimator.pz_exit);
 
 
   //set the random seed to the CPU clock
   //G4Random::setTheEngine(new CLHEP::HepJamesRandom);
   G4long seed = time(NULL);
-  G4Random::setTheSeed(seed);
-  //G4Random::setTheSeed(1655805950);
+  //G4Random::setTheSeed(seed);
+  G4Random::setTheSeed(1712317304);
   G4cout << "seed = " << seed << G4endl;
 
   G4cout << "### Run " << aRun->GetRunID() << " start." << G4endl;
@@ -62,7 +78,9 @@ void PALLAS_CollSimRunAction::EndOfRunAction(const G4Run*aRun){
   //update the temp root file
   G4String fileName = suffixe+".root";
   f = new TFile(fileName,"update");
-  Tree_TP->Write();
+  Tree_Collimator->Write();
+  Tree_FrontCollimator->Write();
+  Tree_BackCollimator->Write();
   f->Close();
 
   if (G4VVisManager::GetConcreteInstance()){
@@ -92,7 +110,17 @@ void PALLAS_CollSimRunAction::EndOfRunAction(const G4Run*aRun){
 //  For each event update the statistics in the Run tree
 //---------------------------------------------------------
 
-void PALLAS_CollSimRunAction::UpdateStatisticsTP(RunTallyTP aRunTallyTP){
-  StatsTP = aRunTallyTP;
-  Tree_TP->Fill();
+void PALLAS_CollSimRunAction::UpdateStatisticsCollimator(RunTallyCollimator aRunTallyCollimator){
+  StatsCollimator = aRunTallyCollimator;
+  Tree_Collimator->Fill();
+}
+
+void PALLAS_CollSimRunAction::UpdateStatisticsFrontCollimator(RunTallyFrontCollimator aRunTallyFrontCollimator){
+  StatsFrontCollimator = aRunTallyFrontCollimator;
+  Tree_FrontCollimator->Fill();
+}
+
+void PALLAS_CollSimRunAction::UpdateStatisticsBackCollimator(RunTallyBackCollimator aRunTallyBackCollimator){
+  StatsBackCollimator = aRunTallyBackCollimator;
+  Tree_BackCollimator->Fill();
 }

@@ -18,30 +18,42 @@ PALLAS_CollSimEventAction::~PALLAS_CollSimEventAction(){}
 // filling histograms with ROOT
 void PALLAS_CollSimEventAction::BeginOfEventAction(const G4Event* evt){
 
-  //StatsOptical.DetectorPositionX.clear();
-  StatsTP.ParticuleID=0;
-  StatsTP.E_start=0;
-  StatsTP.E_dep=0;
-  StatsTP.Charge=0;
-  StatsTP.PositionX =0;
-  StatsTP.PositionY =0;
-  StatsTP.PositionZ =-300;
-  StatsTP.Time =0;
-  StatsTP.TotalLength =0;
-  StatsTP.InteractionDepth =0;
+  //Collimator
+  StatsCollimator.E_start=0;
+  StatsCollimator.E_dep=0;
+  StatsCollimator.E_dep_e=0;
+  StatsCollimator.E_dep_g=0;
+  StatsCollimator.E_gamma_Brem.clear();
+
+  //FRONT Collimator
+  StatsFrontCollimator.ParticuleID.clear();
+  StatsFrontCollimator.E_exit.clear();
+  StatsFrontCollimator.x_exit.clear();
+  StatsFrontCollimator.y_exit.clear();
+  StatsFrontCollimator.z_exit.clear();
+  StatsFrontCollimator.px_exit.clear();
+  StatsFrontCollimator.py_exit.clear();
+  StatsFrontCollimator.pz_exit.clear();
+
+  //BACK Collimator
+  StatsBackCollimator.ParticuleID.clear();
+  StatsBackCollimator.E_exit.clear();
+  StatsBackCollimator.x_exit.clear();
+  StatsBackCollimator.y_exit.clear();
+  StatsBackCollimator.z_exit.clear();
+  StatsBackCollimator.px_exit.clear();
+  StatsBackCollimator.py_exit.clear();
+  StatsBackCollimator.pz_exit.clear();
 
 }
 
 
-// Get the number of stored trajectories and calculate the statistics
 void PALLAS_CollSimEventAction::EndOfEventAction(const G4Event* evt){
-  //G4int event_id = evt->GetEventID();
+  
+PALLAS_CollSimRunAction *runac = (PALLAS_CollSimRunAction*)(G4RunManager::GetRunManager()->GetUserRunAction());
 
-  PALLAS_CollSimRunAction *runac = (PALLAS_CollSimRunAction*)(G4RunManager::GetRunManager()->GetUserRunAction());
-
-
-runac->UpdateStatisticsTP(StatsTP);
-
-
+runac->UpdateStatisticsCollimator(StatsCollimator);
+runac->UpdateStatisticsFrontCollimator(StatsFrontCollimator);
+runac->UpdateStatisticsBackCollimator(StatsBackCollimator);
 
 }

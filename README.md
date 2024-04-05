@@ -3,7 +3,7 @@
 ## INSTRUCTIONS TO USE THE SIMULATION
 - Download the VMWare [Geant4.11.2.1](https://heberge.lp2ib.in2p3.fr/G4VM/index.html)
 
-- Copy all the files from PALLAS_Coll_Simulation folder [ici](https://github.com/ahuber33/PALLAS_Coll_Simulation)
+- Copy all the files from PALLAS_Coll_Simulation folder ici
 
 - Create a build folder in the PALLAS_Coll_Simulation folder and go inside.
 
@@ -29,7 +29,7 @@ Personnaly, I used the vrml.mac but you can create another one. Just to remember
 
 - An PALLAS_CollSim.cfg file is located in bin directory. All the dimensions necessary are in this file to avoid recompilation when you want to change some parameters. If you add some other dimensions, don't forget to add the variables in Geometry.cc.
 
-- Based on G4EmStandardPhysics_option3 with additional Optical part.
+- Based on G4EmStandardPhysics_option3.
 
 - DO NOT HESITATE TO REPORT BUGS OR ANY IDEAS THAT WILL IMPROVE THE SIMULATION !!!!
   
@@ -45,3 +45,10 @@ Personnaly, I used the vrml.mac but you can create another one. Just to remember
 - Définition des matériaux se fait directement dans le fichier Geometry.cc avec l'aide de la base NIST
 - Continuité du nettoyage du code
 - Ajout d'un fichier .gitignore
+
+## Commit #3 le 04/04/2024 [PALLAS_CollSim.0.1.1]
+- Continuité nettoyage code
+- Ajout de fonctions dans le fichier PALLAS_CollSimGeometry pour définir les couleurs ainsi que le World & Holder afin de gagner en visibilité et compression du code.
+- Définition de volumes basiques d'intérêts (FrontOutput, BackOutput entourant le collimateur) permettant une étude préliminaire
+- Creation de 3 Tree distincts pour pouvoir déterminer ce qui se passe dans le collimateur et ce qui en ressort en arrière et en avant
+- Code en cours d'écriture pour accès aux informations dans le SteppingAction et fonctions en cours de développement

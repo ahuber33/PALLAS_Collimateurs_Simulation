@@ -13,6 +13,13 @@ PALLAS_CollSimSteppingAction::PALLAS_CollSimSteppingAction()
 }
 
 PALLAS_CollSimSteppingAction::~PALLAS_CollSimSteppingAction() {}
+
+void PALLAS_CollSimSteppingAction::DefineEStart()
+{
+  
+}
+
+
 void PALLAS_CollSimSteppingAction::UserSteppingAction(const G4Step *aStep)
 {
 
@@ -31,6 +38,7 @@ void PALLAS_CollSimSteppingAction::UserSteppingAction(const G4Step *aStep)
   G4int Parent_ID = aStep->GetTrack()->GetParentID();
   G4int StepNo = aStep->GetTrack()->GetCurrentStepNumber();
 
+  G4double Edep = aStep->GetTotalEnergyDeposit() / keV;
   G4double x = aStep->GetTrack()->GetPosition().x();
   G4double y = aStep->GetTrack()->GetPosition().y();
   G4double z = aStep->GetTrack()->GetPosition().z();
@@ -38,11 +46,7 @@ void PALLAS_CollSimSteppingAction::UserSteppingAction(const G4Step *aStep)
   G4double px = aStep->GetPreStepPoint()->GetMomentumDirection().x();
   G4double py = aStep->GetPreStepPoint()->GetMomentumDirection().y();
   G4double pz = aStep->GetPreStepPoint()->GetMomentumDirection().z();
-  G4double px_exit;
-  G4double py_exit;
-  G4double pz_exit;
-  G4double r = sqrt(x * x + y * y);
-  G4double angle = acos((z - zpre) / aStep->GetStepLength());
+  
   G4String VolumeNamePreStep = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();
   G4String VolumeNamePostStep = aStep->GetPostStepPoint()->GetPhysicalVolume()->GetName();
   
@@ -54,32 +58,52 @@ void PALLAS_CollSimSteppingAction::UserSteppingAction(const G4Step *aStep)
 
   if (Parent_ID == 0 && StepNo == 1)
   {
-    evtac->SetEstartTP(aStep->GetPreStepPoint()->GetKineticEnergy() / MeV);
-    evtac->SetParticuleID(partID);
-    evtac->SetCharge(aStep->GetPostStepPoint()->GetCharge());
+    evtac->SetEstartCollimator(aStep->GetPreStepPoint()->GetKineticEnergy() / MeV);
   }
 
-  if (((aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() == "Scintillator") || (aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() == "ZnS") || (aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() == "Core_Fiber")) && ((aStep->GetPostStepPoint()->GetPhysicalVolume()->GetName() == "Scintillator") || (aStep->GetPostStepPoint()->GetPhysicalVolume()->GetName() == "ZnS") || (aStep->GetPostStepPoint()->GetPhysicalVolume()->GetName() == "Core_Fiber")) && partname == "proton")
+  if(VolumeNamePreStep == "Collimator")
   {
-    evtac->AddTrackLength(aStep->GetTrack()->GetStepLength() / mm);
-    // G4cout << "Track Length = " << evtac->GetTotalTrackLength() << G4endl;
-    evtac->AddEdepTP(aStep->GetTotalEnergyDeposit() / keV);
+    evtac->AddEdepCollimator(Edep);
+    if(partname == "e-")evtac->AddEdepElectronCollimator(Edep);
+    if(partname == "gamma")evtac->AddEdepGammaCollimator(Edep);
+    G4cout << "Edep = " << Edep << G4endl;
+    G4cout << "Edep tot = " << evtac->GetEdepCollimator() << G4endl;
+    G4cout << "Edep tot e- = " << evtac->GetEdepElectronCollimator() << G4endl;
+    G4cout << "Edep tot gamma = " << evtac->GetEdepGammaCollimator() << G4endl;
   }
 
-  // Be careful here !!! If Zns in here, put ZnS. If not, put Scintillator or Core_Fiber!!!!
-  if (Parent_ID == 0 && aStep->GetPostStepPoint()->GetPhysicalVolume()->GetName() == "Scintillator" && evtac->GetTPPositionZ() < 0)
+  if(VolumeNamePreStep == "Collimator" && VolumeNamePostStep == "FrontOutput")
   {
-    evtac->SetTPPositionX(x);
-    evtac->SetTPPositionY(y);
-    evtac->SetTPPositionZ(z);
-    evtac->SetTPTime(aStep->GetPostStepPoint()->GetGlobalTime() / ns);
-    // G4cout << "x = " << x << G4endl;
-    // G4cout << "y = " << y << G4endl;
-    // G4cout << "z = " << z << G4endl;
-
-    // if(x <-25){G4cout << "HERE X" << G4endl;}
-    // if(y <-10){G4cout << "HERE Y" << G4endl;}
+    G4cout << "Particles doing Collimator->Front Output "  << G4endl;
   }
+
+
+if(VolumeNamePreStep == "Collimator" && VolumeNamePostStep == "BackOutput")
+  {
+    G4cout << "Particles doing Collimator->Back Output "  << G4endl;
+  }
+
+  // if (((aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() == "Scintillator") || (aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() == "ZnS") || (aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() == "Core_Fiber")) && ((aStep->GetPostStepPoint()->GetPhysicalVolume()->GetName() == "Scintillator") || (aStep->GetPostStepPoint()->GetPhysicalVolume()->GetName() == "ZnS") || (aStep->GetPostStepPoint()->GetPhysicalVolume()->GetName() == "Core_Fiber")) && partname == "proton")
+  // {
+  //   evtac->AddTrackLength(aStep->GetTrack()->GetStepLength() / mm);
+  //   // G4cout << "Track Length = " << evtac->GetTotalTrackLength() << G4endl;
+  //   evtac->AddEdepTP(aStep->GetTotalEnergyDeposit() / keV);
+  // }
+
+  // // Be careful here !!! If Zns in here, put ZnS. If not, put Scintillator or Core_Fiber!!!!
+  // if (Parent_ID == 0 && aStep->GetPostStepPoint()->GetPhysicalVolume()->GetName() == "Scintillator" && evtac->GetTPPositionZ() < 0)
+  // {
+  //   evtac->SetTPPositionX(x);
+  //   evtac->SetTPPositionY(y);
+  //   evtac->SetTPPositionZ(z);
+  //   evtac->SetTPTime(aStep->GetPostStepPoint()->GetGlobalTime() / ns);
+  //   // G4cout << "x = " << x << G4endl;
+  //   // G4cout << "y = " << y << G4endl;
+  //   // G4cout << "z = " << z << G4endl;
+
+  //   // if(x <-25){G4cout << "HERE X" << G4endl;}
+  //   // if(y <-10){G4cout << "HERE Y" << G4endl;}
+  // }
 
 
   if (aStep->GetPostStepPoint()->GetPhysicalVolume()->GetName() == "World")
@@ -87,6 +111,6 @@ void PALLAS_CollSimSteppingAction::UserSteppingAction(const G4Step *aStep)
     theTrack->SetTrackStatus(fStopAndKill);
   }
 
-  // G4cout << "Charge = " << aStep->GetPostStepPoint()->GetCharge() << G4endl;
-  // G4cout<< "Charge 2 = " << aStep->GetTrack()->GetDefinition()->GetPDGCharge()<<G4endl;
+  // // G4cout << "Charge = " << aStep->GetPostStepPoint()->GetCharge() << G4endl;
+  // // G4cout<< "Charge 2 = " << aStep->GetTrack()->GetDefinition()->GetPDGCharge()<<G4endl;
 }

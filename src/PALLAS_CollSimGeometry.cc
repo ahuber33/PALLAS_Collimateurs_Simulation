@@ -10,161 +10,201 @@ const G4String PALLAS_CollSimGeometry::path_bin = "../bin/";
 const G4String PALLAS_CollSimGeometry::path = "../simulation_input_files/";
 
 // Constructor
-PALLAS_CollSimGeometry::PALLAS_CollSimGeometry(){}
+PALLAS_CollSimGeometry::PALLAS_CollSimGeometry() {}
 
 // Destructor
 PALLAS_CollSimGeometry::~PALLAS_CollSimGeometry()
 {
 }
 
-G4VPhysicalVolume* PALLAS_CollSimGeometry::Construct( ){
-Vacuum = G4NistManager::Instance()->FindOrBuildMaterial("G4_Galactic");
-theScint = new Geometry(path_bin+"PALLAS_CollSim.cfg");
+void PALLAS_CollSimGeometry::SetLogicalVolumeColor(G4LogicalVolume *LogicalVolume, G4String Color)
+{
+    // ***********************
+    // Visualization Colors
+    // ***********************
+    // Create some colors for visualizations
+    invis = new G4VisAttributes(G4Colour(255 / 255., 255 / 255., 255 / 255.));
+    invis->SetVisibility(false);
 
+    black = new G4VisAttributes(G4Colour(0, 0, 0, 0.9));
+    //  black->SetForceWireframe(true);
+    black->SetForceSolid(true);
+    black->SetVisibility(true);
 
-// ***********************
-// Visualization Colors
-// ***********************
-// Create some colors for visualizations
-invis = new G4VisAttributes( G4Colour(255/255. ,255/255. ,255/255. ));
-invis->SetVisibility(false);
+    white = new G4VisAttributes(G4Colour(1, 1, 1, 1.)); // Sets the color (can be looked up online)
+    // white->SetForceWireframe(true); // Sets to wire frame mode for coloring the volume
+    white->SetForceSolid(true); // Sets to solid mode for coloring the volume
+    white->SetVisibility(true); // Makes color visible in visualization
 
-white = new G4VisAttributes(G4Colour(1,1,1,1.)); // Sets the color (can be looked up online)
-//white->SetForceWireframe(true); // Sets to wire frame mode for coloring the volume
-white->SetForceSolid(true); // Sets to solid mode for coloring the volume
-white->SetVisibility(true); // Makes color visible in visualization
+    gray = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5, 0.5));
+    //  gray->SetForceWireframe(true);
+    gray->SetForceSolid(true);
+    gray->SetVisibility(true);
 
-gray = new G4VisAttributes(G4Colour(0.5,0.5,0.5,0.5));
-//  gray->SetForceWireframe(true);
-gray->SetForceSolid(true);
-gray->SetVisibility(true);
+    red = new G4VisAttributes(G4Colour(1, 0, 0, 0.5));
+    //  red->SetForceWireframe(true);
+    red->SetForceSolid(true);
+    red->SetVisibility(true);
 
-gray_bis = new G4VisAttributes(G4Colour(0.5,0.5,0.5,0.05));
-//  gray->SetForceWireframe(true);
-gray_bis->SetForceSolid(true);
-gray_bis->SetVisibility(true);
+    orange = new G4VisAttributes(G4Colour(1, 0.5, 0, 0.1));
+    //  orange->SetForceWireframe(true);
+    orange->SetForceSolid(true);
+    orange->SetVisibility(true);
 
-black = new G4VisAttributes(G4Colour(0,0,0,0.7));
-//  black->SetForceWireframe(true);
-black->SetForceSolid(true);
-black->SetVisibility(true);
+    yellow = new G4VisAttributes(G4Colour(1, 1, 0, 0.7));
+    //  yellow->SetForceWireframe(true);
+    yellow->SetForceSolid(true);
+    yellow->SetVisibility(true);
 
-black_bis = new G4VisAttributes(G4Colour(0,0,0,0.4));
-//  black->SetForceWireframe(true);
-black_bis->SetForceSolid(true);
-black_bis->SetVisibility(true);
+    green = new G4VisAttributes(G4Colour(0, 1, 0, 0.35));
+    //  green->SetForceWireframe(true);
+    green->SetForceSolid(true);
+    green->SetVisibility(true);
 
-red = new G4VisAttributes(G4Colour(1,0,0,0.5));
-//  red->SetForceWireframe(true);
-red->SetForceSolid(true);
-red->SetVisibility(true);
+    cyan = new G4VisAttributes(G4Colour(0, 1, 1, 0.1));
+    //  cyan->SetForceWireframe(true);
+    cyan->SetForceSolid(true);
+    cyan->SetVisibility(true);
 
-red_hot = new G4VisAttributes(G4Colour(1,0,0,1));
-//  red->SetForceWireframe(true);
-red_hot->SetForceSolid(true);
-red_hot->SetVisibility(true);
+    blue = new G4VisAttributes(G4Colour(0, 0, 1, 0.5));
+    //  blue->SetForceWireframe(true);
+    blue->SetForceSolid(true);
+    blue->SetVisibility(true);
 
-orange = new G4VisAttributes(G4Colour(1,0.5,0,0.1));
-//  orange->SetForceWireframe(true);
-orange->SetForceSolid(true);
-orange->SetVisibility(true);
+    magenta = new G4VisAttributes(G4Colour(1, 0, 1, 0.85));
+    //  magenta->SetForceWireframe(true);
+    // magenta->SetForceSolid(true);
+    magenta->SetVisibility(true);
 
-yellow = new G4VisAttributes(G4Colour(1,1,0,0.1));
-//  yellow->SetForceWireframe(true);
-yellow->SetForceSolid(true);
-yellow->SetVisibility(true);
+    if (Color == "invis")
+    {
+        LogicalVolume->SetVisAttributes(invis);
+    }
+    else if (Color == "black")
+    {
+        LogicalVolume->SetVisAttributes(black);
+    }
+    else if (Color == "white")
+    {
+        LogicalVolume->SetVisAttributes(white);
+    }
+    else if (Color == "gray")
+    {
+        LogicalVolume->SetVisAttributes(gray);
+    }
+    else if (Color == "red")
+    {
+        LogicalVolume->SetVisAttributes(red);
+    }
+    else if (Color == "orange")
+    {
+        LogicalVolume->SetVisAttributes(orange);
+    }
+    else if (Color == "yellow")
+    {
+        LogicalVolume->SetVisAttributes(yellow);
+    }
+    else if (Color == "green")
+    {
+        LogicalVolume->SetVisAttributes(green);
+    }
+    else if (Color == "cyan")
+    {
+        LogicalVolume->SetVisAttributes(cyan);
+    }
+    else if (Color == "blue")
+    {
+        LogicalVolume->SetVisAttributes(blue);
+    }
+    else if (Color == "magenta")
+    {
+        LogicalVolume->SetVisAttributes(magenta);
+    }
+}
 
-green = new G4VisAttributes(G4Colour(0,1,0,0.35));
-//  green->SetForceWireframe(true);
-green->SetForceSolid(true);
-green->SetVisibility(true);
+void PALLAS_CollSimGeometry::CreateWorldAndHolder()
+{
+    Vacuum = G4NistManager::Instance()->FindOrBuildMaterial("G4_Galactic");
 
-green_hot = new G4VisAttributes(G4Colour(0,1,0,1));
-//  green_hot->SetForceWireframe(true);
-green_hot->SetForceSolid(true);
-green_hot->SetVisibility(true);
+    // Create World Volume
+    // This is just a big box to place all other logical volumes inside
+    G4Box *SolidWorld = new G4Box("SolidWorld", 1.1 * m, 1.1 * m, 1.1 * m);
+    LogicalWorld = new G4LogicalVolume(SolidWorld, Vacuum, "LogicalWorld", 0, 0, 0);
+    SetLogicalVolumeColor(LogicalWorld, "invis");
 
-cyan = new G4VisAttributes(G4Colour(0,1,1,0.1));
-//  cyan->SetForceWireframe(true);
-cyan->SetForceSolid(true);
-cyan->SetVisibility(true);
+    G4Box *SolidHolder = new G4Box("SolidHolder", 1.05 * m, 1.05 * m, 1.05 * m);
+    LogicalHolder = new G4LogicalVolume(SolidHolder, Vacuum, "LogicalHolder", 0, 0, 0);
+    SetLogicalVolumeColor(LogicalHolder, "invis");
 
-blue = new G4VisAttributes(G4Colour(0,0,1,0.5));
-//  blue->SetForceWireframe(true);
-blue->SetForceSolid(true);
-blue->SetVisibility(true);
+    // Place the world volume: center of world at origin (0,0,0)
+    PhysicalWorld = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0, 0, 0)), "World", LogicalWorld, NULL, false, 0);
 
-magenta = new G4VisAttributes(G4Colour(1,0,1,0.85));
-//  magenta->SetForceWireframe(true);
-//magenta->SetForceSolid(true);
-magenta->SetVisibility(true);
+    PhysicalHolder = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
+                                       LogicalHolder, "Holder",
+                                       LogicalWorld, false, 0);
+}
 
-// Define common rotations
-G4RotationMatrix DontRotate;
-DontRotate.rotateX(0.0*deg);
-G4RotationMatrix Flip;
-Flip.rotateZ(0*deg);
-Flip.rotateX(180*deg);
-Flip.rotateY(0*deg);
+G4VPhysicalVolume *PALLAS_CollSimGeometry::Construct()
+{
+    // ***********************
+    // Various dimensions
+    // ***********************
+    Geom = new Geometry(path_bin + "PALLAS_CollSim.cfg");
+    CollimatorThickness = Geom->GetCollimatorThickness();
+    OutputThickness = Geom->GetOutputThickness();
 
-// ***********************
-// Various dimensions
-// ***********************
-ScintillatorThickness = theScint->GetScintillatorThickness();
-ZnSThickness = theScint->GetZnSThickness();
-DetectorThickness = theScint->GetDetectorThickness();
-AirGap = theScint->GetAirGap();
-GlassThickness = theScint->GetGlassThickness();
-WorkingDistance = theScint->GetWorkingDistance();
+    // Define common rotations
+    DontRotate.rotateX(0.0 * deg);
+    Flip.rotateZ(0 * deg);
+    Flip.rotateX(180 * deg);
+    Flip.rotateY(0 * deg);
 
-//#########################
-// DEFINE GEOMETRY VOLUMES#
-//#########################
+    // #########################
+    //  DEFINE GEOMETRY VOLUMES#
+    // #########################
 
-// Create World Volume
-// This is just a big box to place all other logical volumes inside
-G4Box *SolidWorld = new G4Box("SolidWorld", 1100*cm, 1100*cm, 1100*cm );
-LogicalWorld = new G4LogicalVolume(SolidWorld, Vacuum,"LogicalWorld",0,0,0);
-LogicalWorld->SetVisAttributes(invis);
+    //*********************************
+    // Build scint et wrapping volumes*
+    //*********************** *********
+    // Simply calls functions from Scintillator() class
+    LogicalCollimator = Geom->GetRoundCollimator();
+    LogicalFrontOutput = Geom->GetOutputCollimator();
+    LogicalBackOutput = Geom->GetOutputCollimator();
 
-G4Box *SolidHolder = new G4Box("SolidWorld", 1000*cm, 1000*cm, 1000*cm );
-LogicalHolder = new G4LogicalVolume(SolidHolder, Vacuum,"LogicalHolder",0,0,0);
-LogicalHolder->SetVisAttributes(invis);
+    // Set colors of various block materials
+    // LogicalCollimator->SetVisAttributes(black);
+    SetLogicalVolumeColor(LogicalCollimator, "red");
+    SetLogicalVolumeColor(LogicalFrontOutput, "yellow");
+    SetLogicalVolumeColor(LogicalBackOutput, "red");
 
-// Place the world volume: center of world at origin (0,0,0)
-PhysicalWorld = new G4PVPlacement(G4Transform3D(DontRotate,G4ThreeVector(0,0,0)),"World",LogicalWorld,NULL,false,0);
+    // ############################
+    //  DEFINE GEOMETRY PLACEMENTS#
+    // ############################
 
-//*********************************
-// Build scint et wrapping volumes*
-//*********************** *********
-//Simply calls functions from Scintillator() class
-LogicalSc = theScint->GetSc();
-
-// Set colors of various block materials
-LogicalSc->SetVisAttributes(cyan);
-
-
-//############################
-// DEFINE GEOMETRY PLACEMENTS#
-//############################
+    Z_Collimator = 0;
+    Z_FrontOutput = Z_Collimator - OutputThickness / 2 - CollimatorThickness / 2;
+    Z_BackOutput = Z_Collimator + OutputThickness / 2 + CollimatorThickness / 2;
 
 #ifndef disable_gdml
 
-PhysicalHolder = new G4PVPlacement(G4Transform3D
-(DontRotate,G4ThreeVector(0*mm, 0*mm, 0*mm)),
-LogicalHolder,"Holder",
-LogicalWorld,false,0);
+    CreateWorldAndHolder();
 
-PhysicalSc = new G4PVPlacement(G4Transform3D
-(DontRotate,G4ThreeVector(0*mm, 0*mm, Z_Position_Sc)), 
-LogicalSc,"Scintillator",
-LogicalHolder,false,0);
+    PhysicalFrontOutput = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, Z_FrontOutput)),
+                                            LogicalFrontOutput, "FrontOutput",
+                                            LogicalHolder, false, 0);
+
+    PhysicalCollimator = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, Z_Collimator)),
+                                           LogicalCollimator, "Collimator",
+                                           LogicalHolder, false, 0);
+
+    PhysicalBackOutput = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, Z_BackOutput)),
+                                           LogicalBackOutput, "BackOutput",
+                                           LogicalHolder, false, 0);
 
 #else
 
 #endif
 
-
-// Returns world with everything in it and all properties set
-return PhysicalWorld;
+    // Returns world with everything in it and all properties set
+    return PhysicalWorld;
 }

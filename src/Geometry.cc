@@ -32,98 +32,105 @@ Geometry::Geometry(G4String buildfile)
       if (!config.good())
         break;
       // ####################### COMMON variables ###########################
-      if (variable == "ScintillatorLength")
+      if (variable == "CollimatorInternalRadius")
       {
         config >> value >> unit;
-        ScintillatorLength = value * G4UnitDefinition::GetValueOf(unit);
+        CollimatorInternalRadius = value * G4UnitDefinition::GetValueOf(unit);
       }
-      if (variable == "ScintillatorWidth")
+      else if (variable == "CollimatorExternalRadius")
       {
         config >> value >> unit;
-        ScintillatorWidth = value * G4UnitDefinition::GetValueOf(unit);
+        CollimatorExternalRadius = value * G4UnitDefinition::GetValueOf(unit);
       }
-      else if (variable == "ScintillatorThickness")
+      else if (variable == "CollimatorThickness")
       {
         config >> value >> unit;
-        ScintillatorThickness = value * G4UnitDefinition::GetValueOf(unit);
+        CollimatorThickness = value * G4UnitDefinition::GetValueOf(unit);
       }
-      else if (variable == "ZnSThickness")
+      else if (variable == "CollimatorLength")
       {
         config >> value >> unit;
-        ZnSThickness = value * G4UnitDefinition::GetValueOf(unit);
+        CollimatorLength = value * G4UnitDefinition::GetValueOf(unit);
       }
-      else if (variable == "DetectorLength")
+      else if (variable == "CollimatorWidth")
       {
         config >> value >> unit;
-        DetectorLength = value * G4UnitDefinition::GetValueOf(unit);
+        CollimatorWidth = value * G4UnitDefinition::GetValueOf(unit);
       }
-      else if (variable == "DetectorWidth")
+      else if (variable == "OutputThickness")
       {
         config >> value >> unit;
-        DetectorWidth = value * G4UnitDefinition::GetValueOf(unit);
-      }
-      else if (variable == "DetectorThickness")
-      {
-        config >> value >> unit;
-        DetectorThickness = value * G4UnitDefinition::GetValueOf(unit);
-      }
-      else if (variable == "AirGap")
-      {
-        config >> value >> unit;
-        AirGap = value * G4UnitDefinition::GetValueOf(unit);
-      }
-      else if (variable == "GlassThickness")
-      {
-        config >> value >> unit;
-        GlassThickness = value * G4UnitDefinition::GetValueOf(unit);
-      }
-      else if (variable == "WorkingDistance")
-      {
-        config >> value >> unit;
-        WorkingDistance = value * G4UnitDefinition::GetValueOf(unit);
+        OutputThickness = value * G4UnitDefinition::GetValueOf(unit);
       }
     }
+    config.close();
+
+    G4cout << "\n The Variables that we read in are: "
+           << "\n CollimatorInternalRadius = " << CollimatorInternalRadius
+           << "\n CollimatorExternalRadius = " << CollimatorExternalRadius
+           << "\n CollimatorThickness = " << CollimatorThickness
+           << "\n CollimatorLength = " << CollimatorLength
+           << "\n CollimatorWidth = " << CollimatorWidth
+           << "\n OutputThickness = " << OutputThickness
+           << "\n " << G4endl;
   }
-  config.close();
-
-  G4cout << "\n The Variables that we read in are: "
-         << "\n ScintillatorLength = " << ScintillatorLength
-         << "\n ScintillatorWidth = " << ScintillatorWidth
-         << "\n ScintillatorThickness = " << ScintillatorThickness
-         << "\n ZnSThickness = " << ZnSThickness
-         << "\n DetectorLength = " << DetectorLength
-         << "\n DetectorWidth = " << DetectorWidth
-         << "\n DetectorThickness = " << DetectorThickness
-         << "\n Air gap = " << AirGap
-         << "\n Glass Thickness = " << GlassThickness
-         << "\n WorkingDistance = " << WorkingDistance
-         << "\n " << G4endl;
 }
-// ***********************
-// Destructor
-// ***********************
-Geometry::~Geometry()
-{}
+  // ***********************
+  // Destructor
+  // ***********************
+  Geometry::~Geometry()
+  {
+  }
 
-G4LogicalVolume *Geometry::GetSc()
-{
+  G4LogicalVolume *Geometry::GetCollimator()
+  {
 
-  Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_BRASS");
+    Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_BRASS");
 
-  G4Box *Box = new G4Box("Box",                                                                     // its name
-                         ScintillatorLength / 2, ScintillatorWidth / 2, ScintillatorThickness / 2); // its size
+    G4Box *Box = new G4Box("Box",                                                                     // its name
+                           CollimatorLength / 2, CollimatorWidth / 2, CollimatorThickness / 2); // its size
 
-  LogicalVolume = new G4LogicalVolume(Box, Material, "Sc_Test", 0, 0, 0);
+    LogicalVolume = new G4LogicalVolume(Box, Material, "Collimator", 0, 0, 0);
 
-  return LogicalVolume;
-}
+    return LogicalVolume;
+  }
 
-// Alu = G4NistManager::Instance()->FindOrBuildMaterial("G4_Al");
-// Inox = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
-// Water = G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER");
-// Laiton = G4NistManager::Instance()->FindOrBuildMaterial("G4_BRASS");
-// Kapton = G4NistManager::Instance()->FindOrBuildMaterial("G4_KAPTON");
-// Air = G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
-// Cuivre = G4NistManager::Instance()->FindOrBuildMaterial("G4_Cu");
-// Fer = G4NistManager::Instance()->FindOrBuildMaterial("G4_Fe");
-// Polystyrene = G4NistManager::Instance()->FindOrBuildMaterial("G4_POLYSTYRENE");
+
+  G4LogicalVolume *Geometry::GetOutputCollimator()
+  {
+
+    Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_Galactic");
+
+    G4Box *Box = new G4Box("Box",                                                                     // its name
+                           1*m / 2, 1*m / 2, OutputThickness/2); // its size
+
+    LogicalVolume = new G4LogicalVolume(Box, Material, "OutputCollimator", 0, 0, 0);
+
+    return LogicalVolume;
+  }
+
+
+  G4LogicalVolume *Geometry::GetRoundCollimator()
+  {
+
+    Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_BRASS");
+
+    G4Tubs *Tubs = new G4Tubs("Tubs",                                                                                     // its name
+                              CollimatorInternalRadius, CollimatorExternalRadius, CollimatorThickness / 2, 0, 360 * deg); // its size
+
+    LogicalVolume = new G4LogicalVolume(Tubs, Material, "RoundCollimator", 0, 0, 0);
+
+    return LogicalVolume;
+  }
+
+  // Alu = G4NistManager::Instance()->FindOrBuildMaterial("G4_Al");
+  // Inox = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
+  // Water = G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER");
+  // Laiton = G4NistManager::Instance()->FindOrBuildMaterial("G4_BRASS");
+  // Kapton = G4NistManager::Instance()->FindOrBuildMaterial("G4_KAPTON");
+  // Air = G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
+  // Cuivre = G4NistManager::Instance()->FindOrBuildMaterial("G4_Cu");
+  // Fer = G4NistManager::Instance()->FindOrBuildMaterial("G4_Fe");
+  // Tantale = G4NistManager::Instance()->FindOrBuildMaterial("G4_Ta");
+  // Tungstene = G4NistManager::Instance()->FindOrBuildMaterial("G4_W");
+  // Polystyrene = G4NistManager::Instance()->FindOrBuildMaterial("G4_POLYSTYRENE");

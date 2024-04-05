@@ -12,22 +12,48 @@
 
 class G4Event;
 
-struct RunTallyTP {
-  int ParticuleID;
+struct RunTallyCollimator {
   float E_start;
   float E_dep;
-  float Charge;
-  float PositionX;
-  float PositionY;
-  float PositionZ;
-  float Time;
-  float TotalLength;
-  float InteractionDepth;
+  float E_dep_e;
+  float E_dep_g;
+  std::vector<float> E_gamma_Brem;
 
 
-  inline int operator ==(const RunTallyTP& right) const
+  inline int operator ==(const RunTallyCollimator& right) const
   {return (this==&right);}
 };
+
+
+struct RunTallyFrontCollimator {
+  std::vector<int> ParticuleID;
+  std::vector<float> E_exit;
+  std::vector<float> x_exit;
+  std::vector<float> y_exit;
+  std::vector<float> z_exit;
+  std::vector<float> px_exit;
+  std::vector<float> py_exit;
+  std::vector<float> pz_exit;
+
+  inline int operator ==(const RunTallyFrontCollimator& right) const
+  {return (this==&right);}
+};
+
+
+struct RunTallyBackCollimator {
+  std::vector<int> ParticuleID;
+  std::vector<float> E_exit;
+  std::vector<float> x_exit;
+  std::vector<float> y_exit;
+  std::vector<float> z_exit;
+  std::vector<float> px_exit;
+  std::vector<float> py_exit;
+  std::vector<float> pz_exit;
+
+  inline int operator ==(const RunTallyBackCollimator& right) const
+  {return (this==&right);}
+};
+
 
 
 class PALLAS_CollSimEventAction : public G4UserEventAction
@@ -41,38 +67,25 @@ public:
   void EndOfEventAction(const G4Event*);  
 
   //Functions for TP Tree
-  void SetParticuleID(G4double a){StatsTP.ParticuleID =a;}
-  float GetParticuleID(){return StatsTP.ParticuleID;}
-  void SetEstartTP(G4double d){StatsTP.E_start+=d;}
-  float GetEstartTP(){return StatsTP.E_start;}
-  void AddEdepTP(G4double d){StatsTP.E_dep+=d;}
-  float GetEdepTP(){return StatsTP.E_dep;}
-  void SetCharge(G4double a){StatsTP.Charge =a;}
-  float GetCharge(){return StatsTP.Charge;}
-  void SetTPPositionX(G4double d){StatsTP.PositionX=d;}
-  float GetTPPositionX(){return StatsTP.PositionX;}
-  void SetTPPositionY(G4double d){StatsTP.PositionY=d;}
-  float GetTPPositionY(){return StatsTP.PositionY;}
-  void SetTPPositionZ(G4double d){StatsTP.PositionZ=d;}
-  float GetTPPositionZ(){return StatsTP.PositionZ;}
-  void SetTPTime(G4double d){StatsTP.Time=d;}
-  float GetTPTime(){return StatsTP.Time;}
-  void AddTrackLength(G4double d){StatsTP.TotalLength+=d;}
-  float GetTotalTrackLength(){return StatsTP.TotalLength;}
-  void SetInteractionDepthTP(G4double d){StatsTP.InteractionDepth+=d;}
-  float GetInteractionDepthTP(){return StatsTP.InteractionDepth;}
+  void SetEstartCollimator(G4float d){StatsCollimator.E_start=d;}
+  float GetEstartCollimator(){return StatsCollimator.E_start;}
+  void AddEdepCollimator(G4float d){StatsCollimator.E_dep+=d;}
+  float GetEdepCollimator(){return StatsCollimator.E_dep;}
+  void AddEdepElectronCollimator(G4float d){StatsCollimator.E_dep_e+=d;}
+  float GetEdepElectronCollimator(){return StatsCollimator.E_dep_e;}
+  void AddEdepGammaCollimator(G4float d){StatsCollimator.E_dep_g+=d;}
+  float GetEdepGammaCollimator(){return StatsCollimator.E_dep_g;}
 
 
 private:
 
   TTree *EventTree;
   TBranch *EventBranch;
-  RunTallyTP StatsTP;
+  RunTallyCollimator StatsCollimator;
+  RunTallyFrontCollimator StatsFrontCollimator;
+  RunTallyBackCollimator StatsBackCollimator;
   G4String suffixe;
   
-
-
-
 };
 
 
