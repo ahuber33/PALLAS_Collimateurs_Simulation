@@ -28,34 +28,36 @@ void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
   RunBranch = Tree_Collimator->Branch("E_dep", &StatsCollimator.E_dep, "E_dep/F" );
   RunBranch = Tree_Collimator->Branch("E_dep_e", &StatsCollimator.E_dep_e, "E_dep_e/F" );
   RunBranch = Tree_Collimator->Branch("E_dep_g", &StatsCollimator.E_dep_g, "E_dep_g/F" );
-  RunBranch = Tree_Collimator->Branch("E_gamma_Brem", "vector<float>" , &StatsCollimator.E_gamma_Brem);
+  RunBranch = Tree_Collimator->Branch("Energy_Brem_created", "vector<float>" , &StatsCollimator.Energy_Brem_created);
 
   //*****************************INFORMATION FROM THE FRONT SURFACE**************************************
-  RunBranch = Tree_FrontCollimator->Branch("ParticuleID", "vector<int>" , &StatsFrontCollimator.ParticuleID);
+  RunBranch = Tree_FrontCollimator->Branch("ParticleID", "vector<int>" , &StatsFrontCollimator.particleID);
+  RunBranch = Tree_FrontCollimator->Branch("ParentID", "vector<int>" , &StatsFrontCollimator.parentID);
   RunBranch = Tree_FrontCollimator->Branch("E_exit", "vector<float>" , &StatsFrontCollimator.E_exit);
-  RunBranch = Tree_FrontCollimator->Branch("x_exit", "vector<float>" , &StatsFrontCollimator.x_exit);
-  RunBranch = Tree_FrontCollimator->Branch("y_exit", "vector<float>" , &StatsFrontCollimator.y_exit);
-  RunBranch = Tree_FrontCollimator->Branch("z_exit", "vector<float>" , &StatsFrontCollimator.z_exit);
-  RunBranch = Tree_FrontCollimator->Branch("px_exit", "vector<float>" , &StatsFrontCollimator.px_exit);
-  RunBranch = Tree_FrontCollimator->Branch("py_exit", "vector<float>" , &StatsFrontCollimator.py_exit);
-  RunBranch = Tree_FrontCollimator->Branch("pz_exit", "vector<float>" , &StatsFrontCollimator.pz_exit);
+  // RunBranch = Tree_FrontCollimator->Branch("x_exit", "vector<float>" , &StatsFrontCollimator.x_exit);
+  // RunBranch = Tree_FrontCollimator->Branch("y_exit", "vector<float>" , &StatsFrontCollimator.y_exit);
+  // RunBranch = Tree_FrontCollimator->Branch("z_exit", "vector<float>" , &StatsFrontCollimator.z_exit);
+  // RunBranch = Tree_FrontCollimator->Branch("px_exit", "vector<float>" , &StatsFrontCollimator.px_exit);
+  // RunBranch = Tree_FrontCollimator->Branch("py_exit", "vector<float>" , &StatsFrontCollimator.py_exit);
+  // RunBranch = Tree_FrontCollimator->Branch("pz_exit", "vector<float>" , &StatsFrontCollimator.pz_exit);
 
   //*****************************INFORMATION FROM THE BACK SURFACE**************************************
-  RunBranch = Tree_BackCollimator->Branch("ParticuleID", "vector<int>" , &StatsBackCollimator.ParticuleID);
+  RunBranch = Tree_BackCollimator->Branch("ParticleID", "vector<int>" , &StatsBackCollimator.particleID);
+  RunBranch = Tree_BackCollimator->Branch("ParentID", "vector<int>" , &StatsBackCollimator.parentID);
   RunBranch = Tree_BackCollimator->Branch("E_exit", "vector<float>" , &StatsBackCollimator.E_exit);
-  RunBranch = Tree_BackCollimator->Branch("x_exit", "vector<float>" , &StatsBackCollimator.x_exit);
-  RunBranch = Tree_BackCollimator->Branch("y_exit", "vector<float>" , &StatsBackCollimator.y_exit);
-  RunBranch = Tree_BackCollimator->Branch("z_exit", "vector<float>" , &StatsBackCollimator.z_exit);
-  RunBranch = Tree_BackCollimator->Branch("px_exit", "vector<float>" , &StatsBackCollimator.px_exit);
-  RunBranch = Tree_BackCollimator->Branch("py_exit", "vector<float>" , &StatsBackCollimator.py_exit);
-  RunBranch = Tree_BackCollimator->Branch("pz_exit", "vector<float>" , &StatsBackCollimator.pz_exit);
+  // RunBranch = Tree_BackCollimator->Branch("x_exit", "vector<float>" , &StatsBackCollimator.x_exit);
+  // RunBranch = Tree_BackCollimator->Branch("y_exit", "vector<float>" , &StatsBackCollimator.y_exit);
+  // RunBranch = Tree_BackCollimator->Branch("z_exit", "vector<float>" , &StatsBackCollimator.z_exit);
+  // RunBranch = Tree_BackCollimator->Branch("px_exit", "vector<float>" , &StatsBackCollimator.px_exit);
+  // RunBranch = Tree_BackCollimator->Branch("py_exit", "vector<float>" , &StatsBackCollimator.py_exit);
+  // RunBranch = Tree_BackCollimator->Branch("pz_exit", "vector<float>" , &StatsBackCollimator.pz_exit);
 
 
   //set the random seed to the CPU clock
   //G4Random::setTheEngine(new CLHEP::HepJamesRandom);
   G4long seed = time(NULL);
-  //G4Random::setTheSeed(seed);
-  G4Random::setTheSeed(1712317304);
+  G4Random::setTheSeed(seed);
+  //G4Random::setTheSeed(1712670533);
   G4cout << "seed = " << seed << G4endl;
 
   G4cout << "### Run " << aRun->GetRunID() << " start." << G4endl;

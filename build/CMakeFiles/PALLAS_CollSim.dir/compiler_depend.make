@@ -925,6 +925,7 @@ CMakeFiles/PALLAS_CollSim.dir/PALLAS_CollSim.cc.o: ../PALLAS_CollSim.cc \
   /usr/local/geant4.11.2.1/include/Geant4/G4PVPlacement.hh \
   /usr/local/geant4.11.2.1/include/Geant4/G4PVReplica.hh \
   /usr/local/geant4.11.2.1/include/Geant4/G4Colour.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4VProcess.hh \
   ../include/PALLAS_CollSimPhysics.hh \
   /usr/local/geant4.11.2.1/include/Geant4/G4VModularPhysicsList.hh \
   /usr/local/geant4.11.2.1/include/Geant4/G4VPhysicsConstructor.hh \
@@ -2730,6 +2731,7 @@ CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimEventAction.cc.o: ../src/PALLAS_
   /usr/local/geant4.11.2.1/include/Geant4/G4PVPlacement.hh \
   /usr/local/geant4.11.2.1/include/Geant4/G4PVReplica.hh \
   /usr/local/geant4.11.2.1/include/Geant4/G4Colour.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4VProcess.hh \
   ../include/PALLAS_CollSimEventAction.hh \
   ../include/PALLAS_CollSimRunAction.hh
 
@@ -5864,7 +5866,8 @@ CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimSteppingAction.cc.o: ../src/PALL
   /usr/local/geant4.11.2.1/include/Geant4/G4ThreeVector.hh \
   /usr/local/geant4.11.2.1/include/Geant4/G4PVPlacement.hh \
   /usr/local/geant4.11.2.1/include/Geant4/G4PVReplica.hh \
-  /usr/local/geant4.11.2.1/include/Geant4/G4Colour.hh
+  /usr/local/geant4.11.2.1/include/Geant4/G4Colour.hh \
+  /usr/local/geant4.11.2.1/include/Geant4/G4VProcess.hh
 
 CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimVisManager.cc.o: ../src/PALLAS_CollSimVisManager.cc \
   /usr/include/stdc-predef.h

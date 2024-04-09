@@ -13,7 +13,7 @@
 
 /tracking/verbose 0
 /run/verbose 1
-/run/printProgress 10
+/run/printProgress 10000
 
 
 # /vis/scene/endOfEventAction accumulate 10
@@ -52,13 +52,13 @@
 ### PART TO SIMULATE PARTICLE WITH GPS (no setgun) ###
 ######################################################
 /gps/number 1
-/gps/particle proton
-#/gps/pos/type Point
-/gps/pos/type Plane
+/gps/particle e-
+/gps/pos/type Point
+#/gps/pos/type Plane
 /gps/pos/centre 0.0 0.0 -300.0 mm
-/gps/pos/shape Circle
-/gps/pos/radius 2.5 um
-/gps/energy 2.5 MeV
+#/gps/pos/shape Circle
+#/gps/pos/radius 2.5 um
+/gps/energy 200 MeV
 /gps/direction 0.0 0.0 1.0
 #/gps/ang/type cos
 #/gps/ang/rot1 -1 0 0

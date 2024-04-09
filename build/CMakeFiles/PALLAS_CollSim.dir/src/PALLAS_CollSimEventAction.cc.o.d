@@ -824,5 +824,6 @@ CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimEventAction.cc.o: \
  /usr/local/geant4.11.2.1/include/Geant4/G4PVPlacement.hh \
  /usr/local/geant4.11.2.1/include/Geant4/G4PVReplica.hh \
  /usr/local/geant4.11.2.1/include/Geant4/G4Colour.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4VProcess.hh \
  /data/PALLAS_Collimateurs_Simulation/include/PALLAS_CollSimEventAction.hh \
  /data/PALLAS_Collimateurs_Simulation/include/PALLAS_CollSimRunAction.hh

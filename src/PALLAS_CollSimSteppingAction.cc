@@ -14,11 +14,85 @@ PALLAS_CollSimSteppingAction::PALLAS_CollSimSteppingAction()
 
 PALLAS_CollSimSteppingAction::~PALLAS_CollSimSteppingAction() {}
 
-void PALLAS_CollSimSteppingAction::DefineEStart()
+bool PALLAS_CollSimSteppingAction::SetFlagGammaEnergyDeposition()
 {
-  
+  if (particleID == 22)
+    flag_Gamma = true;
+
+  if (creatorProcessName == "phot" || creatorProcessName == "compt" || creatorProcessName == "conv")
+    flag_Gamma = true;
+  else
+    flag_Gamma = false;
+
+  return flag_Gamma;
 }
 
+void PALLAS_CollSimSteppingAction::UpdateCollimatorInformations(PALLAS_CollSimEventAction *evtac)
+{
+  evtac->AddEdepCollimator(energyDeposited);
+  if (flag_Gamma == false)
+    evtac->AddEdepElectronCollimator(energyDeposited);
+  else
+    evtac->AddEdepGammaCollimator(energyDeposited);
+
+  // G4cout << "Edep = " << energyDeposited << G4endl;
+  // G4cout << "Edep tot = " << evtac->GetEdepCollimator() << G4endl;
+  // G4cout << "Edep tot e- = " << evtac->GetEdepElectronCollimator() << G4endl;
+  // G4cout << "Edep tot gamma = " << evtac->GetEdepGammaCollimator() << G4endl;
+}
+
+void PALLAS_CollSimSteppingAction::UpdateFrontCollimatorInformations(PALLAS_CollSimEventAction *evtac)
+{
+  evtac->AddParticleIDFront(particleID);
+  evtac->AddParentIDFront(parentID);
+  evtac->AddEnergyExitFront(energy);
+  evtac->AddXExitFront(x);
+  evtac->AddYExitFront(y);
+  evtac->AddZExitFront(z);
+  evtac->AddPxExitFront(px);
+  evtac->AddPyExitFront(py);
+  evtac->AddPzExitFront(pz);
+
+  // G4cout << "Part ID = " << particleID << G4endl;
+  // G4cout << "E exit = " << energy << G4endl;
+  // G4cout << "X exit = " << x << G4endl;
+  // G4cout << "Y exit = " << y << G4endl;
+  // G4cout << "Z exit = " << z << G4endl;
+  // G4cout << "Px exit = " << px << G4endl;
+  // G4cout << "Py exit = " << py << G4endl;
+  // G4cout << "Pz exit = " << pz << G4endl;
+}
+
+void PALLAS_CollSimSteppingAction::UpdateBackCollimatorInformations(PALLAS_CollSimEventAction *evtac)
+{
+  evtac->AddParticleIDBack(particleID);
+  evtac->AddParentIDBack(parentID);
+  evtac->AddEnergyExitBack(energy);
+  evtac->AddXExitBack(x);
+  evtac->AddYExitBack(y);
+  evtac->AddZExitBack(z);
+  evtac->AddPxExitBack(px);
+  evtac->AddPyExitBack(py);
+  evtac->AddPzExitBack(pz);
+
+  // G4cout << "Part ID = " << particleID << G4endl;
+  // G4cout << "E exit = " << energy << G4endl;
+  // G4cout << "X exit = " << x << G4endl;
+  // G4cout << "Y exit = " << y << G4endl;
+  // G4cout << "Z exit = " << z << G4endl;
+  // G4cout << "Px exit = " << px << G4endl;
+  // G4cout << "Py exit = " << py << G4endl;
+  // G4cout << "Pz exit = " << pz << G4endl;
+}
+
+void PALLAS_CollSimSteppingAction::UpdateBremInformations(PALLAS_CollSimEventAction *evtac)
+{
+  if (creatorProcessName == "eBrem" && stepNo == 1)
+  {
+    evtac->AddEBremCreated(energy);
+    //G4cout << "Brem[" << evtac->GetEBremCreatedSize() << "]= " << evtac->GetEBremCreatedEnergy(evtac->GetEBremCreatedSize() - 1) << " MeV" << G4endl;
+  }
+}
 
 void PALLAS_CollSimSteppingAction::UserSteppingAction(const G4Step *aStep)
 {
@@ -26,91 +100,54 @@ void PALLAS_CollSimSteppingAction::UserSteppingAction(const G4Step *aStep)
   // ###################################
   //  Déclaration of functions/variables
   // ###################################
-  G4Track *theTrack = aStep->GetTrack();
-  //PALLAS_CollSimTrackInformation *trackInformation = (PALLAS_CollSimTrackInformation *)theTrack->GetUserInformation();
-  G4String partname = aStep->GetTrack()->GetDefinition()->GetParticleName();
-  G4int partID = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
   PALLAS_CollSimRunAction *runac = (PALLAS_CollSimRunAction *)(G4RunManager::GetRunManager()->GetUserRunAction());
   G4EventManager *evtman = G4EventManager::GetEventManager();
   PALLAS_CollSimEventAction *evtac = (PALLAS_CollSimEventAction *)evtman->GetUserEventAction();
-  //PALLAS_CollSimTrackInformation *info = (PALLAS_CollSimTrackInformation *)(aStep->GetTrack()->GetUserInformation());
-  G4String endproc = aStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
-  G4int Parent_ID = aStep->GetTrack()->GetParentID();
-  G4int StepNo = aStep->GetTrack()->GetCurrentStepNumber();
 
-  G4double Edep = aStep->GetTotalEnergyDeposit() / keV;
-  G4double x = aStep->GetTrack()->GetPosition().x();
-  G4double y = aStep->GetTrack()->GetPosition().y();
-  G4double z = aStep->GetTrack()->GetPosition().z();
-  G4double zpre = aStep->GetPreStepPoint()->GetPosition().z();
-  G4double px = aStep->GetPreStepPoint()->GetMomentumDirection().x();
-  G4double py = aStep->GetPreStepPoint()->GetMomentumDirection().y();
-  G4double pz = aStep->GetPreStepPoint()->GetMomentumDirection().z();
-  
-  G4String VolumeNamePreStep = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();
-  G4String VolumeNamePostStep = aStep->GetPostStepPoint()->GetPhysicalVolume()->GetName();
-  
+  theTrack = aStep->GetTrack();
+  particleName = aStep->GetTrack()->GetDefinition()->GetParticleName();
+  particleID = aStep->GetTrack()->GetDefinition()->GetPDGEncoding(); // PART ID => https://pdg.lbl.gov/2007/reviews/montecarlorpp.pdf
+  endproc = aStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
+  auto creatorProcess = theTrack->GetCreatorProcess();
+  parentID = aStep->GetTrack()->GetParentID();
+  stepNo = aStep->GetTrack()->GetCurrentStepNumber();
+  energy = aStep->GetPreStepPoint()->GetKineticEnergy() / MeV;
+  volumeNamePreStep = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();
+  volumeNamePostStep = aStep->GetPostStepPoint()->GetPhysicalVolume()->GetName();
+
+  energyDeposited = aStep->GetTotalEnergyDeposit() / MeV;
+  x = aStep->GetTrack()->GetPosition().x();
+  y = aStep->GetTrack()->GetPosition().y();
+  z = aStep->GetTrack()->GetPosition().z();
+  px = aStep->GetPreStepPoint()->GetMomentumDirection().x();
+  py = aStep->GetPreStepPoint()->GetMomentumDirection().y();
+  pz = aStep->GetPreStepPoint()->GetMomentumDirection().z();
+
   // #######################################################################
   // #######################################################################
   // ###########################START EM INFOS PART#########################
   // #######################################################################
   // #######################################################################
 
-  if (Parent_ID == 0 && StepNo == 1)
+  if (parentID == 0 && stepNo == 1)
+    evtac->SetEstartCollimator(energy);
+
+  if (creatorProcess != NULL)
   {
-    evtac->SetEstartCollimator(aStep->GetPreStepPoint()->GetKineticEnergy() / MeV);
+    creatorProcessName = creatorProcess->GetProcessName();
+    SetFlagGammaEnergyDeposition();
+    UpdateBremInformations(evtac);
   }
 
-  if(VolumeNamePreStep == "Collimator")
-  {
-    evtac->AddEdepCollimator(Edep);
-    if(partname == "e-")evtac->AddEdepElectronCollimator(Edep);
-    if(partname == "gamma")evtac->AddEdepGammaCollimator(Edep);
-    G4cout << "Edep = " << Edep << G4endl;
-    G4cout << "Edep tot = " << evtac->GetEdepCollimator() << G4endl;
-    G4cout << "Edep tot e- = " << evtac->GetEdepElectronCollimator() << G4endl;
-    G4cout << "Edep tot gamma = " << evtac->GetEdepGammaCollimator() << G4endl;
-  }
+  if (volumeNamePreStep == "Collimator")
+    UpdateCollimatorInformations(evtac);
 
-  if(VolumeNamePreStep == "Collimator" && VolumeNamePostStep == "FrontOutput")
-  {
-    G4cout << "Particles doing Collimator->Front Output "  << G4endl;
-  }
+  if (volumeNamePreStep == "Collimator" && volumeNamePostStep == "FrontOutput")
+    UpdateFrontCollimatorInformations(evtac);
 
-
-if(VolumeNamePreStep == "Collimator" && VolumeNamePostStep == "BackOutput")
-  {
-    G4cout << "Particles doing Collimator->Back Output "  << G4endl;
-  }
-
-  // if (((aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() == "Scintillator") || (aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() == "ZnS") || (aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() == "Core_Fiber")) && ((aStep->GetPostStepPoint()->GetPhysicalVolume()->GetName() == "Scintillator") || (aStep->GetPostStepPoint()->GetPhysicalVolume()->GetName() == "ZnS") || (aStep->GetPostStepPoint()->GetPhysicalVolume()->GetName() == "Core_Fiber")) && partname == "proton")
-  // {
-  //   evtac->AddTrackLength(aStep->GetTrack()->GetStepLength() / mm);
-  //   // G4cout << "Track Length = " << evtac->GetTotalTrackLength() << G4endl;
-  //   evtac->AddEdepTP(aStep->GetTotalEnergyDeposit() / keV);
-  // }
-
-  // // Be careful here !!! If Zns in here, put ZnS. If not, put Scintillator or Core_Fiber!!!!
-  // if (Parent_ID == 0 && aStep->GetPostStepPoint()->GetPhysicalVolume()->GetName() == "Scintillator" && evtac->GetTPPositionZ() < 0)
-  // {
-  //   evtac->SetTPPositionX(x);
-  //   evtac->SetTPPositionY(y);
-  //   evtac->SetTPPositionZ(z);
-  //   evtac->SetTPTime(aStep->GetPostStepPoint()->GetGlobalTime() / ns);
-  //   // G4cout << "x = " << x << G4endl;
-  //   // G4cout << "y = " << y << G4endl;
-  //   // G4cout << "z = " << z << G4endl;
-
-  //   // if(x <-25){G4cout << "HERE X" << G4endl;}
-  //   // if(y <-10){G4cout << "HERE Y" << G4endl;}
-  // }
-
+  if (volumeNamePreStep == "Collimator" && volumeNamePostStep == "BackOutput")
+    UpdateBackCollimatorInformations(evtac);
 
   if (aStep->GetPostStepPoint()->GetPhysicalVolume()->GetName() == "World")
-  {
     theTrack->SetTrackStatus(fStopAndKill);
-  }
-
-  // // G4cout << "Charge = " << aStep->GetPostStepPoint()->GetCharge() << G4endl;
-  // // G4cout<< "Charge 2 = " << aStep->GetTrack()->GetDefinition()->GetPDGCharge()<<G4endl;
 }

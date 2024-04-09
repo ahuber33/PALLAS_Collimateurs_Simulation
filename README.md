@@ -52,3 +52,10 @@ Personnaly, I used the vrml.mac but you can create another one. Just to remember
 - Définition de volumes basiques d'intérêts (FrontOutput, BackOutput entourant le collimateur) permettant une étude préliminaire
 - Creation de 3 Tree distincts pour pouvoir déterminer ce qui se passe dans le collimateur et ce qui en ressort en arrière et en avant
 - Code en cours d'écriture pour accès aux informations dans le SteppingAction et fonctions en cours de développement
+
+## Commit #4 le 09/04/2024 [PALLAS_CollSim.0.2.0]
+- Correction bugs divers
+- Ensemble des fonctions définis dans SteppingAction pour récupérer l'ensemble des informations nécessaires (pour le moment) avec prévisions également pour la suite.
+- La création du string "GetProcessName" entraine un segmentation fault si le creatorprocess n'est pas crée. Il est donc indispensable de vérifier que celui-ci existe bien avant de faire appel à cette fonction (possible également en s'affranchissant juste du ParentID=0 qui n'a pas de processus créateur)
+- 3 fonctions principales (UpdateCollimatorInformations, UpdateCollimatorFrontInformations & UpdateBackCollimatorInformations) permettant de remplir les 3 trees de stockage de données correspondant aux informations physique de ce qu'il se passe dans le collimateur, de ce qui ressort en face avant et en face arrière.
+- Simulation simplifiée avec passage du cut physique à 1mm contre 1µm précédemment.

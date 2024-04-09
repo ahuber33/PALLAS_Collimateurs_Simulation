@@ -823,4 +823,5 @@ CMakeFiles/PALLAS_CollSim.dir/src/PALLAS_CollSimSteppingAction.cc.o: \
  /usr/local/geant4.11.2.1/include/Geant4/G4ThreeVector.hh \
  /usr/local/geant4.11.2.1/include/Geant4/G4PVPlacement.hh \
  /usr/local/geant4.11.2.1/include/Geant4/G4PVReplica.hh \
- /usr/local/geant4.11.2.1/include/Geant4/G4Colour.hh
+ /usr/local/geant4.11.2.1/include/Geant4/G4Colour.hh \
+ /usr/local/geant4.11.2.1/include/Geant4/G4VProcess.hh

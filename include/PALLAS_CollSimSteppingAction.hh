@@ -12,21 +12,42 @@
 #include "PALLAS_CollSimRunAction.hh"
 #include "G4RunManager.hh"
 #include "PALLAS_CollSimGeometry.hh"
-
-
+#include "G4VProcess.hh"
 
 class PALLAS_CollSimSteppingAction : public G4UserSteppingAction
 {
 public:
   PALLAS_CollSimSteppingAction();
   ~PALLAS_CollSimSteppingAction();
-public:
-  void UserSteppingAction(const G4Step*);
 
+public:
+  bool SetFlagGammaEnergyDeposition();
+  void UpdateCollimatorInformations(PALLAS_CollSimEventAction *evtac);
+  void UpdateFrontCollimatorInformations(PALLAS_CollSimEventAction *evtac);
+  void UpdateBackCollimatorInformations(PALLAS_CollSimEventAction *evtac);
+  void UpdateBremInformations(PALLAS_CollSimEventAction *evtac);
+  void UserSteppingAction(const G4Step *);
+  // int Flag_gamma;
 
 private:
   static const G4String path;
-
-
+  G4Track *theTrack;
+  G4String particleName;
+  G4String creatorProcessName;
+  G4int particleID;
+  G4String endproc;
+  G4int parentID;
+  G4int stepNo;
+  G4String volumeNamePreStep;
+  G4String volumeNamePostStep;
+  G4float energy;
+  G4float energyDeposited;
+  G4float x;
+  G4float y;
+  G4float z;
+  G4float px;
+  G4float py;
+  G4float pz;
+  G4bool flag_Gamma = false;
 };
 #endif
