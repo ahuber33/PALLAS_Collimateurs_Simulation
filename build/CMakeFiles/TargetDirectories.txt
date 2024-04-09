@@ -1,7 +1,0 @@
-/data/PALLAS_Collimateurs_Simulation/build/CMakeFiles/install/strip.dir
-/data/PALLAS_Collimateurs_Simulation/build/CMakeFiles/install/local.dir
-/data/PALLAS_Collimateurs_Simulation/build/CMakeFiles/install.dir
-/data/PALLAS_Collimateurs_Simulation/build/CMakeFiles/list_install_components.dir
-/data/PALLAS_Collimateurs_Simulation/build/CMakeFiles/rebuild_cache.dir
-/data/PALLAS_Collimateurs_Simulation/build/CMakeFiles/edit_cache.dir
-/data/PALLAS_Collimateurs_Simulation/build/CMakeFiles/PALLAS_CollSim.dir
