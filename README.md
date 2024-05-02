@@ -60,5 +60,5 @@ Personnaly, I used the vrml.mac but you can create another one. Just to remember
 - 3 fonctions principales (UpdateCollimatorInformations, UpdateCollimatorFrontInformations & UpdateBackCollimatorInformations) permettant de remplir les 3 trees de stockage de données correspondant aux informations physique de ce qu'il se passe dans le collimateur, de ce qui ressort en face avant et en face arrière.
 - Simulation simplifiée avec passage du cut physique à 1mm contre 1µm précédemment.
 
-## Commit #5 le 09/04/2024 [PALLAS_CollSim.0.2.1]
+## Commit #5 le 02/04/2024 [PALLAS_CollSim.0.2.1]
 - Commit provisoire de sauvergarde pendant la mise en place des Messenger
