@@ -16,6 +16,10 @@
 #include "G4PVReplica.hh"
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
+#include "G4GeometryManager.hh"
+#include "G4PhysicalVolumeStore.hh"
+#include "G4LogicalVolumeStore.hh"
+#include "G4SolidStore.hh"
 
 
 class PALLAS_CollSimGeometry : public G4VUserDetectorConstruction
@@ -27,6 +31,8 @@ public:
 public:
   void SetLogicalVolumeColor(G4LogicalVolume* LogicalVolume, G4String color);
   void CreateWorldAndHolder();
+  void SetCollimatorInternalRadius(G4double CollimatorInternalRadius);
+  G4double GetCollimatorInternalRadius() { return CollimatorInternalRadius; }
   G4VPhysicalVolume *Construct();
   
 
@@ -67,6 +73,7 @@ private:
   // Dimension values
   G4double CollimatorThickness;
   G4double OutputThickness;
+  G4double CollimatorInternalRadius;
 
   // Dimensions PLACEMENTS
   G4double Z_FrontOutput;

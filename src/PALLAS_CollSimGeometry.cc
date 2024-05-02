@@ -144,14 +144,32 @@ void PALLAS_CollSimGeometry::CreateWorldAndHolder()
                                        LogicalWorld, false, 0);
 }
 
+void PALLAS_CollSimGeometry::SetCollimatorInternalRadius(G4double value)
+{
+    CollimatorInternalRadius = value;
+    G4cout << "\n\n Internal Radius = " << CollimatorInternalRadius << "\n\n"
+           << G4endl;
+    G4RunManager::GetRunManager()->GeometryHasBeenModified();
+}
+
 G4VPhysicalVolume *PALLAS_CollSimGeometry::Construct()
 {
+    G4GeometryManager::GetInstance()->OpenGeometry();
+    G4PhysicalVolumeStore::GetInstance()->Clean();
+    G4LogicalVolumeStore::GetInstance()->Clean();
+    G4SolidStore::GetInstance()->Clean();
+
+    CreateWorldAndHolder();
+
     // ***********************
     // Various dimensions
     // ***********************
     Geom = new Geometry(path_bin + "PALLAS_CollSim.cfg");
     CollimatorThickness = Geom->GetCollimatorThickness();
     OutputThickness = Geom->GetOutputThickness();
+    // CollimatorInternalRadius = Geom->GetCollimatorInternalRadius();
+
+    G4cout << "Collimator Internal Radius SimGeom = " << CollimatorInternalRadius << G4endl;
 
     // Define common rotations
     DontRotate.rotateX(0.0 * deg);
@@ -167,7 +185,7 @@ G4VPhysicalVolume *PALLAS_CollSimGeometry::Construct()
     // Build scint et wrapping volumes*
     //*********************** *********
     // Simply calls functions from Scintillator() class
-    LogicalCollimator = Geom->GetRoundCollimator();
+    LogicalCollimator = Geom->GetRoundCollimator(CollimatorInternalRadius);
     LogicalFrontOutput = Geom->GetOutputCollimator();
     LogicalBackOutput = Geom->GetOutputCollimator();
 
@@ -186,8 +204,6 @@ G4VPhysicalVolume *PALLAS_CollSimGeometry::Construct()
     Z_BackOutput = Z_Collimator + OutputThickness / 2 + CollimatorThickness / 2;
 
 #ifndef disable_gdml
-
-    CreateWorldAndHolder();
 
     PhysicalFrontOutput = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, Z_FrontOutput)),
                                             LogicalFrontOutput, "FrontOutput",

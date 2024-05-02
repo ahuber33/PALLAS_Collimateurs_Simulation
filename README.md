@@ -59,3 +59,6 @@ Personnaly, I used the vrml.mac but you can create another one. Just to remember
 - La création du string "GetProcessName" entraine un segmentation fault si le creatorprocess n'est pas crée. Il est donc indispensable de vérifier que celui-ci existe bien avant de faire appel à cette fonction (possible également en s'affranchissant juste du ParentID=0 qui n'a pas de processus créateur)
 - 3 fonctions principales (UpdateCollimatorInformations, UpdateCollimatorFrontInformations & UpdateBackCollimatorInformations) permettant de remplir les 3 trees de stockage de données correspondant aux informations physique de ce qu'il se passe dans le collimateur, de ce qui ressort en face avant et en face arrière.
 - Simulation simplifiée avec passage du cut physique à 1mm contre 1µm précédemment.
+
+## Commit #5 le 09/04/2024 [PALLAS_CollSim.0.2.1]
+- Commit provisoire de sauvergarde pendant la mise en place des Messenger
