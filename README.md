@@ -3,15 +3,16 @@
 ## INSTRUCTIONS TO USE THE SIMULATION
 - Download the VMWare [Geant4.11.2.1](https://heberge.lp2ib.in2p3.fr/G4VM/index.html)
 
-- Copy all the files from PALLAS_Coll_Simulation folder ici
+```
+git clone https://github.com/ahuber33/PALLAS_Collimateurs_Simulation
+```
 
-- Create a build folder in the PALLAS_Coll_Simulation folder and go inside.
-
-- Use this command : 
+- Go to build Folder and use this command :
 ```
 cmake -DGeant4_DIR=$G4COMP ../
 make -j4
-```
+```  
+then compile it with make
 
 - The executable PALLAS_CollSim will be add to your bin folder
 
@@ -60,5 +61,10 @@ Personnaly, I used the vrml.mac but you can create another one. Just to remember
 - 3 fonctions principales (UpdateCollimatorInformations, UpdateCollimatorFrontInformations & UpdateBackCollimatorInformations) permettant de remplir les 3 trees de stockage de données correspondant aux informations physique de ce qu'il se passe dans le collimateur, de ce qui ressort en face avant et en face arrière.
 - Simulation simplifiée avec passage du cut physique à 1mm contre 1µm précédemment.
 
-## Commit #5 le 02/04/2024 [PALLAS_CollSim.0.2.1]
+## Commit #5 le 02/05/2024 [PALLAS_CollSim.0.2.1]
 - Commit provisoire de sauvergarde pendant la mise en place des Messenger
+
+## Commit #6 le 07/05/2024 [PALLAS_CollSim.0.2.2]
+- Implémentation des éléments de géométrie de la ligne PALLAS via plusieurs fichiers GDML. Ces fichiers ont été définis à partir des fichiers géométrie .step, maillé et tesselated via FREECAD. Pour éviter d'avoir des fichiers trop gros et afin d'avoir juste une vision globale de la ligne, les fichiers GDML ont été simplifiés au maximum.
+
+- TO DO : Terminer la mise en place des Messenger

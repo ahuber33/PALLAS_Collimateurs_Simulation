@@ -1,10 +1,11 @@
 /Collimator_InternalRadius 5 mm
-/run/reinitializeGeometry
+#/run/reinitializeGeometry
 
 /vis/open OGL 600x600-0+0
 /vis/drawVolume
 #/vis/viewer/set/style wireframe
 /vis/viewer/set/viewpointThetaPhi 0 0
+/vis/viewer/set/upVector 1 0 0
 /vis/viewer/zoom 1.
 /vis/viewer/set/auxiliaryEdge true
 #/vis/set/lineWidth 2

@@ -47,6 +47,45 @@ public:
   G4LogicalVolume *GetOutputCollimator();
   G4LogicalVolume *GetRoundCollimator(G4double CollimatorInternalRadius);
 
+  G4LogicalVolume *GetPALLAS_Assemblage2Cellules();
+  //LIF
+  G4LogicalVolume *GetPALLAS_Croix();
+  G4LogicalVolume *GetPALLAS_LIFHublot1();
+  G4LogicalVolume *GetPALLAS_LIFHublot2();
+  G4LogicalVolume *GetPALLAS_LIFHublot3();
+  G4LogicalVolume *GetPALLAS_LIFHublot4();
+  G4LogicalVolume *GetPALLAS_LIFHublot5();
+  G4LogicalVolume *GetPALLAS_LIF_IBX_DD();
+  G4LogicalVolume *GetPALLAS_LIF_SQLT();
+  G4LogicalVolume *GetPALLAS_MarbreBreadboard1();
+  G4LogicalVolume *GetPALLAS_MarbreBreadboard2();
+  G4LogicalVolume *GetPALLAS_OptoMeK();
+  //SECTION 1 ASM Q1 - Chamber - Q2
+  G4LogicalVolume *GetPALLAS_ATH500_DN100();
+  G4LogicalVolume *GetPALLAS_BaseMarbre();
+  G4LogicalVolume *GetPALLAS_ChambreISO();
+  G4LogicalVolume *GetPALLAS_QuadrupoleQ1();
+  G4LogicalVolume *GetPALLAS_QuadrupoleQ2();
+  //SECTION 2 ASM Poutre Q3 - Removal Chamber - Q4
+  G4LogicalVolume *GetPALLAS_QuadrupoleQ3();
+  G4LogicalVolume *GetPALLAS_QuadrupoleQ4();
+  G4LogicalVolume *GetPALLAS_ASMRemovalChamber();
+  G4LogicalVolume *GetPALLAS_BreadboardRemovalChamber();
+  G4LogicalVolume *GetPALLAS_ChassisRemovalChamber();
+  G4LogicalVolume *GetPALLAS_TubeISO1();
+  G4LogicalVolume *GetPALLAS_TubeISO2();
+  //SECTION 3
+  G4LogicalVolume *GetPALLAS_ASMPoutre();
+  G4LogicalVolume *GetPALLAS_StationYAG();
+  //SECTION 4
+  G4LogicalVolume *GetPALLAS_BlindageBD();
+  G4LogicalVolume *GetPALLAS_BlindageCBD();
+  G4LogicalVolume *GetPALLAS_ChambreDipole();
+  G4LogicalVolume *GetPALLAS_ChassisDipoleYAG();
+  G4LogicalVolume *GetPALLAS_DiagsChamber();
+  G4LogicalVolume *GetPALLAS_Dipole();
+  
+
   //****************COMMON********************
   G4double GetCollimatorThickness() { return CollimatorThickness; }
   G4double GetOutputThickness() { return OutputThickness; }

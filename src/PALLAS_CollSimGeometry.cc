@@ -41,12 +41,12 @@ void PALLAS_CollSimGeometry::SetLogicalVolumeColor(G4LogicalVolume *LogicalVolum
     gray->SetForceSolid(true);
     gray->SetVisibility(true);
 
-    red = new G4VisAttributes(G4Colour(1, 0, 0, 0.5));
+    red = new G4VisAttributes(G4Colour(1, 0, 0, 0.3));
     //  red->SetForceWireframe(true);
     red->SetForceSolid(true);
     red->SetVisibility(true);
 
-    orange = new G4VisAttributes(G4Colour(1, 0.5, 0, 0.1));
+    orange = new G4VisAttributes(G4Colour(1, 0.5, 0, 0.3));
     //  orange->SetForceWireframe(true);
     orange->SetForceSolid(true);
     orange->SetVisibility(true);
@@ -56,22 +56,22 @@ void PALLAS_CollSimGeometry::SetLogicalVolumeColor(G4LogicalVolume *LogicalVolum
     yellow->SetForceSolid(true);
     yellow->SetVisibility(true);
 
-    green = new G4VisAttributes(G4Colour(0, 1, 0, 0.35));
+    green = new G4VisAttributes(G4Colour(0, 1, 0, 0.3));
     //  green->SetForceWireframe(true);
     green->SetForceSolid(true);
     green->SetVisibility(true);
 
-    cyan = new G4VisAttributes(G4Colour(0, 1, 1, 0.1));
+    cyan = new G4VisAttributes(G4Colour(0, 1, 1, 0.3));
     //  cyan->SetForceWireframe(true);
     cyan->SetForceSolid(true);
     cyan->SetVisibility(true);
 
-    blue = new G4VisAttributes(G4Colour(0, 0, 1, 0.5));
+    blue = new G4VisAttributes(G4Colour(0, 0, 1, 0.3));
     //  blue->SetForceWireframe(true);
     blue->SetForceSolid(true);
     blue->SetVisibility(true);
 
-    magenta = new G4VisAttributes(G4Colour(1, 0, 1, 0.85));
+    magenta = new G4VisAttributes(G4Colour(1, 0, 1, 0.3));
     //  magenta->SetForceWireframe(true);
     // magenta->SetForceSolid(true);
     magenta->SetVisibility(true);
@@ -128,11 +128,11 @@ void PALLAS_CollSimGeometry::CreateWorldAndHolder()
 
     // Create World Volume
     // This is just a big box to place all other logical volumes inside
-    G4Box *SolidWorld = new G4Box("SolidWorld", 1.1 * m, 1.1 * m, 1.1 * m);
+    G4Box *SolidWorld = new G4Box("SolidWorld", 10.1 * m, 10.1* m, 10.1 * m);
     LogicalWorld = new G4LogicalVolume(SolidWorld, Vacuum, "LogicalWorld", 0, 0, 0);
     SetLogicalVolumeColor(LogicalWorld, "invis");
 
-    G4Box *SolidHolder = new G4Box("SolidHolder", 1.05 * m, 1.05 * m, 1.05 * m);
+    G4Box *SolidHolder = new G4Box("SolidHolder", 10.05 * m, 10.05 * m, 10.05 * m);
     LogicalHolder = new G4LogicalVolume(SolidHolder, Vacuum, "LogicalHolder", 0, 0, 0);
     SetLogicalVolumeColor(LogicalHolder, "invis");
 
@@ -149,8 +149,9 @@ void PALLAS_CollSimGeometry::SetCollimatorInternalRadius(G4double value)
     CollimatorInternalRadius = value;
     G4cout << "\n\n Internal Radius = " << CollimatorInternalRadius << "\n\n"
            << G4endl;
-    G4RunManager::GetRunManager()->GeometryHasBeenModified();
+    //G4RunManager::GetRunManager()->GeometryHasBeenModified();
 }
+
 
 G4VPhysicalVolume *PALLAS_CollSimGeometry::Construct()
 {
@@ -189,11 +190,89 @@ G4VPhysicalVolume *PALLAS_CollSimGeometry::Construct()
     LogicalFrontOutput = Geom->GetOutputCollimator();
     LogicalBackOutput = Geom->GetOutputCollimator();
 
+    LogicalPALLAS_Assemblage2Cellules = Geom->GetPALLAS_Assemblage2Cellules();
+    //LIF
+    LogicalPALLAS_Croix = Geom->GetPALLAS_Croix();
+    LogicalPALLAS_LIFHublot1 = Geom->GetPALLAS_LIFHublot1();
+    LogicalPALLAS_LIFHublot2 = Geom->GetPALLAS_LIFHublot2();
+    LogicalPALLAS_LIFHublot3 = Geom->GetPALLAS_LIFHublot3();
+    LogicalPALLAS_LIFHublot4 = Geom->GetPALLAS_LIFHublot4();
+    LogicalPALLAS_LIFHublot5 = Geom->GetPALLAS_LIFHublot5();
+    LogicalPALLAS_LIF_IBX_DD = Geom->GetPALLAS_LIF_IBX_DD();
+    LogicalPALLAS_LIF_SQLT = Geom->GetPALLAS_LIF_SQLT();
+    LogicalPALLAS_MarbreBreadboard1 = Geom->GetPALLAS_MarbreBreadboard1();
+    LogicalPALLAS_MarbreBreadboard2 = Geom->GetPALLAS_MarbreBreadboard2();
+    LogicalPALLAS_OptoMeK = Geom->GetPALLAS_OptoMeK();
+    //SECTION 1 ASM Q1 - Chamber - Q2
+    LogicalPALLAS_QuadrupoleQ1 = Geom->GetPALLAS_QuadrupoleQ1();
+    LogicalPALLAS_QuadrupoleQ2 = Geom->GetPALLAS_QuadrupoleQ2();
+    LogicalPALLAS_ATH500_DN100 = Geom->GetPALLAS_ATH500_DN100();
+    LogicalPALLAS_ChambreISO = Geom->GetPALLAS_ChambreISO();
+    LogicalPALLAS_BaseMarbre = Geom->GetPALLAS_BaseMarbre();
+    //SECTION 2 ASM Poutre Q3 - Removal Chamber - Q4
+    LogicalPALLAS_QuadrupoleQ3 = Geom->GetPALLAS_QuadrupoleQ3();
+    LogicalPALLAS_QuadrupoleQ4 = Geom->GetPALLAS_QuadrupoleQ4();
+    LogicalPALLAS_ASMRemovalChamber = Geom->GetPALLAS_ASMRemovalChamber();
+    LogicalPALLAS_BreadboardRemovalChamber = Geom->GetPALLAS_BreadboardRemovalChamber();
+    LogicalPALLAS_ChassisRemovalChamber = Geom->GetPALLAS_ChassisRemovalChamber();
+    LogicalPALLAS_TubeISO1 = Geom->GetPALLAS_TubeISO1();
+    LogicalPALLAS_TubeISO2 = Geom->GetPALLAS_TubeISO2();
+    //SECTION 3
+    LogicalPALLAS_ASMPoutre = Geom->GetPALLAS_ASMPoutre();
+    LogicalPALLAS_StationYAG = Geom->GetPALLAS_StationYAG();
+    //SECTION 4
+    LogicalPALLAS_BlindageBD = Geom->GetPALLAS_BlindageBD();
+    LogicalPALLAS_BlindageCBD = Geom->GetPALLAS_BlindageCBD();
+    LogicalPALLAS_ChambreDipole = Geom->GetPALLAS_ChambreDipole();
+    LogicalPALLAS_ChassisDipoleYAG = Geom->GetPALLAS_ChassisDipoleYAG();
+    LogicalPALLAS_DiagsChamber = Geom->GetPALLAS_DiagsChamber();
+    LogicalPALLAS_Dipole = Geom->GetPALLAS_Dipole();
+    
+
     // Set colors of various block materials
     // LogicalCollimator->SetVisAttributes(black);
     SetLogicalVolumeColor(LogicalCollimator, "red");
     SetLogicalVolumeColor(LogicalFrontOutput, "yellow");
     SetLogicalVolumeColor(LogicalBackOutput, "red");
+
+    SetLogicalVolumeColor(LogicalPALLAS_Assemblage2Cellules, "magenta");
+    //LIF
+    SetLogicalVolumeColor(LogicalPALLAS_Croix, "green");
+    SetLogicalVolumeColor(LogicalPALLAS_LIFHublot1, "green");
+    SetLogicalVolumeColor(LogicalPALLAS_LIFHublot2, "green");
+    SetLogicalVolumeColor(LogicalPALLAS_LIFHublot3, "green");
+    SetLogicalVolumeColor(LogicalPALLAS_LIFHublot4, "green");
+    SetLogicalVolumeColor(LogicalPALLAS_LIFHublot5, "green");
+    SetLogicalVolumeColor(LogicalPALLAS_LIF_IBX_DD, "green");
+    SetLogicalVolumeColor(LogicalPALLAS_LIF_SQLT, "green");
+    SetLogicalVolumeColor(LogicalPALLAS_MarbreBreadboard1, "green");
+    SetLogicalVolumeColor(LogicalPALLAS_MarbreBreadboard2, "green");
+    SetLogicalVolumeColor(LogicalPALLAS_OptoMeK, "green");
+    //SECTION 1 ASM Q1 - Chamber - Q2
+    SetLogicalVolumeColor(LogicalPALLAS_QuadrupoleQ1, "red");
+    SetLogicalVolumeColor(LogicalPALLAS_QuadrupoleQ2, "red");
+    SetLogicalVolumeColor(LogicalPALLAS_ATH500_DN100, "red");
+    SetLogicalVolumeColor(LogicalPALLAS_ChambreISO, "red");
+    SetLogicalVolumeColor(LogicalPALLAS_BaseMarbre, "red");
+    //SECTION 2 ASM Poutre Q3 - Removal Chamber - Q4
+    SetLogicalVolumeColor(LogicalPALLAS_QuadrupoleQ3, "cyan");
+    SetLogicalVolumeColor(LogicalPALLAS_QuadrupoleQ4, "cyan");
+    SetLogicalVolumeColor(LogicalPALLAS_ASMRemovalChamber, "cyan");
+    SetLogicalVolumeColor(LogicalPALLAS_BreadboardRemovalChamber, "cyan");
+    SetLogicalVolumeColor(LogicalPALLAS_ChassisRemovalChamber, "cyan");
+    SetLogicalVolumeColor(LogicalPALLAS_TubeISO1, "cyan");
+    SetLogicalVolumeColor(LogicalPALLAS_TubeISO2, "cyan");
+    //SECTION 3
+    SetLogicalVolumeColor(LogicalPALLAS_ASMPoutre, "orange");
+    SetLogicalVolumeColor(LogicalPALLAS_StationYAG, "orange");
+    //SECTION 4
+    SetLogicalVolumeColor(LogicalPALLAS_BlindageBD, "blue");
+    SetLogicalVolumeColor(LogicalPALLAS_BlindageCBD, "blue");
+    SetLogicalVolumeColor(LogicalPALLAS_ChambreDipole, "blue");
+    SetLogicalVolumeColor(LogicalPALLAS_ChassisDipoleYAG, "blue");
+    SetLogicalVolumeColor(LogicalPALLAS_DiagsChamber, "blue");
+    SetLogicalVolumeColor(LogicalPALLAS_Dipole, "blue");
+
 
     // ############################
     //  DEFINE GEOMETRY PLACEMENTS#
@@ -205,18 +284,156 @@ G4VPhysicalVolume *PALLAS_CollSimGeometry::Construct()
 
 #ifndef disable_gdml
 
-    PhysicalFrontOutput = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, Z_FrontOutput)),
-                                            LogicalFrontOutput, "FrontOutput",
-                                            LogicalHolder, false, 0);
+    // PhysicalFrontOutput = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, Z_FrontOutput)),
+    //                                         LogicalFrontOutput, "FrontOutput",
+    //                                         LogicalHolder, false, 0);
 
-    PhysicalCollimator = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, Z_Collimator)),
-                                           LogicalCollimator, "Collimator",
+    // PhysicalCollimator = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, Z_Collimator)),
+    //                                        LogicalCollimator, "Collimator",
+    //                                        LogicalHolder, false, 0);
+
+    // PhysicalBackOutput = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, Z_BackOutput)),
+    //                                        LogicalBackOutput, "BackOutput",
+    //                                        LogicalHolder, false, 0);
+
+
+    PhysicalPALLAS_Assemblage2Cellules = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_Assemblage2Cellules, "Assemblage2Cellules",
+                                           LogicalHolder, false, 0);  
+
+    //LIF
+    PhysicalPALLAS_Croix = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_Croix, "Croix",
+                                           LogicalHolder, false, 0);  
+
+    PhysicalPALLAS_OptoMeK = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_OptoMeK, "OptoMeK",
                                            LogicalHolder, false, 0);
 
-    PhysicalBackOutput = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, Z_BackOutput)),
-                                           LogicalBackOutput, "BackOutput",
+    PhysicalPALLAS_LIFHublot1 = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_LIFHublot1, "LIFHublot1",
+                                           LogicalHolder, false, 0);                                       
+
+    PhysicalPALLAS_LIFHublot2 = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_LIFHublot2, "LIFHublot2",
+                                           LogicalHolder, false, 0);                                       
+
+    PhysicalPALLAS_LIFHublot3 = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_LIFHublot3, "LIFHublot3",
+                                           LogicalHolder, false, 0);                                       
+
+    PhysicalPALLAS_LIFHublot4 = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_LIFHublot4, "LIFHublot4",
+                                           LogicalHolder, false, 0);                                       
+
+    PhysicalPALLAS_LIFHublot5 = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_LIFHublot5, "LIFHublot5",
+                                           LogicalHolder, false, 0);                                                                                                                                                                                                                   
+
+    PhysicalPALLAS_LIF_IBX_DD = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_LIF_IBX_DD, "LIF_IBX_DD",
                                            LogicalHolder, false, 0);
 
+    PhysicalPALLAS_LIF_SQLT = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_LIF_SQLT, "LIF_SQLT",
+                                           LogicalHolder, false, 0);                                                                                  
+
+    PhysicalPALLAS_MarbreBreadboard1 = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_MarbreBreadboard1, "MarbreBreadboard1",
+                                           LogicalHolder, false, 0);                                       
+
+    PhysicalPALLAS_MarbreBreadboard2 = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_MarbreBreadboard2, "MarbreBreadboard2",
+                                           LogicalHolder, false, 0);                                                                                  
+
+    //SECTION 1 ASM Q1 - Chamber - Q2
+    PhysicalPALLAS_QuadrupoleQ1 = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_QuadrupoleQ1, "QuadrupoleQ1",
+                                           LogicalHolder, false, 0);  
+
+    PhysicalPALLAS_QuadrupoleQ2 = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_QuadrupoleQ2, "QuadrupoleQ2",
+                                           LogicalHolder, false, 0);   
+
+    PhysicalPALLAS_ATH500_DN100 = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_ATH500_DN100, "ATH500_DN100",
+                                           LogicalHolder, false, 0); 
+
+    PhysicalPALLAS_BaseMarbre = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_BaseMarbre, "BaseMarbre",
+                                           LogicalHolder, false, 0);    
+
+    PhysicalPALLAS_ChambreISO = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_ChambreISO, "ChambreISO",
+                                           LogicalHolder, false, 0);        
+
+
+    //SECTION 2 ASM Poutre Q3 - Removal Chamber - Q4
+    PhysicalPALLAS_QuadrupoleQ3 = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_QuadrupoleQ3, "QuadrupoleQ3",
+                                           LogicalHolder, false, 0);                                           
+
+    PhysicalPALLAS_QuadrupoleQ4 = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_QuadrupoleQ4, "QuadrupoleQ4",
+                                           LogicalHolder, false, 0);                                           
+
+    PhysicalPALLAS_ASMRemovalChamber = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_ASMRemovalChamber, "ASMRemovalChamber",
+                                           LogicalHolder, false, 0);                                           
+
+    PhysicalPALLAS_BreadboardRemovalChamber = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_BreadboardRemovalChamber, "BreadboardRemovalChamber",
+                                           LogicalHolder, false, 0);                                                                                      
+
+    PhysicalPALLAS_ChassisRemovalChamber = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_ChassisRemovalChamber, "ChassisRemovalChamber",
+                                           LogicalHolder, false, 0);                                                                                                                                 
+
+    PhysicalPALLAS_TubeISO1 = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_TubeISO1, "TubeISO1",
+                                           LogicalHolder, false, 0);                                           
+
+    PhysicalPALLAS_TubeISO2 = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_TubeISO2, "TubeISO2",
+                                           LogicalHolder, false, 0);                                                                                      
+
+    
+
+    //SECTION 3
+    PhysicalPALLAS_ASMPoutre = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_ASMPoutre, "ASMPoutre",
+                                           LogicalHolder, false, 0);
+
+    PhysicalPALLAS_StationYAG = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_StationYAG, "StationYAG",
+                                           LogicalHolder, false, 0);   
+
+
+    //SECTION 4
+    PhysicalPALLAS_BlindageBD = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_BlindageBD, "BlindageBD",
+                                           LogicalHolder, false, 0);                                   
+
+    PhysicalPALLAS_BlindageCBD = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_BlindageCBD, "BlindageCBD",
+                                           LogicalHolder, false, 0);  
+
+    PhysicalPALLAS_ChambreDipole = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_ChambreDipole, "ChambreDipole",
+                                           LogicalHolder, false, 0);  
+
+    PhysicalPALLAS_ChassisDipoleYAG = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_ChassisDipoleYAG, "ChassisDipoleYAG",
+                                           LogicalHolder, false, 0);   
+
+    PhysicalPALLAS_DiagsChamber = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_DiagsChamber, "DiagsChamber",
+                                           LogicalHolder, false, 0);   
+
+    PhysicalPALLAS_Dipole = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0*mm)),
+                                           LogicalPALLAS_Dipole, "Dipole",
+                                           LogicalHolder, false, 0);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                      
 #else
 
 #endif
