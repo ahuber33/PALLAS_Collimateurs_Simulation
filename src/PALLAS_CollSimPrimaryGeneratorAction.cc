@@ -5,7 +5,7 @@
 #include "PALLAS_CollSimPrimaryGeneratorAction.hh"
 
 G4UImanager *UI = G4UImanager::GetUIpointer();
-PALLAS_CollSimPrimaryGeneratorAction::PALLAS_CollSimPrimaryGeneratorAction(char *N) : s_NEventsGenerated(N),
+PALLAS_CollSimPrimaryGeneratorAction::PALLAS_CollSimPrimaryGeneratorAction(const char *N) : s_NEventsGenerated(N),
                                                                                       G4VUserPrimaryGeneratorAction(),
                                                                                       particleGun(nullptr),
                                                                                       currentEvent(0)
@@ -272,5 +272,5 @@ void PALLAS_CollSimPrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
     currentEvent++;
   }
 
-  ShowProgress(double(currentParticleNumber) / double(TotalNParticles), startTime);
+  if (TotalNParticles >1000) ShowProgress(double(currentParticleNumber) / double(TotalNParticles), startTime);
 }

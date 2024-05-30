@@ -28,7 +28,7 @@ class G4Event;
 class PALLAS_CollSimPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
 public:
-  PALLAS_CollSimPrimaryGeneratorAction(char*);
+  PALLAS_CollSimPrimaryGeneratorAction(const char*);
   ~PALLAS_CollSimPrimaryGeneratorAction();
 
 public:

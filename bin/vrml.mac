@@ -9,7 +9,7 @@
 /geometry/SetCollimatorSpectrometerDistance 200 mm
 
 /display/SetStatusDisplayCelluleGeometry false
-/display//SetStatusDisplayLIFGeometry false
+/display/SetStatusDisplayLIFGeometry false
 /display/SetStatusDisplaySection1Geometry false
 /display/SetStatusDisplaySection2Geometry false
 /display/SetStatusDisplaySection3Geometry false

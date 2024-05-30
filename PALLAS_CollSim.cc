@@ -15,7 +15,9 @@ int main(int argc, char **argv)
 {
 
   char *suff = argv[1];
-  char* NEvents = argv[2];
+  const char*NEvents = "1";
+  if (argc >2) NEvents = argv[2];
+
 
   // Use SteppingVerbose with Unit
   // G4int precision = 4;

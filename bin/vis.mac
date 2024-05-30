@@ -1,30 +1,3 @@
-/geometry/SetCollimatorThickness 10 mm
-/geometry/SetCollimatorInternalRadius 10 mm
-/geometry/SetCollimatorExternalRadius 100 mm
-/geometry/SetCollimatorSpectrometerDistance 200 mm
-
-/display/SetStatusDisplayCelluleGeometry false
-/display//SetStatusDisplayLIFGeometry false
-/display/SetStatusDisplaySection1Geometry false
-/display/SetStatusDisplaySection2Geometry false
-/display/SetStatusDisplaySection3Geometry false
-/display/SetStatusDisplaySection4Geometry true
-/display/SetStatusDisplaySection4DumpGeometry false
-/run/reinitializeGeometry
-
-/field/SetStatusMapBField false
-/field/SetConstantBField 0.4 tesla
-
-/gun/SetStatusGunParticle true
-/gun/SetParticleName geantino
-/gun/SetEnergyReference 247 MeV
-/gun/SetPhaseSpaceFilename PALLAS_phasespace_1411_preCollimateur.txt
-/gun/SetMacroChargeFilename PALLAS_qm1411_preCollimateur.txt
-
-/step/SetTrackingStatus false
-
-
-
 /vis/open OGL 600x600-0+0
 /vis/drawVolume
 #/vis/viewer/set/style wireframe
@@ -46,14 +19,8 @@
 /vis/viewer/set/background white
 #/vis/scene/add/logo    # 3D logo
 
-
 # To superimpose all of the events from a given run:
 /vis/scene/endOfEventAction accumulate
-
-/tracking/verbose 1
-/run/verbose 1
-
-
 # /vis/scene/endOfEventAction accumulate 10
 # /vis/scene/endOfEventAction refresh
 
@@ -69,10 +36,50 @@
 
 
 
+######################################################
+########## PART FOR MESSENGER INFORMATIONS ###########
+######################################################
+/geometry/SetCollimatorThickness 10 mm
+/geometry/SetCollimatorInternalRadius 10 mm
+/geometry/SetCollimatorExternalRadius 100 mm
+/geometry/SetCollimatorSpectrometerDistance 200 mm
+
+/display/SetStatusDisplayCelluleGeometry false
+/display/SetStatusDisplayLIFGeometry false
+/display/SetStatusDisplaySection1Geometry false
+/display/SetStatusDisplaySection2Geometry false
+/display/SetStatusDisplaySection3Geometry false
+/display/SetStatusDisplaySection4Geometry true
+/display/SetStatusDisplaySection4DumpGeometry false
+/run/reinitializeGeometry
+
+/field/SetStatusMapBField false
+/field/SetConstantBField 0.4 tesla
+
+/step/SetTrackingStatus true
+
+/tracking/verbose 1
+/run/verbose 1
+
+
+
+
+######################################################
+##### PART TO SIMULATE PARTICLE WITH PARTICLEGUN #####
+######################################################
+/gun/SetStatusGunParticle false
+/gun/SetParticleName geantino
+/gun/SetEnergyReference 247 MeV
+/gun/SetPhaseSpaceFilename PALLAS_phasespace_1411_preCollimateur.txt
+/gun/SetMacroChargeFilename PALLAS_qm1411_preCollimateur.txt
+
+
+
 
 ######################################################
 ### PART TO SIMULATE PARTICLE WITH GPS (no setgun) ###
 ######################################################
+/run/initialize
 /gps/number 1
 # PART TO SIMULATE 1 MEV ELECTRON !!!!!!!!
 #/gps/particle e-
