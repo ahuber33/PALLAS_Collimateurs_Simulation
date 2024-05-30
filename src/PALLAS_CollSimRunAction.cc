@@ -19,9 +19,25 @@ void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
 
   start = time(NULL);     //start the timer clock to calculate run times
 
+  Tree_Input = new TTree("Input","Input Information");  //Tree to access Collimator information
   Tree_Collimator = new TTree("Collimator","Collimator Information");  //Tree to access Collimator information
   Tree_FrontCollimator = new TTree("FrontCollimator","FrontCollimator Information");  //Tree to access Front Collimator infos
   Tree_BackCollimator = new TTree("BackCollimator","BackCollimator Information");  //Tree to access Back Collimator infos
+  Tree_YAG = new TTree("YAG","YAG Information");  //Tree to access Back Collimator infos
+
+  //*****************************INFORMATION FROM THE INPUT*******************************************
+  RunBranch = Tree_Input->Branch("x", &StatsInput.x, "x/F" );
+  RunBranch = Tree_Input->Branch("xoffset", &StatsInput.xoffset, "xoffset/F" );
+  RunBranch = Tree_Input->Branch("xp", &StatsInput.xp, "xp/F" );
+  RunBranch = Tree_Input->Branch("y", &StatsInput.y, "y/F" );
+  RunBranch = Tree_Input->Branch("yoffset", &StatsInput.yoffset, "yoffset/F" );
+  RunBranch = Tree_Input->Branch("yp", &StatsInput.yp, "yp/F" );
+  RunBranch = Tree_Input->Branch("s", &StatsInput.s, "s/F" );
+  RunBranch = Tree_Input->Branch("soffset", &StatsInput.soffset, "soffset/F" );
+  RunBranch = Tree_Input->Branch("p", &StatsInput.p, "p/F" );
+  RunBranch = Tree_Input->Branch("delta", &StatsInput.delta, "delta/F" );
+  RunBranch = Tree_Input->Branch("energy", &StatsInput.energy, "energy/F" );
+  RunBranch = Tree_Input->Branch("Nevent", &StatsInput.Nevent, "Nevent/I" );
 
   //*****************************INFORMATION FROM THE COLLIMATOR**************************************
   RunBranch = Tree_Collimator->Branch("E_start", &StatsCollimator.E_start, "E_start/F" );
@@ -52,6 +68,12 @@ void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
   // RunBranch = Tree_BackCollimator->Branch("py_exit", "vector<float>" , &StatsBackCollimator.py_exit);
   // RunBranch = Tree_BackCollimator->Branch("pz_exit", "vector<float>" , &StatsBackCollimator.pz_exit);
 
+  //************************************INFORMATION FROM THE YAG*****************************************
+  RunBranch = Tree_YAG->Branch("x_exit", "vector<float>" , &StatsYAG.x_exit);
+  RunBranch = Tree_YAG->Branch("y_exit", "vector<float>" , &StatsYAG.y_exit);
+  RunBranch = Tree_YAG->Branch("z_exit", "vector<float>" , &StatsYAG.z_exit);
+  RunBranch = Tree_YAG->Branch("energy", "vector<float>" , &StatsYAG.energy);
+
 
   //set the random seed to the CPU clock
   //G4Random::setTheEngine(new CLHEP::HepJamesRandom);
@@ -80,9 +102,11 @@ void PALLAS_CollSimRunAction::EndOfRunAction(const G4Run*aRun){
   //update the temp root file
   G4String fileName = suffixe+".root";
   f = new TFile(fileName,"update");
+  Tree_Input->Write();
   Tree_Collimator->Write();
   Tree_FrontCollimator->Write();
   Tree_BackCollimator->Write();
+  Tree_YAG->Write();
   f->Close();
 
   if (G4VVisManager::GetConcreteInstance()){
@@ -105,12 +129,18 @@ void PALLAS_CollSimRunAction::EndOfRunAction(const G4Run*aRun){
   << ":" <<((elapsed%3600)%60) << G4endl;
   timeout.close();
 
+
   G4cout<<"Leaving Run Action"<<G4endl;
 }
 
 //---------------------------------------------------------
 //  For each event update the statistics in the Run tree
 //---------------------------------------------------------
+
+void PALLAS_CollSimRunAction::UpdateStatisticsInput(RunTallyInput aRunTallyInput){
+  StatsInput = aRunTallyInput;
+  Tree_Input->Fill();
+}
 
 void PALLAS_CollSimRunAction::UpdateStatisticsCollimator(RunTallyCollimator aRunTallyCollimator){
   StatsCollimator = aRunTallyCollimator;
@@ -125,4 +155,9 @@ void PALLAS_CollSimRunAction::UpdateStatisticsFrontCollimator(RunTallyFrontColli
 void PALLAS_CollSimRunAction::UpdateStatisticsBackCollimator(RunTallyBackCollimator aRunTallyBackCollimator){
   StatsBackCollimator = aRunTallyBackCollimator;
   Tree_BackCollimator->Fill();
+}
+
+void PALLAS_CollSimRunAction::UpdateStatisticsYAG(RunTallyYAG aRunTallyYAG){
+  StatsYAG = aRunTallyYAG;
+  Tree_YAG->Fill();
 }

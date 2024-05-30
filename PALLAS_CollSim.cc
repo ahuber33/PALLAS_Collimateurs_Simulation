@@ -8,7 +8,6 @@
 #include "PALLAS_CollSimPrimaryGeneratorAction.hh"
 #include "G4VisExecutive.hh"
 #include "G4UIExecutive.hh"
-#include "PALLAS_CollSimMessenger.hh"
 #include "Geometry.hh"
 
 
@@ -16,6 +15,7 @@ int main(int argc, char **argv)
 {
 
   char *suff = argv[1];
+  char* NEvents = argv[2];
 
   // Use SteppingVerbose with Unit
   // G4int precision = 4;
@@ -25,20 +25,20 @@ int main(int argc, char **argv)
   G4RunManager *runManager = new G4RunManager;
 
   // set mandatory initialization classes
-  Geometry *Geom = new Geometry("/bin/PALLAS_CollSim.cfg");
-  PALLAS_CollSimGeometry *OptGeom = new PALLAS_CollSimGeometry;
+  Geometry *Geom = new Geometry();
+  PALLAS_CollSimGeometryConstruction *GeomCons = new PALLAS_CollSimGeometryConstruction;
 
   G4cout << "Geometry given to PALLAS_CollSim.cc" << G4endl;
 
   // initialize the geometry
-  runManager->SetUserInitialization(OptGeom);
+  runManager->SetUserInitialization(GeomCons);
   G4cout << "Geometry set in PALLAS_CollSim.cc given to Runman" << G4endl;
 
   // initialize the physics
   runManager->SetUserInitialization(new PALLAS_CollSimPhysics);
 
   // set mandatory user action class
-  PALLAS_CollSimPrimaryGeneratorAction *Generator = new PALLAS_CollSimPrimaryGeneratorAction;
+  PALLAS_CollSimPrimaryGeneratorAction *Generator = new PALLAS_CollSimPrimaryGeneratorAction(NEvents);
   runManager->SetUserAction(Generator);
 
   // set Run Event and Stepping action classes
@@ -49,8 +49,8 @@ int main(int argc, char **argv)
   G4cout << "Initialized new EventAction" << G4endl;
   runManager->SetUserAction(new PALLAS_CollSimSteppingAction);
   G4cout << "Initialized new SteppingAction" << G4endl;
-  new PALLAS_CollSimMessenger(OptGeom, Generator);
-  G4cout << "Initialized new Messenger" << G4endl;
+  // new PALLAS_CollSimMessenger(OptGeom, Generator);
+  // G4cout << "Initialized new Messenger" << G4endl;
 
   // #ifdef G4VIS_USE
   G4VisManager *visManager = new G4VisExecutive;
@@ -87,7 +87,7 @@ int main(int argc, char **argv)
     UI->ApplyCommand(movefile);
     G4cout << "Output saved to file " << argv[1] << ".root" << G4endl;
   }
-
+  
   else // define visualization and UI terminal for interactive mode
   {
 

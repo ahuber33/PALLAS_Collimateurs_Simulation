@@ -1,11 +1,12 @@
-/// PALLAS_CollSimGeometry.hh
+/// PALLAS_CollSimGeometryConstruction.hh
 //// Auteur: Arnaud HUBER for ENL group <huber@lp2ib.in2p3.fr>
 //// Copyright: 2024 (C) Projet PALLAS
 
-#ifndef PALLAS_CollSimGeometry_h
-#define PALLAS_CollSimGeometry_h 1
+#ifndef PALLAS_CollSimGeometryConstruction_h
+#define PALLAS_CollSimGeometryConstruction_h 1
 
 #include "Geometry.hh"
+#include "G4GenericMessenger.hh"
 #include "G4VUserDetectorConstruction.hh"
 #include "G4LogicalVolume.hh"
 #include "CLHEP/Units/SystemOfUnits.h"
@@ -20,28 +21,94 @@
 #include "G4PhysicalVolumeStore.hh"
 #include "G4LogicalVolumeStore.hh"
 #include "G4SolidStore.hh"
+#include "G4ElectroMagneticField.hh"
+#include "G4MagneticField.hh"
+#include "G4UniformMagField.hh"
+#include "G4FieldManager.hh"
+#include "G4TransportationManager.hh"
+#include "G4EquationOfMotion.hh"
+#include "G4Mag_UsualEqRhs.hh"
+#include "G4MagIntegratorStepper.hh"
+#include "G4ChordFinder.hh"
+#include "G4UniformElectricField.hh"
+#include "G4EqMagElectricField.hh"
+#include "G4MagIntegratorStepper.hh"
+#include "G4MagIntegratorDriver.hh"
+#include "G4ExplicitEuler.hh"
+#include "G4ImplicitEuler.hh"
+#include "G4SimpleRunge.hh"
+#include "G4SimpleHeum.hh"
+#include "G4ClassicalRK4.hh"
+#include "G4HelixExplicitEuler.hh"
+#include "G4HelixImplicitEuler.hh"
+#include "G4HelixSimpleRunge.hh"
+#include "G4CashKarpRKF45.hh"
+#include "G4RKG3_Stepper.hh"
+#include "G4ConstRK4.hh"
+#include "G4NystromRK4.hh"
+#include "G4HelixMixedStepper.hh"
+#include "G4ExactHelixStepper.hh"
+#include "G4InterpolationDriver.hh"
+#include "G4IntegrationDriver.hh"
+#include "G4VIntegrationDriver.hh"
+#include "G4BFieldIntegrationDriver.hh"
+#include <G4HelixHeum.hh>
+// Newest steppers - from Release 10.3-beta (June 2013)
+#include "G4BogackiShampine23.hh"
+#include "G4BogackiShampine45.hh"
+#include "G4DormandPrince745.hh"
+#include "G4DormandPrinceRK56.hh"
+#include "G4DormandPrinceRK78.hh"
+#include "G4TsitourasRK45.hh"
 
+class Geometry;
 
-class PALLAS_CollSimGeometry : public G4VUserDetectorConstruction
+class PALLAS_CollSimGeometryConstruction : public G4VUserDetectorConstruction
 {
 public:
-  PALLAS_CollSimGeometry();
-  ~PALLAS_CollSimGeometry();
+  PALLAS_CollSimGeometryConstruction();
+  ~PALLAS_CollSimGeometryConstruction();
 
 public:
   void SetLogicalVolumeColor(G4LogicalVolume* LogicalVolume, G4String color);
   void CreateWorldAndHolder();
-  void SetCollimatorInternalRadius(G4double CollimatorInternalRadius);
-  G4double GetCollimatorInternalRadius() { return CollimatorInternalRadius; }
+  void ConstructCollimator();
+  void ConstructCollimatorWithOutput();
+  void ConstructBField();
+  void ConstructCellulePart();
+  void ConstructLIFPart();
+  void ConstructSection1Part();
+  void ConstructSection2Part();
+  void ConstructSection3Part();
+  void ConstructSection4Part();
+  void ConstructSection4DumpPart();
   G4VPhysicalVolume *Construct();
   
 
 private:
-  static const G4String path_bin;
-  static const G4String path;
-  PALLAS_CollSimMaterials *scintProp;
   Geometry *Geom;
   G4Material *Vacuum;
+  
+  G4GenericMessenger* fMessenger;
+  G4GenericMessenger* gMessenger;
+  G4GenericMessenger* bMessenger;
+
+  G4bool StatusDisplayCelluleGeometry;
+  G4bool StatusDisplayLIFGeometry;
+  G4bool StatusDisplaySection1Geometry;
+  G4bool StatusDisplaySection2Geometry;
+  G4bool StatusDisplaySection3Geometry;
+  G4bool StatusDisplaySection4Geometry;
+  G4bool StatusDisplaySection4DumpGeometry;
+  G4bool StatusMapBField;
+
+  // Dimension values
+  G4double CollimatorThickness=1.0*mm;
+  G4double OutputThickness;
+  G4double CollimatorInternalRadius=0*mm;
+  G4double CollimatorExternalRadius=20*mm;
+  G4double CollimatorSpectrometerDistance=0*mm;
+  G4double ConstantBField =0.4*tesla;
 
   // Colors for visualizations
   G4VisAttributes *invis;
@@ -62,6 +129,7 @@ private:
   G4LogicalVolume *LogicalCollimator;
   G4LogicalVolume *LogicalFrontOutput;
   G4LogicalVolume *LogicalBackOutput;
+  G4LogicalVolume *LogicalBFieldVolume;
   G4LogicalVolume *LogicalPALLAS_QuadrupoleQ3;
   G4LogicalVolume *LogicalPALLAS_QuadrupoleQ4;
   G4LogicalVolume *LogicalPALLAS_ASMRemovalChamber;
@@ -93,6 +161,8 @@ private:
   G4LogicalVolume *LogicalPALLAS_ChassisDipoleYAG;
   G4LogicalVolume *LogicalPALLAS_DiagsChamber;
   G4LogicalVolume *LogicalPALLAS_Dipole;
+  G4LogicalVolume *LogicalPALLAS_BS1YAG;
+  G4LogicalVolume *LogicalPALLAS_BSPEC1YAG;
   G4LogicalVolume *LogicalPALLAS_Assemblage2Cellules;
 
 
@@ -102,6 +172,7 @@ private:
   G4VPhysicalVolume *PhysicalCollimator;
   G4VPhysicalVolume *PhysicalFrontOutput;
   G4VPhysicalVolume *PhysicalBackOutput;
+  G4VPhysicalVolume *PhysicalBFieldVolume; 
   G4VPhysicalVolume *PhysicalPALLAS_QuadrupoleQ3;
   G4VPhysicalVolume *PhysicalPALLAS_QuadrupoleQ4;
   G4VPhysicalVolume *PhysicalPALLAS_ASMRemovalChamber;
@@ -133,21 +204,25 @@ private:
   G4VPhysicalVolume *PhysicalPALLAS_ChassisDipoleYAG;
   G4VPhysicalVolume *PhysicalPALLAS_DiagsChamber;
   G4VPhysicalVolume *PhysicalPALLAS_Dipole;
+  G4VPhysicalVolume *PhysicalPALLAS_BS1YAG;
+  G4VPhysicalVolume *PhysicalPALLAS_BSPEC1YAG;
   G4VPhysicalVolume *PhysicalPALLAS_Assemblage2Cellules;
-  
-  // Dimension values
-  G4double CollimatorThickness;
-  G4double OutputThickness;
-  G4double CollimatorInternalRadius;
 
   // Dimensions PLACEMENTS
-  G4double Z_FrontOutput;
-  G4double Z_BackOutput;
-  G4double Z_Collimator;
+  G4double Y_FrontOutput;
+  G4double Y_BackOutput;
+  G4double Y_Collimator;
 
   //Rotation Matrix
   G4RotationMatrix DontRotate;
   G4RotationMatrix Flip;
+  G4RotationMatrix* RotationMatrix;
+
+  G4MagneticField *localmagField;
+  G4Mag_UsualEqRhs* fEquationlocal;
+  G4MagIntegratorStepper* localfStepperMag;
+
+
 
 };
 #endif

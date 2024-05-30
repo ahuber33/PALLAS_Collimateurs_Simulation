@@ -1,11 +1,36 @@
-/Collimator_InternalRadius 5 mm
-#/run/reinitializeGeometry
+/geometry/SetCollimatorThickness 10 mm
+/geometry/SetCollimatorInternalRadius 10 mm
+/geometry/SetCollimatorExternalRadius 100 mm
+/geometry/SetCollimatorSpectrometerDistance 200 mm
+
+/display/SetStatusDisplayCelluleGeometry false
+/display//SetStatusDisplayLIFGeometry false
+/display/SetStatusDisplaySection1Geometry false
+/display/SetStatusDisplaySection2Geometry false
+/display/SetStatusDisplaySection3Geometry false
+/display/SetStatusDisplaySection4Geometry true
+/display/SetStatusDisplaySection4DumpGeometry false
+/run/reinitializeGeometry
+
+/field/SetStatusMapBField false
+/field/SetConstantBField 0.4 tesla
+
+/gun/SetStatusGunParticle true
+/gun/SetParticleName geantino
+/gun/SetEnergyReference 247 MeV
+/gun/SetPhaseSpaceFilename PALLAS_phasespace_1411_preCollimateur.txt
+/gun/SetMacroChargeFilename PALLAS_qm1411_preCollimateur.txt
+
+/step/SetTrackingStatus false
+
+
 
 /vis/open OGL 600x600-0+0
 /vis/drawVolume
 #/vis/viewer/set/style wireframe
 /vis/viewer/set/viewpointThetaPhi 0 0
 /vis/viewer/set/upVector 1 0 0
+/vis/viewer/set/viewpointVector -0.99 0 0.01
 /vis/viewer/zoom 1.
 /vis/viewer/set/auxiliaryEdge true
 #/vis/set/lineWidth 2
@@ -49,19 +74,17 @@
 ### PART TO SIMULATE PARTICLE WITH GPS (no setgun) ###
 ######################################################
 /gps/number 1
-
-
 # PART TO SIMULATE 1 MEV ELECTRON !!!!!!!!
-/gps/particle e-
-#/gps/particle geantino
-#/gps/pos/type Point
-/gps/pos/type Plane
-/gps/pos/centre 0.0 0.0 -200.0 mm
-/gps/pos/shape Circle
-/gps/pos/radius 5 um
+#/gps/particle e-
+/gps/particle geantino
+/gps/pos/type Point
+#/gps/pos/type Plane
+#/gps/pos/centre -0.152 2500.0 0.08 mm
+#/gps/pos/shape Circle
+#/gps/pos/radius 5 um
 
-/gps/energy 1. MeV
-/gps/direction 0.0 0.0 1.0
+/gps/energy 250. MeV
+/gps/direction 0.0 1.0 0.0
 #/gps/ang/type cos
 #/gps/ang/rot1 -1 0 0
 #/gps/ang/rot2 1 0 0
@@ -76,4 +99,6 @@
 #/gps/particle ion
 #/gps/ion 2 4 1
 #/grdm/nucleusLimits 60 60 27 27
-/run/beamOn 1
+
+
+/run/beamOn 10

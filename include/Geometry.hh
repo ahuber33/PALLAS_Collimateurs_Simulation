@@ -22,30 +22,32 @@
 #include "G4UnitsTable.hh"
 #include "../PALLAS_CollSimGlobal.hh"
 #include "G4RunManager.hh"
+#include "G4GenericMessenger.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4UImessenger.hh"
 
 //#ifndef disable_gdml
 #include "G4GDMLParser.hh"
 //#endif
 
 class PALLAS_CollSimMaterials;
-class PALLAS_CollSimGeometry;
+class PALLAS_CollSimGeometryConstruction;
 class G4GenericMessenger;
 class Geometry
 
 {
 protected:
-G4GenericMessenger *fMessenger;
-double thickness_catcher;
 
 public:
   // constructor, builds from keys specified in buildfile
-  Geometry(G4String buildfile);
+  Geometry();
   ~Geometry();
 
 public:
   G4LogicalVolume *GetCollimator();
   G4LogicalVolume *GetOutputCollimator();
-  G4LogicalVolume *GetRoundCollimator(G4double CollimatorInternalRadius);
+  G4LogicalVolume *GetRoundCollimator();
+  G4LogicalVolume *GetBFieldVolume();
 
   G4LogicalVolume *GetPALLAS_Assemblage2Cellules();
   //LIF
@@ -84,6 +86,8 @@ public:
   G4LogicalVolume *GetPALLAS_ChassisDipoleYAG();
   G4LogicalVolume *GetPALLAS_DiagsChamber();
   G4LogicalVolume *GetPALLAS_Dipole();
+  G4LogicalVolume *GetPALLAS_BS1YAG();
+  G4LogicalVolume *GetPALLAS_BSPEC1YAG();
   
 
   //****************COMMON********************
@@ -95,7 +99,8 @@ public:
 private:
   Geometry *Geom;
   PALLAS_CollSimMaterials *scintProp;
-  PALLAS_CollSimGeometry *SimGeometry;
+  PALLAS_CollSimGeometryConstruction *SimGeometry;
+  G4GenericMessenger* gMessenger;
 
   static const G4String path_bin;
 
@@ -106,9 +111,9 @@ private:
   G4LogicalVolume *LogicalVolume;
 
   // Physical Dimensions
-  G4double CollimatorInternalRadius=0*mm;
+  G4double CollimatorInternalRadius;
   G4double CollimatorExternalRadius;
-  G4double CollimatorThickness;
+  G4double CollimatorThickness=5.0*mm;
   G4double CollimatorLength;
   G4double CollimatorWidth;
   G4double OutputThickness;

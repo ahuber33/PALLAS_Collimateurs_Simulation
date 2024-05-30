@@ -29,23 +29,29 @@ public:
   void EndOfRunAction(const G4Run*);
 
   //adds the photon fates from an event to the run tree
+  void UpdateStatisticsInput(RunTallyInput);
   void UpdateStatisticsCollimator(RunTallyCollimator);
   void UpdateStatisticsFrontCollimator(RunTallyFrontCollimator);
   void UpdateStatisticsBackCollimator(RunTallyBackCollimator);
-
-
+  void UpdateStatisticsYAG(RunTallyYAG);
+  
 
 private:
   G4String suffixe;
+  RunTallyInput StatsInput;
   RunTallyCollimator StatsCollimator;
   RunTallyFrontCollimator StatsFrontCollimator;
   RunTallyBackCollimator StatsBackCollimator;
+  RunTallyYAG StatsYAG;
   TFile *f;
+  TTree *Tree_Input;
   TTree *Tree_Collimator;
   TTree *Tree_FrontCollimator;
   TTree *Tree_BackCollimator;
+  TTree *Tree_YAG;
   TBranch *RunBranch;
   time_t start;
+  
 
 };
 

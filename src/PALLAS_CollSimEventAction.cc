@@ -16,6 +16,18 @@ PALLAS_CollSimEventAction::~PALLAS_CollSimEventAction() {}
 // filling histograms with ROOT
 void PALLAS_CollSimEventAction::BeginOfEventAction(const G4Event *evt)
 {
+  // Input
+  StatsInput.x = 0;
+  StatsInput.xoffset = 0;
+  StatsInput.xp = 0;
+  StatsInput.y = 0;
+  StatsInput.yoffset = 0;
+  StatsInput.yp = 0;
+  StatsInput.s = 0;
+  StatsInput.soffset = 0;
+  StatsInput.delta = 0;
+  StatsInput.energy = 0;
+  StatsInput.Nevent = 0;
 
   // Collimator
   StatsCollimator.E_start = 0;
@@ -45,6 +57,12 @@ void PALLAS_CollSimEventAction::BeginOfEventAction(const G4Event *evt)
   StatsBackCollimator.px_exit.clear();
   StatsBackCollimator.py_exit.clear();
   StatsBackCollimator.pz_exit.clear();
+
+  //YAG
+  StatsYAG.x_exit.clear();
+  StatsYAG.y_exit.clear();
+  StatsYAG.z_exit.clear();
+  StatsYAG.energy.clear();
 }
 
 void PALLAS_CollSimEventAction::EndOfEventAction(const G4Event *evt)
@@ -52,9 +70,15 @@ void PALLAS_CollSimEventAction::EndOfEventAction(const G4Event *evt)
 
   PALLAS_CollSimRunAction *runac = (PALLAS_CollSimRunAction *)(G4RunManager::GetRunManager()->GetUserRunAction());
 
-  runac->UpdateStatisticsCollimator(StatsCollimator);
-  runac->UpdateStatisticsFrontCollimator(StatsFrontCollimator);
-  runac->UpdateStatisticsBackCollimator(StatsBackCollimator);
+  if (StatsInput.energy>0)
+  {
+    runac->UpdateStatisticsInput(StatsInput);
+    runac->UpdateStatisticsCollimator(StatsCollimator);
+    runac->UpdateStatisticsFrontCollimator(StatsFrontCollimator);
+    runac->UpdateStatisticsBackCollimator(StatsBackCollimator);
+  }
+
+  if (StatsYAG.energy.size()>0) runac->UpdateStatisticsYAG(StatsYAG);
 
   //G4cout << "Etot verif = " << StatsCollimator.E_dep_verif << G4endl;
 }

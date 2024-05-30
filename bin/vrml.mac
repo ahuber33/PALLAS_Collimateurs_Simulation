@@ -1,39 +1,41 @@
-/Collimator_InternalRadius 5 mm
+#/control/alias NEventsToGenerate 106435 #PALLAS_qm1411_preCollimateur.txt
+
+######################################################
+########## PART FOR MESSENGER INFORMATIONS ###########
+######################################################
+/geometry/SetCollimatorThickness 10 mm
+/geometry/SetCollimatorInternalRadius 10 mm
+/geometry/SetCollimatorExternalRadius 100 mm
+/geometry/SetCollimatorSpectrometerDistance 200 mm
+
+/display/SetStatusDisplayCelluleGeometry false
+/display//SetStatusDisplayLIFGeometry false
+/display/SetStatusDisplaySection1Geometry false
+/display/SetStatusDisplaySection2Geometry false
+/display/SetStatusDisplaySection3Geometry false
+/display/SetStatusDisplaySection4Geometry true
+/display/SetStatusDisplaySection4DumpGeometry false
 /run/reinitializeGeometry
+
+/field/SetStatusMapBField false
+/field/SetConstantBField 0.4 tesla
+
+/step/SetTrackingStatus false
 
 /tracking/verbose 0
 /run/verbose 1
-/run/printProgress 10000
-
-
-# /vis/scene/endOfEventAction accumulate 10
-# /vis/scene/endOfEventAction refresh
-
-# /vis/scene/add/hits
-# /tracking/storeTrajectory 1
 
 
 
-# /vis/scene/create
-# /vis/scene/add/volume
-# /vis/sceneHandler/create OGLIX
-# /vis/viewer/create		
 
-
-# # /vis/viewer/set/viewpointThetaPhi 90 0
-# # #/vis/viewer/set/viewpointThetaPhi 0 0
-# # /vis/viewer/zoom 10.
-# # #/vis/viewer/set/style wireframe
-
-
-# # /vis/sceneHandler/attach
-# # /vis/viewer/flush
-
-
-/run/initialize
-
-# #/vis/open VRML2FILE
-# #/vis/scene/create
+######################################################
+##### PART TO SIMULATE PARTICLE WITH PARTICLEGUN #####
+######################################################
+/gun/SetStatusGunParticle false
+/gun/SetParticleName geantino
+/gun/SetEnergyReference 247 MeV
+/gun/SetPhaseSpaceFilename PALLAS_phasespace_1411_preCollimateur.txt
+/gun/SetMacroChargeFilename PALLAS_qm1411_preCollimateur.txt
 
 
 
@@ -41,6 +43,9 @@
 ######################################################
 ### PART TO SIMULATE PARTICLE WITH GPS (no setgun) ###
 ######################################################
+/run/initialize
+#/run/printProgress 10000
+
 /gps/number 1
 /gps/particle e-
 /gps/pos/type Point

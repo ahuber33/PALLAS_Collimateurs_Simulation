@@ -3,6 +3,7 @@
 //// Copyright: 2024 (C) Projet PALLAS
 
 #include "PALLAS_CollSimSteppingAction.hh"
+#include "G4GenericMessenger.hh"
 
 using namespace CLHEP;
 
@@ -10,9 +11,18 @@ const G4String PALLAS_CollSimSteppingAction::path = "../simulation_input_files/"
 
 PALLAS_CollSimSteppingAction::PALLAS_CollSimSteppingAction()
 {
+  sMessenger = new G4GenericMessenger(this, "/step/", "Control commands for my application");
+
+  sMessenger->DeclareProperty("SetTrackingStatus", TrackingStatus)
+      .SetGuidance("Set the boolean parameter.")
+      .SetParameterName("TrackingStatus", false)
+      .SetDefaultValue("true");
 }
 
-PALLAS_CollSimSteppingAction::~PALLAS_CollSimSteppingAction() {}
+PALLAS_CollSimSteppingAction::~PALLAS_CollSimSteppingAction() 
+{
+  delete sMessenger;
+}
 
 bool PALLAS_CollSimSteppingAction::SetFlagGammaEnergyDeposition()
 {
@@ -94,6 +104,32 @@ void PALLAS_CollSimSteppingAction::UpdateBremInformations(PALLAS_CollSimEventAct
   }
 }
 
+void PALLAS_CollSimSteppingAction::GetInputInformations(PALLAS_CollSimEventAction *evtac)
+{
+  evtac->SetEstartCollimator(energy);
+  evtac->SetXStart(x);
+  evtac->SetXOffsetStart(x);
+  evtac->SetXpStart(px);
+  evtac->SetYStart(z);
+  evtac->SetYOffsetStart(z);
+  evtac->SetYpStart(pz);
+  evtac->SetSStart(y);
+  evtac->SetSOffsetStart(y);
+  evtac->SetPStart(py);
+  evtac->SetEnergyStart(energy);
+  evtac->SetDeltaStart(energy-247);
+  evtac->AddNeventStart();
+  // G4cout << "x = " << x << G4endl;
+  // G4cout << "y = " << y << G4endl;
+  // G4cout << "z = " << z << G4endl;
+  // G4cout << "px = " << px << G4endl;
+  // G4cout << "py = " << py << G4endl;
+  // G4cout << "pz = " << pz << G4endl;
+  // G4cout << "energy = " << energy << G4endl;
+  // G4cout << "Nevent = " << evtac->GetNeventStart() << G4endl;
+  if (TrackingStatus ==false) theTrack->SetTrackStatus(fStopAndKill);
+}
+
 void PALLAS_CollSimSteppingAction::UserSteppingAction(const G4Step *aStep)
 {
 
@@ -116,9 +152,9 @@ void PALLAS_CollSimSteppingAction::UserSteppingAction(const G4Step *aStep)
   volumeNamePostStep = aStep->GetPostStepPoint()->GetPhysicalVolume()->GetName();
 
   energyDeposited = aStep->GetTotalEnergyDeposit() / MeV;
-  x = aStep->GetTrack()->GetPosition().x();
-  y = aStep->GetTrack()->GetPosition().y();
-  z = aStep->GetTrack()->GetPosition().z();
+  x = aStep->GetPreStepPoint()->GetPosition().x()/mm;
+  y = aStep->GetPreStepPoint()->GetPosition().y()/mm;
+  z = aStep->GetPreStepPoint()->GetPosition().z()/mm;
   px = aStep->GetPreStepPoint()->GetMomentumDirection().x();
   py = aStep->GetPreStepPoint()->GetMomentumDirection().y();
   pz = aStep->GetPreStepPoint()->GetMomentumDirection().z();
@@ -129,8 +165,8 @@ void PALLAS_CollSimSteppingAction::UserSteppingAction(const G4Step *aStep)
   // #######################################################################
   // #######################################################################
 
-  if (parentID == 0 && stepNo == 1)
-    evtac->SetEstartCollimator(energy);
+  if (parentID == 0 && stepNo == 1) GetInputInformations(evtac);
+  
 
   if (creatorProcess != NULL)
   {

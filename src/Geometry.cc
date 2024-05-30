@@ -6,141 +6,82 @@
 
 using namespace CLHEP;
 
-
 // ***********************
 // Constructor
 // ***********************
-const G4String Geometry::path_bin = "../bin/";
 
-Geometry::Geometry(G4String buildfile)
+Geometry::Geometry()
+{
+}
+// ***********************
+// Destructor
+// ***********************
+Geometry::~Geometry()
+{
+}
+
+G4LogicalVolume *Geometry::GetCollimator()
 {
 
-  // Read keys and values from file buildfile defined in x_blockGeometry.cc
-  // Some of these variables may not be needed.
-  std::ifstream config;
-  config.open(buildfile);
-  if (!config.is_open())
-    G4cout << "Error opening file " << buildfile << G4endl;
-  else
-  {
-    while (config.is_open())
-    {
-      G4String variable;
-      G4String unit;
-      G4double value;
+  Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_BRASS");
 
-      config >> variable;
-      if (!config.good())
-        break;
-      // ####################### COMMON variables ###########################
-      if (variable == "CollimatorInternalRadius")
-      {
-        config >> value >> unit;
-        //CollimatorInternalRadius = value * G4UnitDefinition::GetValueOf(unit);
-      }
-      else if (variable == "CollimatorExternalRadius")
-      {
-        config >> value >> unit;
-        CollimatorExternalRadius = value * G4UnitDefinition::GetValueOf(unit);
-      }
-      else if (variable == "CollimatorThickness")
-      {
-        config >> value >> unit;
-        CollimatorThickness = value * G4UnitDefinition::GetValueOf(unit);
-      }
-      else if (variable == "CollimatorLength")
-      {
-        config >> value >> unit;
-        CollimatorLength = value * G4UnitDefinition::GetValueOf(unit);
-      }
-      else if (variable == "CollimatorWidth")
-      {
-        config >> value >> unit;
-        CollimatorWidth = value * G4UnitDefinition::GetValueOf(unit);
-      }
-      else if (variable == "OutputThickness")
-      {
-        config >> value >> unit;
-        OutputThickness = value * G4UnitDefinition::GetValueOf(unit);
-      }
-    }
-    config.close();
+  G4Box *Box = new G4Box("Box",                                 // its name
+                         10 / 2 * mm, 10 / 2 * mm, 1 / 2 * mm); // its size
 
-    G4cout << "\n The Variables that we read in are: "
-           << "\n CollimatorInternalRadius = " << CollimatorInternalRadius
-           << "\n CollimatorExternalRadius = " << CollimatorExternalRadius
-           << "\n CollimatorThickness = " << CollimatorThickness
-           << "\n CollimatorLength = " << CollimatorLength
-           << "\n CollimatorWidth = " << CollimatorWidth
-           << "\n OutputThickness = " << OutputThickness
-           << "\n " << G4endl;
-  }
+  LogicalVolume = new G4LogicalVolume(Box, Material, "Collimator", 0, 0, 0);
+
+  return LogicalVolume;
 }
-  // ***********************
-  // Destructor
-  // ***********************
-  Geometry::~Geometry()
-  {
-  }
 
-  G4LogicalVolume *Geometry::GetCollimator()
-  {
+G4LogicalVolume *Geometry::GetOutputCollimator()
+{
 
-    Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_BRASS");
+  Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_Galactic");
 
-    G4Box *Box = new G4Box("Box",                                                                     // its name
-                           CollimatorLength / 2, CollimatorWidth / 2, CollimatorThickness / 2); // its size
+  G4Box *Box = new G4Box("Box",                   // its name
+                         1 * m, 1 * m, 0.5 * mm); // its size
 
-    LogicalVolume = new G4LogicalVolume(Box, Material, "Collimator", 0, 0, 0);
+  LogicalVolume = new G4LogicalVolume(Box, Material, "OutputCollimator", 0, 0, 0);
 
-    return LogicalVolume;
-  }
+  return LogicalVolume;
+}
 
+G4LogicalVolume *Geometry::GetBFieldVolume()
+{
 
-  G4LogicalVolume *Geometry::GetOutputCollimator()
-  {
+  Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_Galactic");
 
-    Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_Galactic");
+  G4Box *Box = new G4Box("Box",                                   // its name
+                         302 * mm, 670 / 2 * mm, 706.5 / 2 * mm); // its size
 
-    G4Box *Box = new G4Box("Box",                                                                     // its name
-                           1*m / 2, 1*m / 2, OutputThickness/2); // its size
+  LogicalVolume = new G4LogicalVolume(Box, Material, "OutputCollimator", 0, 0, 0);
 
+  return LogicalVolume;
+}
 
-    LogicalVolume = new G4LogicalVolume(Box, Material, "OutputCollimator", 0, 0, 0);
+G4LogicalVolume *Geometry::GetRoundCollimator()
+{
+  // SimGeometry = new PALLAS_CollSimGeometry();
+  // CollimatorInternalRadius = SimGeometry->GetCollimatorInternalRadius();
+  Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_BRASS");
 
-    return LogicalVolume;
-  }
+  G4Tubs *Tubs = new G4Tubs("Tubs",                                  // its name
+                            0 * mm, 2 * mm, 0.5 * mm, 0, 360 * deg); // its size
 
+  LogicalVolume = new G4LogicalVolume(Tubs, Material, "RoundCollimator", 0, 0, 0);
 
-  G4LogicalVolume *Geometry::GetRoundCollimator(G4double CollimatorInternalRadius)
-  {
-    //SimGeometry = new PALLAS_CollSimGeometry();
-    //CollimatorInternalRadius = SimGeometry->GetCollimatorInternalRadius();
-    Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_BRASS");
+  // G4RunManager::GetRunManager()->GeometryHasBeenModified();
 
-    //SetCollimatorInternalRadius(5*mm);
+  return LogicalVolume;
+}
 
-    G4cout << "\n\nCollimatorInternal Radius = " << CollimatorInternalRadius << G4endl;
-
-    G4Tubs *Tubs = new G4Tubs("Tubs",                                                                                     // its name
-                              CollimatorInternalRadius, CollimatorExternalRadius, CollimatorThickness / 2, 0, 360 * deg); // its size
-
-    LogicalVolume = new G4LogicalVolume(Tubs, Material, "RoundCollimator", 0, 0, 0);
-
-    //G4RunManager::GetRunManager()->GeometryHasBeenModified();
-
-    return LogicalVolume;
-  }
-
-
-
-
-G4LogicalVolume *Geometry::GetPALLAS_Assemblage2Cellules(){
+G4LogicalVolume *Geometry::GetPALLAS_Assemblage2Cellules()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/Assemblage_2_Cellules.gdml", false);
   LogicalVolume = parser->GetVolume("Assemblage_2_Cellules");
@@ -149,19 +90,19 @@ G4LogicalVolume *Geometry::GetPALLAS_Assemblage2Cellules(){
   return LogicalVolume;
 }
 
+// ################################################################################################################
+// ################################################################################################################
+// LIF
+// ################################################################################################################
+// ################################################################################################################
 
-// ################################################################################################################
-// ################################################################################################################
-//LIF
-// ################################################################################################################
-// ################################################################################################################
-
-G4LogicalVolume *Geometry::GetPALLAS_Croix(){
+G4LogicalVolume *Geometry::GetPALLAS_Croix()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/LIF/Croix.gdml", false);
   LogicalVolume = parser->GetVolume("Croix");
@@ -170,13 +111,13 @@ G4LogicalVolume *Geometry::GetPALLAS_Croix(){
   return LogicalVolume;
 }
 
-
-G4LogicalVolume *Geometry::GetPALLAS_LIFHublot1(){
+G4LogicalVolume *Geometry::GetPALLAS_LIFHublot1()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/LIF/LIF_Hublot1.gdml", false);
   LogicalVolume = parser->GetVolume("LIF_Hublot1");
@@ -185,13 +126,13 @@ G4LogicalVolume *Geometry::GetPALLAS_LIFHublot1(){
   return LogicalVolume;
 }
 
-
-G4LogicalVolume *Geometry::GetPALLAS_LIFHublot2(){
+G4LogicalVolume *Geometry::GetPALLAS_LIFHublot2()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/LIF/LIF_Hublot2.gdml", false);
   LogicalVolume = parser->GetVolume("LIF_Hublot2");
@@ -200,13 +141,13 @@ G4LogicalVolume *Geometry::GetPALLAS_LIFHublot2(){
   return LogicalVolume;
 }
 
-
-G4LogicalVolume *Geometry::GetPALLAS_LIFHublot3(){
+G4LogicalVolume *Geometry::GetPALLAS_LIFHublot3()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/LIF/LIF_Hublot3.gdml", false);
   LogicalVolume = parser->GetVolume("LIF_Hublot3");
@@ -215,12 +156,13 @@ G4LogicalVolume *Geometry::GetPALLAS_LIFHublot3(){
   return LogicalVolume;
 }
 
-G4LogicalVolume *Geometry::GetPALLAS_LIFHublot4(){
+G4LogicalVolume *Geometry::GetPALLAS_LIFHublot4()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/LIF/LIF_Hublot4.gdml", false);
   LogicalVolume = parser->GetVolume("LIF_Hublot4");
@@ -229,13 +171,13 @@ G4LogicalVolume *Geometry::GetPALLAS_LIFHublot4(){
   return LogicalVolume;
 }
 
-
-G4LogicalVolume *Geometry::GetPALLAS_LIFHublot5(){
+G4LogicalVolume *Geometry::GetPALLAS_LIFHublot5()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/LIF/LIF_Hublot5.gdml", false);
   LogicalVolume = parser->GetVolume("LIF_Hublot5");
@@ -244,13 +186,13 @@ G4LogicalVolume *Geometry::GetPALLAS_LIFHublot5(){
   return LogicalVolume;
 }
 
-
-G4LogicalVolume *Geometry::GetPALLAS_LIF_IBX_DD(){
+G4LogicalVolume *Geometry::GetPALLAS_LIF_IBX_DD()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/LIF/LIF_IBX_DD.gdml", false);
   LogicalVolume = parser->GetVolume("LIF_IBX_DD");
@@ -259,13 +201,13 @@ G4LogicalVolume *Geometry::GetPALLAS_LIF_IBX_DD(){
   return LogicalVolume;
 }
 
-
-G4LogicalVolume *Geometry::GetPALLAS_LIF_SQLT(){
+G4LogicalVolume *Geometry::GetPALLAS_LIF_SQLT()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/LIF/LIF_SQLT.gdml", false);
   LogicalVolume = parser->GetVolume("LIF_SQLT");
@@ -274,13 +216,13 @@ G4LogicalVolume *Geometry::GetPALLAS_LIF_SQLT(){
   return LogicalVolume;
 }
 
-
-G4LogicalVolume *Geometry::GetPALLAS_MarbreBreadboard1(){
+G4LogicalVolume *Geometry::GetPALLAS_MarbreBreadboard1()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/LIF/Marbre_Breadboard1.gdml", false);
   LogicalVolume = parser->GetVolume("Marbre_Breadboard1");
@@ -289,13 +231,13 @@ G4LogicalVolume *Geometry::GetPALLAS_MarbreBreadboard1(){
   return LogicalVolume;
 }
 
-
-G4LogicalVolume *Geometry::GetPALLAS_MarbreBreadboard2(){
+G4LogicalVolume *Geometry::GetPALLAS_MarbreBreadboard2()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/LIF/Marbre_Breadboard2.gdml", false);
   LogicalVolume = parser->GetVolume("Marbre_Breadboard1");
@@ -304,13 +246,13 @@ G4LogicalVolume *Geometry::GetPALLAS_MarbreBreadboard2(){
   return LogicalVolume;
 }
 
-
-G4LogicalVolume *Geometry::GetPALLAS_OptoMeK(){
+G4LogicalVolume *Geometry::GetPALLAS_OptoMeK()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/LIF/OptoMeK.gdml", false);
   LogicalVolume = parser->GetVolume("OptoMeK");
@@ -319,20 +261,19 @@ G4LogicalVolume *Geometry::GetPALLAS_OptoMeK(){
   return LogicalVolume;
 }
 
-
-
 // ################################################################################################################
 // ################################################################################################################
-//SECTION 1 ASM Q1 - Chamber - Q2
+// SECTION 1 ASM Q1 - Chamber - Q2
 // ################################################################################################################
 // ################################################################################################################
 
-G4LogicalVolume *Geometry::GetPALLAS_ATH500_DN100(){
+G4LogicalVolume *Geometry::GetPALLAS_ATH500_DN100()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/S1/ATH500_DN100.gdml", false);
   LogicalVolume = parser->GetVolume("ATH500_DN100");
@@ -341,13 +282,13 @@ G4LogicalVolume *Geometry::GetPALLAS_ATH500_DN100(){
   return LogicalVolume;
 }
 
-
-G4LogicalVolume *Geometry::GetPALLAS_BaseMarbre(){
+G4LogicalVolume *Geometry::GetPALLAS_BaseMarbre()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/S1/Base_Marbre.gdml", false);
   LogicalVolume = parser->GetVolume("Base_Marbre");
@@ -356,13 +297,13 @@ G4LogicalVolume *Geometry::GetPALLAS_BaseMarbre(){
   return LogicalVolume;
 }
 
-
-G4LogicalVolume *Geometry::GetPALLAS_ChambreISO(){
+G4LogicalVolume *Geometry::GetPALLAS_ChambreISO()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/S1/Chambre_ISO.gdml", false);
   LogicalVolume = parser->GetVolume("Chambre_ISO");
@@ -371,13 +312,13 @@ G4LogicalVolume *Geometry::GetPALLAS_ChambreISO(){
   return LogicalVolume;
 }
 
-
-G4LogicalVolume *Geometry::GetPALLAS_QuadrupoleQ1(){
+G4LogicalVolume *Geometry::GetPALLAS_QuadrupoleQ1()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/S1/Quadrupole_Q1.gdml", false);
   LogicalVolume = parser->GetVolume("Quadrupole_Q1");
@@ -386,24 +327,19 @@ G4LogicalVolume *Geometry::GetPALLAS_QuadrupoleQ1(){
   return LogicalVolume;
 }
 
-
-
-
-
-
-
 // ################################################################################################################
 // ################################################################################################################
-//SECTION 2 ASM Poutre Q3 - Removal Chamber - Q4
+// SECTION 2 ASM Poutre Q3 - Removal Chamber - Q4
 // ################################################################################################################
 // ################################################################################################################
 
-G4LogicalVolume *Geometry::GetPALLAS_QuadrupoleQ2(){
+G4LogicalVolume *Geometry::GetPALLAS_QuadrupoleQ2()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/S1/Quadrupole_Q2.gdml", false);
   LogicalVolume = parser->GetVolume("Quadrupole_Q2");
@@ -412,13 +348,13 @@ G4LogicalVolume *Geometry::GetPALLAS_QuadrupoleQ2(){
   return LogicalVolume;
 }
 
-
-  G4LogicalVolume *Geometry::GetPALLAS_QuadrupoleQ3(){
+G4LogicalVolume *Geometry::GetPALLAS_QuadrupoleQ3()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/S2/QuadrupoleQ3.gdml", false);
   LogicalVolume = parser->GetVolume("Quadrupole_Q3");
@@ -427,13 +363,13 @@ G4LogicalVolume *Geometry::GetPALLAS_QuadrupoleQ2(){
   return LogicalVolume;
 }
 
-
-G4LogicalVolume *Geometry::GetPALLAS_QuadrupoleQ4(){
+G4LogicalVolume *Geometry::GetPALLAS_QuadrupoleQ4()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/S2/QuadrupoleQ4.gdml", false);
   LogicalVolume = parser->GetVolume("Quadrupole_Q4");
@@ -442,13 +378,13 @@ G4LogicalVolume *Geometry::GetPALLAS_QuadrupoleQ4(){
   return LogicalVolume;
 }
 
-
-G4LogicalVolume *Geometry::GetPALLAS_ASMRemovalChamber(){
+G4LogicalVolume *Geometry::GetPALLAS_ASMRemovalChamber()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/S2/ASM_Removal_Chamber.gdml", false);
   LogicalVolume = parser->GetVolume("ASMRemovalChamber");
@@ -457,13 +393,13 @@ G4LogicalVolume *Geometry::GetPALLAS_ASMRemovalChamber(){
   return LogicalVolume;
 }
 
-
-G4LogicalVolume *Geometry::GetPALLAS_BreadboardRemovalChamber(){
+G4LogicalVolume *Geometry::GetPALLAS_BreadboardRemovalChamber()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/S2/Assemblage_Breadboard_Thorlabs_Removal_Chamber.gdml", false);
   LogicalVolume = parser->GetVolume("Breadboard_Removal_Chamber");
@@ -472,13 +408,13 @@ G4LogicalVolume *Geometry::GetPALLAS_BreadboardRemovalChamber(){
   return LogicalVolume;
 }
 
-
-G4LogicalVolume *Geometry::GetPALLAS_ChassisRemovalChamber(){
+G4LogicalVolume *Geometry::GetPALLAS_ChassisRemovalChamber()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/S2/Chassis_PALLAS_Removal_Chamber.gdml", false);
   LogicalVolume = parser->GetVolume("Chassis_PALLAS_Removal_Chamber");
@@ -487,13 +423,13 @@ G4LogicalVolume *Geometry::GetPALLAS_ChassisRemovalChamber(){
   return LogicalVolume;
 }
 
-
-G4LogicalVolume *Geometry::GetPALLAS_TubeISO1(){
+G4LogicalVolume *Geometry::GetPALLAS_TubeISO1()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/S2/Tube_ISO_1.gdml", false);
   LogicalVolume = parser->GetVolume("Tube_ISO_1");
@@ -502,13 +438,13 @@ G4LogicalVolume *Geometry::GetPALLAS_TubeISO1(){
   return LogicalVolume;
 }
 
-
-G4LogicalVolume *Geometry::GetPALLAS_TubeISO2(){
+G4LogicalVolume *Geometry::GetPALLAS_TubeISO2()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/S2/Tube_ISO_2.gdml", false);
   LogicalVolume = parser->GetVolume("Tube_ISO_2");
@@ -517,22 +453,19 @@ G4LogicalVolume *Geometry::GetPALLAS_TubeISO2(){
   return LogicalVolume;
 }
 
-
-
-
-
 // ################################################################################################################
 // ################################################################################################################
-//SECTION 3
+// SECTION 3
 // ################################################################################################################
 // ################################################################################################################
 
-G4LogicalVolume *Geometry::GetPALLAS_ASMPoutre(){
+G4LogicalVolume *Geometry::GetPALLAS_ASMPoutre()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/S3/ASM_Poutre.gdml", false);
   LogicalVolume = parser->GetVolume("ASM_Poutre");
@@ -541,13 +474,13 @@ G4LogicalVolume *Geometry::GetPALLAS_ASMPoutre(){
   return LogicalVolume;
 }
 
-
-G4LogicalVolume *Geometry::GetPALLAS_StationYAG(){
+G4LogicalVolume *Geometry::GetPALLAS_StationYAG()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/S3/Station_YAG.gdml", false);
   LogicalVolume = parser->GetVolume("Station_YAG");
@@ -556,22 +489,19 @@ G4LogicalVolume *Geometry::GetPALLAS_StationYAG(){
   return LogicalVolume;
 }
 
-
-
-
-
 // ################################################################################################################
 // ################################################################################################################
-//SECTION 4
+// SECTION 4
 // ################################################################################################################
 // ################################################################################################################
 
-G4LogicalVolume *Geometry::GetPALLAS_BlindageBD(){
+G4LogicalVolume *Geometry::GetPALLAS_BlindageBD()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/S4/Blindage_BD.gdml", false);
   LogicalVolume = parser->GetVolume("Blindage_BD");
@@ -580,13 +510,13 @@ G4LogicalVolume *Geometry::GetPALLAS_BlindageBD(){
   return LogicalVolume;
 }
 
-
-G4LogicalVolume *Geometry::GetPALLAS_BlindageCBD(){
+G4LogicalVolume *Geometry::GetPALLAS_BlindageCBD()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/S4/Blindage_CBD.gdml", false);
   LogicalVolume = parser->GetVolume("Blindage_CBD");
@@ -595,13 +525,13 @@ G4LogicalVolume *Geometry::GetPALLAS_BlindageCBD(){
   return LogicalVolume;
 }
 
-
-G4LogicalVolume *Geometry::GetPALLAS_ChambreDipole(){
+G4LogicalVolume *Geometry::GetPALLAS_ChambreDipole()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/S4/Chambre_Dipole.gdml", false);
   LogicalVolume = parser->GetVolume("Chambre_Dipole");
@@ -610,13 +540,13 @@ G4LogicalVolume *Geometry::GetPALLAS_ChambreDipole(){
   return LogicalVolume;
 }
 
-
-G4LogicalVolume *Geometry::GetPALLAS_ChassisDipoleYAG(){
+G4LogicalVolume *Geometry::GetPALLAS_ChassisDipoleYAG()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/S4/Chassis_Dipole_YAG.gdml", false);
   LogicalVolume = parser->GetVolume("Chassis_Dipole_YAG");
@@ -625,13 +555,13 @@ G4LogicalVolume *Geometry::GetPALLAS_ChassisDipoleYAG(){
   return LogicalVolume;
 }
 
-
-G4LogicalVolume *Geometry::GetPALLAS_DiagsChamber(){
+G4LogicalVolume *Geometry::GetPALLAS_DiagsChamber()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/S4/Diags_Chamber.gdml", false);
   LogicalVolume = parser->GetVolume("Diags_Chamber");
@@ -640,13 +570,13 @@ G4LogicalVolume *Geometry::GetPALLAS_DiagsChamber(){
   return LogicalVolume;
 }
 
-
-G4LogicalVolume *Geometry::GetPALLAS_Dipole(){
+G4LogicalVolume *Geometry::GetPALLAS_Dipole()
+{
 
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-  G4GDMLParser* parser = new G4GDMLParser();
-  //Create Tesselated volume of "Bouchon"
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
   parser->Clear();
   parser->Read("../gdml_models/S4/Dipole.gdml", false);
   LogicalVolume = parser->GetVolume("Dipole");
@@ -655,16 +585,70 @@ G4LogicalVolume *Geometry::GetPALLAS_Dipole(){
   return LogicalVolume;
 }
 
+G4LogicalVolume *Geometry::GetPALLAS_BS1YAG()
+{
 
+  G4Element *elementY = new G4Element("Yttrium", "Yttrium", 39., 88.90585 * g / mole);
+  G4Element *elementO = new G4Element("Oxygen", "O", 8, 15.9994 * g / mole);
+  G4Element *elementAl = new G4Element("Aluminum", "Al", 13, 26.981538 * g / mole);
 
-  // Alu = G4NistManager::Instance()->FindOrBuildMaterial("G4_Al");
-  // Inox = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
-  // Water = G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER");
-  // Laiton = G4NistManager::Instance()->FindOrBuildMaterial("G4_BRASS");
-  // Kapton = G4NistManager::Instance()->FindOrBuildMaterial("G4_KAPTON");
-  // Air = G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
-  // Cuivre = G4NistManager::Instance()->FindOrBuildMaterial("G4_Cu");
-  // Fer = G4NistManager::Instance()->FindOrBuildMaterial("G4_Fe");
-  // Tantale = G4NistManager::Instance()->FindOrBuildMaterial("G4_Ta");
-  // Tungstene = G4NistManager::Instance()->FindOrBuildMaterial("G4_W");
-  // Polystyrene = G4NistManager::Instance()->FindOrBuildMaterial("G4_POLYSTYRENE");
+  Material = new G4Material("YAG",
+                            4.57 * g / cm3, // 1.053
+                            3,
+                            kStateSolid,
+                            273.15 * kelvin,
+                            1.0 * atmosphere);
+
+  Material->AddElement(elementY, 3);
+  Material->AddElement(elementAl, 5);
+  Material->AddElement(elementO, 12);
+
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
+  parser->Clear();
+  parser->Read("../gdml_models/S4/BS1_YAG.gdml", false);
+  LogicalVolume = parser->GetVolume("BS1_YAG");
+  LogicalVolume->SetMaterial(Material);
+
+  return LogicalVolume;
+}
+
+G4LogicalVolume *Geometry::GetPALLAS_BSPEC1YAG()
+{
+
+  G4Element *elementY = new G4Element("Yttrium", "Yttrium", 39., 88.90585 * g / mole);
+  G4Element *elementO = new G4Element("Oxygen", "O", 8, 15.9994 * g / mole);
+  G4Element *elementAl = new G4Element("Aluminum", "Al", 13, 26.981538 * g / mole);
+
+  Material = new G4Material("YAG",
+                            4.57 * g / cm3, // 1.053
+                            3,
+                            kStateSolid,
+                            273.15 * kelvin,
+                            1.0 * atmosphere);
+
+  Material->AddElement(elementY, 3);
+  Material->AddElement(elementAl, 5);
+  Material->AddElement(elementO, 12);
+
+  G4GDMLParser *parser = new G4GDMLParser();
+  // Create Tesselated volume of "Bouchon"
+  parser->Clear();
+  parser->Read("../gdml_models/S4/BSPEC1_YAG.gdml", false);
+  LogicalVolume = parser->GetVolume("BSPEC1_YAG");
+  LogicalVolume->SetMaterial(Material);
+
+  return LogicalVolume;
+}
+
+// Alu = G4NistManager::Instance()->FindOrBuildMaterial("G4_Al");
+// Inox = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
+// Water = G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER");
+// Laiton = G4NistManager::Instance()->FindOrBuildMaterial("G4_BRASS");
+// Kapton = G4NistManager::Instance()->FindOrBuildMaterial("G4_KAPTON");
+// Air = G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
+// Cuivre = G4NistManager::Instance()->FindOrBuildMaterial("G4_Cu");
+// Fer = G4NistManager::Instance()->FindOrBuildMaterial("G4_Fe");
+// Tantale = G4NistManager::Instance()->FindOrBuildMaterial("G4_Ta");
+// Tungstene = G4NistManager::Instance()->FindOrBuildMaterial("G4_W");
+// Polystyrene = G4NistManager::Instance()->FindOrBuildMaterial("G4_POLYSTYRENE");
