@@ -1,4 +1,4 @@
-# PALLAS_CollSim for PALLAS_Coll Experiment [huber@cenbg.in2p3.fr, huberarnaud@gmail.com]
+# PALLAS_CollSim for PALLAS_Coll Experiment [huber@lp2ib.in2p3.fr, huberarnaud@gmail.com]
 
 ## INSTRUCTIONS TO USE THE SIMULATION
 - Download the VMWare [Geant4.11.2.1](https://heberge.lp2ib.in2p3.fr/G4VM/index.html)
