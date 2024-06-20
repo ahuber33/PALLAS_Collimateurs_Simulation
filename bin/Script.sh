@@ -1,35 +1,70 @@
 #!/bin/bash
 
+# Ensemble des valeurs pour variable1 et variable2
+Material=(G4_BRASS G4_BRASS G4_BRASS G4_BRASS G4_BRASS G4_BRASS G4_BRASS G4_BRASS G4_BRASS G4_W G4_W G4_W G4_W G4_W G4_W G4_W G4_W G4_W G4_Pb G4_Pb G4_Pb G4_Pb G4_Pb G4_Pb G4_Pb G4_Pb G4_Pb)
+Thickness=(50 50 50 75 75 75 100 100 100 15 15 15 23 23 23 30 30 30 20 20 20 35 35 35 50 50 50)
+Ecart=(0.2 0.4 0.6 0.2 0.4 0.6 0.2 0.4 0.6 0.2 0.4 0.6 0.2 0.4 0.6 0.2 0.4 0.6 0.2 0.4 0.6 0.2 0.4 0.6 0.2 0.4 0.6)
+count=0
 
-echo "Début de traitement"
-#myArr=("10" "9" "8" "7" "6" "5" "4" "3" "2" "1")
-myArr=("2 4 1" "2 4 2")
-myArr1=("He1+" "He2+")
-myArr2=(1000 1000)
+# Chemin vers le fichier macro
+macro_file="vrml_base.mac"
 
 
-for idx in ${!myArr[*]}
-do
+
+# Boucles pour les deux ensembles de valeurs
+for value1 in "${Thickness[@]}"; do
+
     while [[ $(pgrep -x PALLAS_CollSim | wc -l) -gt 6 ]]
     do
-	sleep 5
+	sleep 1
     done
-        #Init
-    value=${myArr[$idx]}
-        idx_fichier=$(($idx))
-        echo Index : $idx / Fichier : $value
-        # Creation du fichier a partir du fichier de base (fichier temporaire)
-        cp vrml_base.mac base_$idx_fichier_bis.mac
-        # Mise en place de la variable
-        #sed -e "s/%energy/$value/g" base_$idx_fichier_bis.mac > base_$idx_fichier.mac
-	sed -e "s/%ion/$value/g" base_$idx_fichier_bis.mac > base_$idx_fichier.mac
-        # Suppression fichier temporaire
-        rm base_$idx_fichier_bis.mac
-	./PALLAS_CollSim ${myArr1[$idx]}_EJ212_1mm 100000 base_$idx_fichier.mac &
-	#./PALLAS_CollSim He2+_Config2_ZnS_0.1_${myArr[$idx]}MeV 100 base_$idx_fichier.mac &
-	sleep 4
-	#rm base_$idx_fichier.mac
+
+    value2=${Material[count]}
+    value3=${Ecart[count]}
+    count=$((count+1))
+    cp vrml_base.mac base_tmp_$count.mac
+
+    # Remplacer les valeurs dans le fichier macro
+    sed -e "s/%Thickness/$value1/g" base_tmp_$count.mac > base_tmp2_$count.mac
+    sed -e "s/%Material/$value2/g" base_tmp2_$count.mac > base_tmp3_$count.mac
+    sed -e "s/%Ecart/$value3/g" base_tmp3_$count.mac > base_$count.mac
+    rm base_tmp_$count.mac
+    rm base_tmp2_$count.mac
+    rm base_tmp3_$count.mac
+    
+    ./PALLAS_CollSim VerticalConfiguration_${value2}_epaisseur_${value1}_ecartement_${value3} 1 base_$count.mac &
+
+    sleep 5
+  done
 done
-echo "Fin de traitement"
+
+
+
+
+
+
+# Boucles pour les deux ensembles de valeurs
+#for value1 in "${thickness[@]}"; do
+#    for value2 in "${distance[@]}"; do
+
+#    while [[ $(pgrep -x PALLAS_CollSim | wc -l) -gt 6 ]]
+#    do
+#	sleep 1
+#    done
+
+#    count=$((count+1))
+#    cp vrml_base.mac base_tmp_$count.mac
+
+    # Remplacer les valeurs dans le fichier macro
+#    sed -e "s/%thickness/$value1/g" base_tmp_$count.mac > base_tmp2_$count.mac
+#    sed -e "s/%distance/$value2/g" base_tmp2_$count.mac > base_$count.mac
+#    rm base_tmp_$count.mac
+#    rm base_tmp2_$count.mac
+    
+#    ./PALLAS_CollSim HorizontalConfiguration_epaisseur_${value1}_ecartement_${value2} 110000 base_$count.mac &
+
+#    sleep 1
+#  done
+#done
 
 

@@ -36,13 +36,34 @@
 
 
 
+/control/alias VerticalCollimatorThickness 20
+/control/alias HorizontalCollimatorThickness 60
+/control/alias CollimatorSpectrometerDistance 50
+/control/alias CollimatorVHDistance 10
+/control/alias YParticleGenerationOffset 140
+
 ######################################################
 ########## PART FOR MESSENGER INFORMATIONS ###########
 ######################################################
-/geometry/SetCollimatorThickness 10 mm
+/geometry/SetStatusRoundCollimator false
+/geometry/SetCollimatorThickness 150 mm
 /geometry/SetCollimatorInternalRadius 10 mm
 /geometry/SetCollimatorExternalRadius 100 mm
-/geometry/SetCollimatorSpectrometerDistance 200 mm
+/geometry/SetCollimatorDistanceBetweenPlates 0 mm
+
+/geometry/SetVerticalCollimatorMaterial G4_W
+/geometry/SetHorizontalCollimatorMaterial G4_Pb
+
+/geometry/SetVerticalCollimatorThickness {VerticalCollimatorThickness} mm
+/geometry/SetHorizontalCollimatorThickness {HorizontalCollimatorThickness} mm
+/geometry/SetCollimatorSpectrometerDistance {CollimatorSpectrometerDistance} mm
+/geometry/SetCollimatorVHDistance {CollimatorVHDistance} mm
+/gun/SetYParticleGenerationOffset {YParticleGenerationOffset} mm
+/geometry/SetOpenVerticalCollimator 0 mm
+/geometry/SetOpenHorizontalCollimator 0 mm
+/geometry/SetCollimatorLength 100 mm
+
+
 
 /display/SetStatusDisplayCelluleGeometry false
 /display/SetStatusDisplayLIFGeometry false
@@ -53,22 +74,21 @@
 /display/SetStatusDisplaySection4DumpGeometry false
 /run/reinitializeGeometry
 
-/field/SetStatusMapBField false
-/field/SetConstantBField 0.4 tesla
 
-/step/SetTrackingStatus true
+/field/SetStatusMapBField false
+/field/SetConstantBField 0.0 tesla #0.4 tesla
+
+/step/SetTrackingStatus false
 
 /tracking/verbose 1
 /run/verbose 1
 
 
-
-
 ######################################################
 ##### PART TO SIMULATE PARTICLE WITH PARTICLEGUN #####
 ######################################################
-/gun/SetStatusGunParticle false
-/gun/SetParticleName geantino
+/gun/SetStatusGunParticle true
+/gun/SetParticleName e-
 /gun/SetEnergyReference 247 MeV
 /gun/SetPhaseSpaceFilename PALLAS_phasespace_1411_preCollimateur.txt
 /gun/SetMacroChargeFilename PALLAS_qm1411_preCollimateur.txt
@@ -82,25 +102,14 @@
 /run/initialize
 /gps/number 1
 # PART TO SIMULATE 1 MEV ELECTRON !!!!!!!!
-#/gps/particle e-
 /gps/particle geantino
+
 /gps/pos/type Point
-#/gps/pos/type Plane
-#/gps/pos/centre -0.152 2500.0 0.08 mm
-#/gps/pos/shape Circle
-#/gps/pos/radius 5 um
+/gps/pos/centre -0.162 0.0 0.18 mm
+/gps/direction 0.0 1.0 0.0
 
 /gps/energy 250. MeV
-/gps/direction 0.0 1.0 0.0
-#/gps/ang/type cos
-#/gps/ang/rot1 -1 0 0
-#/gps/ang/rot2 1 0 0
-#/gps/ang/mintheta 37 deg
-#/gps/ang/maxtheta 37 deg
-#/gps/ang/minphi 0 deg
-#/gps/ang/maxphi 0 deg
-#/gps/ang/maxtheta 0.001 rad
-#/gps/ang/maxtheta 0.03 rad
+
 
 
 #/gps/particle ion
@@ -108,4 +117,4 @@
 #/grdm/nucleusLimits 60 60 27 27
 
 
-/run/beamOn 10
+/run/beamOn 1

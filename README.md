@@ -30,13 +30,34 @@ Personnaly, I used the vrml.mac but you can create another one. Just to remember
 
 - In your macro, you need to specifiy some informations for the Messenger used :
 ```
+/control/alias VerticalCollimatorThickness 20
+/control/alias HorizontalCollimatorThickness 60
+/control/alias CollimatorSpectrometerDistance 50
+/control/alias CollimatorVHDistance 10
+/control/alias YParticleGenerationOffset 140 #Sum of precedent values
+
 ######################################################
 ########## PART FOR MESSENGER INFORMATIONS ###########
 ######################################################
-/geometry/SetCollimatorThickness 10 mm
+/geometry/SetStatusRoundCollimator false
+/geometry/SetCollimatorThickness 150 mm
 /geometry/SetCollimatorInternalRadius 10 mm
 /geometry/SetCollimatorExternalRadius 100 mm
-/geometry/SetCollimatorSpectrometerDistance 200 mm
+/geometry/SetCollimatorDistanceBetweenPlates 0 mm
+
+/geometry/SetVerticalCollimatorMaterial G4_W
+/geometry/SetHorizontalCollimatorMaterial G4_Pb
+
+/geometry/SetVerticalCollimatorThickness {VerticalCollimatorThickness} mm
+/geometry/SetHorizontalCollimatorThickness {HorizontalCollimatorThickness} mm
+/geometry/SetCollimatorSpectrometerDistance {CollimatorSpectrometerDistance} mm
+/geometry/SetCollimatorVHDistance {CollimatorVHDistance} mm
+/gun/SetYParticleGenerationOffset {YParticleGenerationOffset} mm
+/geometry/SetOpenVerticalCollimator 0 mm
+/geometry/SetOpenHorizontalCollimator 0 mm
+/geometry/SetCollimatorLength 100 mm
+
+
 
 /display/SetStatusDisplayCelluleGeometry false
 /display/SetStatusDisplayLIFGeometry false
@@ -47,17 +68,30 @@ Personnaly, I used the vrml.mac but you can create another one. Just to remember
 /display/SetStatusDisplaySection4DumpGeometry false
 /run/reinitializeGeometry
 
+
 /field/SetStatusMapBField false
-/field/SetConstantBField 0.4 tesla
+/field/SetConstantBField 0.0 tesla #0.4 tesla
 
 /step/SetTrackingStatus false
+
 ```
+- **alias** defines some values with YParticleGenerationOffset which depends on the 4 precedent values. Necessayre to be used in macro Script bash
 
 - **/geometry/** corresponds to definition of specific volume & distance (here the Collimator) :
+    - SetStatusRoundCollimator for the status of if we use Round collimator or not (USED FOR TESTS)
     - SetCollimatorThickness for the thickness of the collimator
     - SetCollimatorInternalRadius for the part of the collimator without matter
     - SetCollimatorExternalRadius for the external radius of the collimator
-    - SetCollimatorSpectrometerDistance to define the distance between the end of the collimator and the begin of spectrometer
+    - SetVerticalCollimatorMaterial to define the material of the vertical collimator
+    - SetHorizontalCollimatorMaterial to define the material of the horizontal collimator
+    - SetVerticalCollimatorThickness to define the thickness of the vertical collimator from the alias defined before
+    - SetHorizontalCollimatorThickness to define the thickness of the horizontal collimator from the alias defined before
+    - SetCollimatorSpectrometerDistance to define the distance between the end of the collimator and the begin of spectrometer from the alias defined before
+    - SetCollimatorVHDistance define the distance between the end of the vertical collimator and the begin of the horizontal collimator from the alias defined before
+    - SetYParticleGenerationOffset define the Offset parameter for the aprticle generation according to the different values of the 2 collimators. => DEFINED WITH GUN MESSENGER
+    - SetOpenVerticalCollimator define the aperture of the vertical collimator
+    - SetOpenHorizontalCollimator define the aperture of the horizontal collimator
+    - SetCollimatorLength define the other dimensions of the collimator
     - **IMPORTANT** You can find a **Geometry.cc** file where all the possible LogicalVolume are created and a **PALLAS_CollSimGeometryConstruction.cc** where these functions are call to construct the geometry.
 
 - **/display/** manages if some part of the geometry are taken into account or no :
@@ -140,6 +174,7 @@ Personnaly, I used the vrml.mac but you can create another one. Just to remember
     - **Tree_FrontCollimator** with the informations of particles passing through the collimator:
         - particleID : ID of the particle 
             - e- =11
+            - e+ = -11
             - gamma = 22
             - proton = 2212
             - neutron = 2112
@@ -156,6 +191,7 @@ Personnaly, I used the vrml.mac but you can create another one. Just to remember
     - **Tree_BackCollimator** with the informations of particles passing which go back towards the rear of the collimator:
         - particleID : ID of the particle 
             - e- =11
+            - e+ = -11
             - gamma = 22
             - proton = 2212
             - neutron = 2112
@@ -173,6 +209,7 @@ Personnaly, I used the vrml.mac but you can create another one. Just to remember
         - x_exit : X Position of the particle
         - y_exit : Y Position of the particle
         - z_exit : Z Position of the particle
+        - parentID : ParentID of the particle
         - energy : Energy of the particle
 
 

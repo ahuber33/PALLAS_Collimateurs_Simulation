@@ -62,6 +62,7 @@ void PALLAS_CollSimEventAction::BeginOfEventAction(const G4Event *evt)
   StatsYAG.x_exit.clear();
   StatsYAG.y_exit.clear();
   StatsYAG.z_exit.clear();
+  StatsYAG.parentID.clear();
   StatsYAG.energy.clear();
 }
 

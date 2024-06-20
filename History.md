@@ -104,3 +104,12 @@
 
 - Mise à jour du README avec création de ce fichier History pour suivre l'évolution du code.
 - Le fichier README gardant la vocation d'être la documentation du code.
+
+
+## Commit #8 le 20/06/2024 [PALLAS_CollSim.0.3.1]
+- Mise à jour de certains fichiers GDML qui entrainaient des soucis de tracking car surement pas aprfaitment défini dans le fichier .stp
+- Le fichier GDML DiagsChamber a d'ailleurs un souci qui a été corrigé en plaçant un cylindre de même diamètre et de même épaisseur à cet endroit
+- Changement dans l'appel de la fonction GetCollimator() afin de pouvoir l'appeler plusieurs fois pour définir les différents collimateurs. Il est maintenant nécessaire de fournir un string à la fonction permettant d'avoir un nom différent à chaque appel
+- Ajout de l'information parentID dans le tree YAG
+- Changement dans la macro et dans le code permettant de générer de façon automatique un collimateur vertical et un autre horizontal. Le README a d'aileurs été modifié.
+- Les simulations étanttrop longues (>2 mois), la macro charge a été modifiée d'un facteur 100 (1.6e-17 a lieu de 1.6e-19) qui correspondait exactement à la charge d'un électron.

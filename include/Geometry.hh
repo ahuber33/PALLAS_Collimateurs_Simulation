@@ -44,10 +44,11 @@ public:
   ~Geometry();
 
 public:
-  G4LogicalVolume *GetCollimator();
+  G4LogicalVolume *GetCollimator(G4String name);
   G4LogicalVolume *GetOutputCollimator();
   G4LogicalVolume *GetRoundCollimator();
   G4LogicalVolume *GetBFieldVolume();
+  G4LogicalVolume *GetOutputSpectrometer();
 
   G4LogicalVolume *GetPALLAS_Assemblage2Cellules();
   //LIF
@@ -85,9 +86,14 @@ public:
   G4LogicalVolume *GetPALLAS_ChambreDipole();
   G4LogicalVolume *GetPALLAS_ChassisDipoleYAG();
   G4LogicalVolume *GetPALLAS_DiagsChamber();
+  G4LogicalVolume *GetFakeDiagsChamber();
   G4LogicalVolume *GetPALLAS_Dipole();
   G4LogicalVolume *GetPALLAS_BS1YAG();
   G4LogicalVolume *GetPALLAS_BSPEC1YAG();
+  G4LogicalVolume *GetPALLAS_S4Tube();
+  G4LogicalVolume *GetPALLAS_S4Tube1();
+  G4LogicalVolume *GetPALLAS_S4Soufflet();
+  G4LogicalVolume *GetPALLAS_S4Croix();
   
 
   //****************COMMON********************

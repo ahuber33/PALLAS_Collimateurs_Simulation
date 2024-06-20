@@ -108,13 +108,13 @@ void PALLAS_CollSimSteppingAction::GetInputInformations(PALLAS_CollSimEventActio
 {
   evtac->SetEstartCollimator(energy);
   evtac->SetXStart(x);
-  evtac->SetXOffsetStart(x);
+  evtac->SetXOffsetStart(-0.152);
   evtac->SetXpStart(px);
   evtac->SetYStart(z);
-  evtac->SetYOffsetStart(z);
+  evtac->SetYOffsetStart(0.08);
   evtac->SetYpStart(pz);
   evtac->SetSStart(y);
-  evtac->SetSOffsetStart(y);
+  evtac->SetSOffsetStart(3114.5);
   evtac->SetPStart(py);
   evtac->SetEnergyStart(energy);
   evtac->SetDeltaStart(energy-247);
@@ -127,6 +127,21 @@ void PALLAS_CollSimSteppingAction::GetInputInformations(PALLAS_CollSimEventActio
   // G4cout << "pz = " << pz << G4endl;
   // G4cout << "energy = " << energy << G4endl;
   // G4cout << "Nevent = " << evtac->GetNeventStart() << G4endl;
+  if (TrackingStatus ==false) theTrack->SetTrackStatus(fStopAndKill);
+}
+
+void PALLAS_CollSimSteppingAction::UpdateYAGInformations(PALLAS_CollSimEventAction *evtac)
+{
+  evtac->AddXExitYAG(xpost);
+  evtac->AddYExitYAG(ypost);
+  evtac->AddZExitYAG(zpost);
+  evtac->AddParentIDYAG(parentID);
+  evtac->AddEnergyYAG(energy);
+  // G4cout << "x = " << x << G4endl;
+  // G4cout << "y = " << y << G4endl;
+  // G4cout << "z = " << z << G4endl;
+  // G4cout << "energy = " << energy << G4endl;
+
   if (TrackingStatus ==false) theTrack->SetTrackStatus(fStopAndKill);
 }
 
@@ -155,9 +170,13 @@ void PALLAS_CollSimSteppingAction::UserSteppingAction(const G4Step *aStep)
   x = aStep->GetPreStepPoint()->GetPosition().x()/mm;
   y = aStep->GetPreStepPoint()->GetPosition().y()/mm;
   z = aStep->GetPreStepPoint()->GetPosition().z()/mm;
+  xpost = aStep->GetPostStepPoint()->GetPosition().x()/mm;
+  ypost = aStep->GetPostStepPoint()->GetPosition().y()/mm;
+  zpost = aStep->GetPostStepPoint()->GetPosition().z()/mm;
   px = aStep->GetPreStepPoint()->GetMomentumDirection().x();
   py = aStep->GetPreStepPoint()->GetMomentumDirection().y();
   pz = aStep->GetPreStepPoint()->GetMomentumDirection().z();
+
 
   // #######################################################################
   // #######################################################################
@@ -178,12 +197,31 @@ void PALLAS_CollSimSteppingAction::UserSteppingAction(const G4Step *aStep)
   if (volumeNamePreStep == "Collimator")
     UpdateCollimatorInformations(evtac);
 
-  if (volumeNamePreStep == "Collimator" && volumeNamePostStep == "FrontOutput")
+  if (volumeNamePreStep == "Collimator1" && volumeNamePostStep == "FrontOutput")
     UpdateFrontCollimatorInformations(evtac);
+
+  if (volumeNamePreStep == "Collimator2" && volumeNamePostStep == "FrontOutput")
+    UpdateFrontCollimatorInformations(evtac);    
+
+  // if (volumeNamePreStep == "Holder" && volumeNamePostStep == "FrontOutput")
+  //   UpdateFrontCollimatorInformations(evtac);
 
   if (volumeNamePreStep == "Collimator" && volumeNamePostStep == "BackOutput")
     UpdateBackCollimatorInformations(evtac);
 
   if (aStep->GetPostStepPoint()->GetPhysicalVolume()->GetName() == "World")
     theTrack->SetTrackStatus(fStopAndKill);
+
+   if (volumeNamePostStep == "BS1_YAG")
+   {
+    UpdateYAGInformations(evtac);
+    theTrack->SetTrackStatus(fStopAndKill);
+   }
+    
+    G4cout << " y =" << y << G4endl;
+
+  // if (aStep->GetPostStepPoint()->GetPhysicalVolume()->GetName() == "Collimator")
+  //   theTrack->SetTrackStatus(fStopAndKill);
+
+  //if (parentID>0) theTrack->SetTrackStatus(fStopAndKill);
 }

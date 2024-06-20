@@ -42,6 +42,11 @@ private:
   G4String MacroChargeFilename;
   G4String ParticleName;
   G4double EnergyReference;
+  G4double YParticleGenerationOffset;
+
+  G4double xOffset;
+  G4double sOffset;
+  G4double zOffset;
 
   size_t charToSizeT(const char* str);
   void GunParticleInitialization();

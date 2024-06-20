@@ -11,6 +11,7 @@
 #include "Geometry.hh"
 
 
+
 int main(int argc, char **argv)
 {
 
@@ -54,6 +55,7 @@ int main(int argc, char **argv)
   // new PALLAS_CollSimMessenger(OptGeom, Generator);
   // G4cout << "Initialized new Messenger" << G4endl;
 
+   
   // #ifdef G4VIS_USE
   G4VisManager *visManager = new G4VisExecutive;
   visManager->Initialize();

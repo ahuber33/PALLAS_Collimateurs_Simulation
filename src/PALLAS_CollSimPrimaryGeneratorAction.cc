@@ -39,6 +39,12 @@ PALLAS_CollSimPrimaryGeneratorAction::PALLAS_CollSimPrimaryGeneratorAction(const
       .SetDefaultValue("247 MeV")
       .SetRange("EnergyReference >=0.0");
 
+  pMessenger->DeclarePropertyWithUnit("SetYParticleGenerationOffset", "mm", YParticleGenerationOffset)
+        .SetGuidance("Set the YParticleGeneration parameter.")
+        .SetParameterName("YParticleGenerationOffset", false)
+        .SetDefaultValue("100.0 mm")
+        .SetRange("YParticleGenerationOffset >=0.0");      
+
   particleGun = new G4ParticleGun(1);
   particleSource = new G4GeneralParticleSource();
 }
@@ -90,7 +96,7 @@ void PALLAS_CollSimPrimaryGeneratorAction::ReadNumberFile(const std::string &fil
       continue; // Skip comments
     std::istringstream iss(line);
     iss >> macrocharge;
-    numParticles = macrocharge / (1.6e-19);
+    numParticles = macrocharge / (1.6e-17); //SCALE 100 !!!!!
     // G4cout << "\n Number of PART = " << numParticles << G4endl;
     EventNumberOfParticles.push_back(numParticles);
     if (i <= NEventsGenerated)
@@ -207,7 +213,7 @@ void PALLAS_CollSimPrimaryGeneratorAction::ShowProgress(double progress, std::ch
     else
       std::cout << " ";
   }
-  std::cout << "] " << int(progress * 100.0) << " %\n";
+  std::cout << "] " << int(progress * 100.0) << " %";
   std::cout.flush();
 
   auto currentTime = std::chrono::high_resolution_clock::now();
@@ -217,9 +223,9 @@ void PALLAS_CollSimPrimaryGeneratorAction::ShowProgress(double progress, std::ch
   estimatedRemainingTime = averageTimePerProgress * progressRemaining;
 
   // Set the precision for floating point output
-  std::cout << std::fixed << std::setprecision(1);
+  std::cout << std::fixed << std::setprecision(1) << std::endl;
 
-  std::cout << "=> Estimated remaining time = " << estimatedRemainingTime/60.0 << " minutes\r";
+  std::cout << "=> Estimated remaining time = " << estimatedRemainingTime/60.0 << " min" << "\r";
   std::cout.flush();
 
 }
@@ -244,15 +250,24 @@ void PALLAS_CollSimPrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
 
     G4double yp = sqrt(1 / (pdata.xp * pdata.xp + pdata.zp * pdata.zp + 1));
 
+    xOffset = -0.152; //mm
+    sOffset = 3114.5 - YParticleGenerationOffset; //mm
+    zOffset = 0.08; //mm
+
     particleGun->SetParticleDefinition(particleDefinition);
-    particleGun->SetParticleEnergy(EnergyReference + pdata.delta);
-    particleGun->SetParticlePosition(G4ThreeVector(pdata.x * mm, pdata.s * mm, pdata.z * mm));
+    particleGun->SetParticleEnergy(EnergyReference * (1+pdata.delta));
+    particleGun->SetParticlePosition(G4ThreeVector((pdata.x*1000 + xOffset) * mm, (pdata.s*1000 + sOffset) * mm, (pdata.z*1000 + zOffset) * mm));
     particleGun->SetParticleMomentumDirection(G4ThreeVector(pdata.xp, yp, pdata.zp));
+
+    // G4cout << "pdata.s = " << pdata.s*1000 << G4endl;
+    // G4cout << "Y = " << pdata.s*1000+sOffset << G4endl;
 
     eventID = anEvent->GetEventID();
     nEvent = EventNumberOfParticles.at(eventID);
+    //nEvent = 1;
     // G4cout << "nEvent = " << nEvent << G4endl;
     currentParticleNumber += nEvent;
+    //G4cout << "N event = " << nEvent << G4endl;
 
     for (int i = 0; i < nEvent; i++)
     {

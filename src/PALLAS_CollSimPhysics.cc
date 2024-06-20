@@ -23,7 +23,7 @@ PALLAS_CollSimPhysics::PALLAS_CollSimPhysics() : G4VModularPhysicsList()
 
   // EM physics
   emPhysicsList = new G4EmStandardPhysics_option3();
-  // emPhysicsList = new G4EmStandardPhysics();
+  //emPhysicsList = new G4EmStandardPhysics();
 }
 
 PALLAS_CollSimPhysics::~PALLAS_CollSimPhysics()
@@ -58,5 +58,6 @@ void PALLAS_CollSimPhysics::SetCuts()
     G4cout << "opticalPhysics::SetCuts:";
   }
   SetCutsWithDefault();
+  //SetCutValue(0.0*mm, "gamma");
   //  SetCutValue(5*mm,"opticalphoton");
 }

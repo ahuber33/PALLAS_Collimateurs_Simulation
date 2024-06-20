@@ -79,6 +79,7 @@ struct RunTallyYAG {
   std::vector<float> x_exit;
   std::vector<float> y_exit;
   std::vector<float> z_exit;
+  std::vector<float> parentID;
   std::vector<float> energy;
 
   inline int operator ==(const RunTallyYAG& right) const
@@ -194,6 +195,9 @@ public:
   void AddEnergyYAG(G4float d){StatsYAG.energy.push_back(d);}
   int GetEnergyYAGSize(){return StatsYAG.energy.size();}
   float GetEnergyYAG(G4float a){return StatsYAG.energy.at(a);}
+  void AddParentIDYAG(G4float d){StatsYAG.parentID.push_back(d);}
+  int GetParentIDYAGSize(){return StatsYAG.parentID.size();}
+  float GetParentIDYAG(G4float a){return StatsYAG.parentID.at(a);}
 
 private:
 

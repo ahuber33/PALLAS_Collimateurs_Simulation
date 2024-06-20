@@ -60,6 +60,7 @@
 #include "G4DormandPrinceRK56.hh"
 #include "G4DormandPrinceRK78.hh"
 #include "G4TsitourasRK45.hh"
+#include "G4GeometryTolerance.hh"
 
 class Geometry;
 
@@ -72,8 +73,9 @@ public:
 public:
   void SetLogicalVolumeColor(G4LogicalVolume* LogicalVolume, G4String color);
   void CreateWorldAndHolder();
-  void ConstructCollimator();
   void ConstructCollimatorWithOutput();
+  void ConstructVerticalCollimator();
+  void ConstructHorizontalCollimator();
   void ConstructBField();
   void ConstructCellulePart();
   void ConstructLIFPart();
@@ -88,27 +90,39 @@ public:
 private:
   Geometry *Geom;
   G4Material *Vacuum;
+  G4Material *Material;
   
   G4GenericMessenger* fMessenger;
   G4GenericMessenger* gMessenger;
   G4GenericMessenger* bMessenger;
 
-  G4bool StatusDisplayCelluleGeometry;
-  G4bool StatusDisplayLIFGeometry;
-  G4bool StatusDisplaySection1Geometry;
-  G4bool StatusDisplaySection2Geometry;
-  G4bool StatusDisplaySection3Geometry;
-  G4bool StatusDisplaySection4Geometry;
-  G4bool StatusDisplaySection4DumpGeometry;
-  G4bool StatusMapBField;
+  G4bool StatusDisplayCelluleGeometry=false;
+  G4bool StatusDisplayLIFGeometry=false;
+  G4bool StatusDisplaySection1Geometry=false;
+  G4bool StatusDisplaySection2Geometry=false;
+  G4bool StatusDisplaySection3Geometry=false;
+  G4bool StatusDisplaySection4Geometry=false;
+  G4bool StatusDisplaySection4DumpGeometry=false;
+  G4bool StatusMapBField=false;
+  G4bool StatusRoundCollimator=false;
+  G4String CollimatorMaterial;
+  G4String VerticalCollimatorMaterial;
+  G4String HorizontalCollimatorMaterial;
 
   // Dimension values
   G4double CollimatorThickness=1.0*mm;
+  G4double VerticalCollimatorThickness=1.0*mm;
+  G4double HorizontalCollimatorThickness=1.0*mm;
   G4double OutputThickness;
   G4double CollimatorInternalRadius=0*mm;
   G4double CollimatorExternalRadius=20*mm;
   G4double CollimatorSpectrometerDistance=0*mm;
   G4double ConstantBField =0.4*tesla;
+  G4double CollimatorLength=200*mm;
+  G4double CollimatorDistanceBetweenPlates = 10*mm;
+  G4double OpenVerticalCollimator = 10*mm;
+  G4double OpenHorizontalCollimator = 10*mm;
+  G4double CollimatorVHDistance = 0*mm;
 
   // Colors for visualizations
   G4VisAttributes *invis;
@@ -124,89 +138,109 @@ private:
   G4VisAttributes *magenta;
 
   // Logical Volumes
-  G4LogicalVolume *LogicalWorld;
-  G4LogicalVolume *LogicalHolder;
-  G4LogicalVolume *LogicalCollimator;
-  G4LogicalVolume *LogicalFrontOutput;
-  G4LogicalVolume *LogicalBackOutput;
-  G4LogicalVolume *LogicalBFieldVolume;
-  G4LogicalVolume *LogicalPALLAS_QuadrupoleQ3;
-  G4LogicalVolume *LogicalPALLAS_QuadrupoleQ4;
-  G4LogicalVolume *LogicalPALLAS_ASMRemovalChamber;
-  G4LogicalVolume *LogicalPALLAS_BreadboardRemovalChamber;
-  G4LogicalVolume *LogicalPALLAS_ChassisRemovalChamber;
-  G4LogicalVolume *LogicalPALLAS_TubeISO1;
-  G4LogicalVolume *LogicalPALLAS_TubeISO2;
-  G4LogicalVolume *LogicalPALLAS_ATH500_DN100;
-  G4LogicalVolume *LogicalPALLAS_BaseMarbre;
-  G4LogicalVolume *LogicalPALLAS_ChambreISO;
-  G4LogicalVolume *LogicalPALLAS_QuadrupoleQ1;
-  G4LogicalVolume *LogicalPALLAS_QuadrupoleQ2;
-  G4LogicalVolume *LogicalPALLAS_Croix;
-  G4LogicalVolume *LogicalPALLAS_LIFHublot1;
-  G4LogicalVolume *LogicalPALLAS_LIFHublot2;
-  G4LogicalVolume *LogicalPALLAS_LIFHublot3;
-  G4LogicalVolume *LogicalPALLAS_LIFHublot4;
-  G4LogicalVolume *LogicalPALLAS_LIFHublot5;
-  G4LogicalVolume *LogicalPALLAS_LIF_IBX_DD;
-  G4LogicalVolume *LogicalPALLAS_LIF_SQLT;
-  G4LogicalVolume *LogicalPALLAS_MarbreBreadboard1;
-  G4LogicalVolume *LogicalPALLAS_MarbreBreadboard2;
-  G4LogicalVolume *LogicalPALLAS_OptoMeK;
-  G4LogicalVolume *LogicalPALLAS_ASMPoutre;
-  G4LogicalVolume *LogicalPALLAS_StationYAG;
-  G4LogicalVolume *LogicalPALLAS_BlindageBD;
-  G4LogicalVolume *LogicalPALLAS_BlindageCBD;
-  G4LogicalVolume *LogicalPALLAS_ChambreDipole;
-  G4LogicalVolume *LogicalPALLAS_ChassisDipoleYAG;
-  G4LogicalVolume *LogicalPALLAS_DiagsChamber;
-  G4LogicalVolume *LogicalPALLAS_Dipole;
-  G4LogicalVolume *LogicalPALLAS_BS1YAG;
-  G4LogicalVolume *LogicalPALLAS_BSPEC1YAG;
-  G4LogicalVolume *LogicalPALLAS_Assemblage2Cellules;
+  G4LogicalVolume *LogicalWorld=nullptr;
+  G4LogicalVolume *LogicalHolder=nullptr;
+  G4LogicalVolume *LogicalCollimator=nullptr;
+  G4LogicalVolume *LogicalVerticalCollimator=nullptr;
+  G4LogicalVolume *LogicalHorizontalCollimator=nullptr;
+  G4LogicalVolume *LogicalFrontOutput=nullptr;
+  G4LogicalVolume *LogicalBackOutput=nullptr;
+  G4LogicalVolume *LogicalBFieldVolume=nullptr;
+  G4LogicalVolume *LogicalFakeDiagsChamber=nullptr;
+  G4LogicalVolume *LogicalPALLAS_QuadrupoleQ3=nullptr;
+  G4LogicalVolume *LogicalPALLAS_QuadrupoleQ4=nullptr;
+  G4LogicalVolume *LogicalPALLAS_ASMRemovalChamber=nullptr;
+  G4LogicalVolume *LogicalPALLAS_BreadboardRemovalChamber=nullptr;
+  G4LogicalVolume *LogicalPALLAS_ChassisRemovalChamber=nullptr;
+  G4LogicalVolume *LogicalPALLAS_TubeISO1=nullptr;
+  G4LogicalVolume *LogicalPALLAS_TubeISO2=nullptr;
+  G4LogicalVolume *LogicalPALLAS_ATH500_DN100=nullptr;
+  G4LogicalVolume *LogicalPALLAS_BaseMarbre=nullptr;
+  G4LogicalVolume *LogicalPALLAS_ChambreISO=nullptr;
+  G4LogicalVolume *LogicalPALLAS_QuadrupoleQ1=nullptr;
+  G4LogicalVolume *LogicalPALLAS_QuadrupoleQ2=nullptr;
+  G4LogicalVolume *LogicalPALLAS_Croix=nullptr;
+  G4LogicalVolume *LogicalPALLAS_LIFHublot1=nullptr;
+  G4LogicalVolume *LogicalPALLAS_LIFHublot2=nullptr;
+  G4LogicalVolume *LogicalPALLAS_LIFHublot3=nullptr;
+  G4LogicalVolume *LogicalPALLAS_LIFHublot4=nullptr;
+  G4LogicalVolume *LogicalPALLAS_LIFHublot5=nullptr;
+  G4LogicalVolume *LogicalPALLAS_LIF_IBX_DD=nullptr;
+  G4LogicalVolume *LogicalPALLAS_LIF_SQLT=nullptr;
+  G4LogicalVolume *LogicalPALLAS_MarbreBreadboard1=nullptr;
+  G4LogicalVolume *LogicalPALLAS_MarbreBreadboard2=nullptr;
+  G4LogicalVolume *LogicalPALLAS_OptoMeK=nullptr;
+  G4LogicalVolume *LogicalPALLAS_ASMPoutre=nullptr;
+  G4LogicalVolume *LogicalPALLAS_StationYAG=nullptr;
+  G4LogicalVolume *LogicalPALLAS_BlindageBD=nullptr;
+  G4LogicalVolume *LogicalPALLAS_BlindageCBD=nullptr;
+  G4LogicalVolume *LogicalPALLAS_ChambreDipole=nullptr;
+  G4LogicalVolume *LogicalPALLAS_ChassisDipoleYAG=nullptr;
+  G4LogicalVolume *LogicalPALLAS_DiagsChamber=nullptr;
+  G4LogicalVolume *LogicalPALLAS_Dipole=nullptr;
+  G4LogicalVolume *LogicalPALLAS_BS1YAG=nullptr;
+  G4LogicalVolume *LogicalPALLAS_BSPEC1YAG=nullptr;
+  G4LogicalVolume *LogicalPALLAS_S4Tube=nullptr;
+  G4LogicalVolume *LogicalPALLAS_S4Tube1=nullptr;
+  G4LogicalVolume *LogicalPALLAS_S4Soufflet=nullptr;
+  G4LogicalVolume *LogicalPALLAS_S4Croix=nullptr;
+  G4LogicalVolume *LogicalPALLAS_Assemblage2Cellules=nullptr;
 
 
   // Physical volumes
-  G4VPhysicalVolume *PhysicalWorld;
-  G4VPhysicalVolume *PhysicalHolder;
-  G4VPhysicalVolume *PhysicalCollimator;
-  G4VPhysicalVolume *PhysicalFrontOutput;
-  G4VPhysicalVolume *PhysicalBackOutput;
-  G4VPhysicalVolume *PhysicalBFieldVolume; 
-  G4VPhysicalVolume *PhysicalPALLAS_QuadrupoleQ3;
-  G4VPhysicalVolume *PhysicalPALLAS_QuadrupoleQ4;
-  G4VPhysicalVolume *PhysicalPALLAS_ASMRemovalChamber;
-  G4VPhysicalVolume *PhysicalPALLAS_BreadboardRemovalChamber;
-  G4VPhysicalVolume *PhysicalPALLAS_ChassisRemovalChamber;
-  G4VPhysicalVolume *PhysicalPALLAS_TubeISO1;
-  G4VPhysicalVolume *PhysicalPALLAS_TubeISO2;
-  G4VPhysicalVolume *PhysicalPALLAS_ATH500_DN100;
-  G4VPhysicalVolume *PhysicalPALLAS_BaseMarbre;
-  G4VPhysicalVolume *PhysicalPALLAS_ChambreISO;
-  G4VPhysicalVolume *PhysicalPALLAS_QuadrupoleQ1;
-  G4VPhysicalVolume *PhysicalPALLAS_QuadrupoleQ2;
-  G4VPhysicalVolume *PhysicalPALLAS_Croix;
-  G4VPhysicalVolume *PhysicalPALLAS_LIFHublot1;
-  G4VPhysicalVolume *PhysicalPALLAS_LIFHublot2;
-  G4VPhysicalVolume *PhysicalPALLAS_LIFHublot3;
-  G4VPhysicalVolume *PhysicalPALLAS_LIFHublot4;
-  G4VPhysicalVolume *PhysicalPALLAS_LIFHublot5;
-  G4VPhysicalVolume *PhysicalPALLAS_LIF_IBX_DD;
-  G4VPhysicalVolume *PhysicalPALLAS_LIF_SQLT;
-  G4VPhysicalVolume *PhysicalPALLAS_MarbreBreadboard1;
-  G4VPhysicalVolume *PhysicalPALLAS_MarbreBreadboard2;
-  G4VPhysicalVolume *PhysicalPALLAS_OptoMeK;
-  G4VPhysicalVolume *PhysicalPALLAS_ASMPoutre;
-  G4VPhysicalVolume *PhysicalPALLAS_StationYAG;
-  G4VPhysicalVolume *PhysicalPALLAS_BlindageBD;
-  G4VPhysicalVolume *PhysicalPALLAS_BlindageCBD;
-  G4VPhysicalVolume *PhysicalPALLAS_ChambreDipole;
-  G4VPhysicalVolume *PhysicalPALLAS_ChassisDipoleYAG;
-  G4VPhysicalVolume *PhysicalPALLAS_DiagsChamber;
-  G4VPhysicalVolume *PhysicalPALLAS_Dipole;
-  G4VPhysicalVolume *PhysicalPALLAS_BS1YAG;
-  G4VPhysicalVolume *PhysicalPALLAS_BSPEC1YAG;
-  G4VPhysicalVolume *PhysicalPALLAS_Assemblage2Cellules;
+  G4VPhysicalVolume *PhysicalWorld=nullptr;
+  G4VPhysicalVolume *PhysicalHolder=nullptr;
+  G4VPhysicalVolume *PhysicalCollimator=nullptr;
+  G4VPhysicalVolume *PhysicalCollimator1=nullptr;
+  G4VPhysicalVolume *PhysicalCollimator2=nullptr;
+  G4VPhysicalVolume *PhysicalVerticalCollimator=nullptr;
+  G4VPhysicalVolume *PhysicalVerticalCollimator1=nullptr;
+  G4VPhysicalVolume *PhysicalVerticalCollimator2=nullptr;
+  G4VPhysicalVolume *PhysicalHorizontalCollimator=nullptr;
+  G4VPhysicalVolume *PhysicalHorizontalCollimator1=nullptr;
+  G4VPhysicalVolume *PhysicalHorizontalCollimator2=nullptr;
+  G4VPhysicalVolume *PhysicalFrontOutput=nullptr;
+  G4VPhysicalVolume *PhysicalBackOutput=nullptr;
+  G4VPhysicalVolume *PhysicalBFieldVolume=nullptr; 
+  G4VPhysicalVolume *PhysicalFakeDiagsChamber=nullptr; 
+  G4VPhysicalVolume *PhysicalPALLAS_QuadrupoleQ3=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_QuadrupoleQ4=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_ASMRemovalChamber=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_BreadboardRemovalChamber=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_ChassisRemovalChamber=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_TubeISO1=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_TubeISO2=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_ATH500_DN100=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_BaseMarbre=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_ChambreISO=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_QuadrupoleQ1=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_QuadrupoleQ2=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_Croix=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_LIFHublot1=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_LIFHublot2=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_LIFHublot3=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_LIFHublot4=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_LIFHublot5=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_LIF_IBX_DD=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_LIF_SQLT=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_MarbreBreadboard1=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_MarbreBreadboard2=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_OptoMeK=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_ASMPoutre=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_StationYAG=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_BlindageBD=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_BlindageCBD=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_ChambreDipole=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_ChassisDipoleYAG=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_DiagsChamber=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_Dipole=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_BS1YAG=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_BSPEC1YAG=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_S4Tube=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_S4Tube1=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_S4Soufflet=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_S4Croix=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_Assemblage2Cellules=nullptr;
 
   // Dimensions PLACEMENTS
   G4double Y_FrontOutput;

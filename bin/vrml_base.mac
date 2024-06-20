@@ -1,9 +1,58 @@
+#/control/alias NEventsToGenerate 106435 #PALLAS_qm1411_preCollimateur.txt
+
+######################################################
+########## PART FOR MESSENGER INFORMATIONS ###########
+######################################################
+/geometry/SetStatusRoundCollimator false
+/geometry/SetCollimatorMaterial %Material
+
+/geometry/SetCollimatorThickness %Thickness mm
+/gun/SetCollimatorThickness %Thickness mm #Important to have the same value than above !!!!
+
+/geometry/SetCollimatorInternalRadius 10.0 mm
+/geometry/SetCollimatorExternalRadius 100 mm
+/geometry/SetCollimatorLength 500 mm
+/geometry/SetCollimatorDistanceBetweenPlates %Ecart mm
+
+/geometry/SetCollimatorSpectrometerDistance 50 mm
+/gun/SetCollimatorSpectrometerDistance 50 mm #Important to have the same value than above !!!!
+
+
+
+
+/display/SetStatusDisplayCelluleGeometry false
+/display/SetStatusDisplayLIFGeometry false
+/display/SetStatusDisplaySection1Geometry false
+/display/SetStatusDisplaySection2Geometry false
+/display/SetStatusDisplaySection3Geometry false
+/display/SetStatusDisplaySection4Geometry true
+/display/SetStatusDisplaySection4DumpGeometry false
+/run/reinitializeGeometry
+
+
+
+/field/SetStatusMapBField false
+/field/SetConstantBField 0.0 tesla #0.4 tesla
+
+/step/SetTrackingStatus true
+
 /tracking/verbose 0
 /run/verbose 1
-/run/printProgress 100000
+/geometry/navigator/verbose 0
+/geometry/test/run
 
 
-/run/initialize
+
+
+
+######################################################
+##### PART TO SIMULATE PARTICLE WITH PARTICLEGUN #####
+######################################################
+/gun/SetStatusGunParticle true
+/gun/SetParticleName e-
+/gun/SetEnergyReference 247 MeV
+/gun/SetPhaseSpaceFilename PALLAS_phasespace_1411_preCollimateur.txt
+/gun/SetMacroChargeFilename PALLAS_qm1411_preCollimateur.txt
 
 
 
@@ -11,30 +60,14 @@
 ######################################################
 ### PART TO SIMULATE PARTICLE WITH GPS (no setgun) ###
 ######################################################
+/run/initialize
+#/run/printProgress 10000
+
 /gps/number 1
-#/gps/particle alpha
+/gps/particle e-
+
 /gps/pos/type Point
-/gps/pos/centre 0.0 0.0 -300.0 mm
-#/gps/energy %energy MeV
-/gps/direction 0.0 0.0 1.0
+/gps/pos/centre -0.152 0.0 0.08 mm
+/gps/direction 0.0 1.0 0.0
 
-#/gps/ene/type Lin
-#/#gps/ene/min 5000 keV
-#/gps/ene/max 200000 keV
-#/gps/ene/gradient 0
-#/gps/ene/intercept 1
-
-/gps/ang/type cos
-/gps/ang/rot1 -1 0 0
-/gps/ang/maxtheta 0.001 rad
-#/gps/ang/maxtheta 0.0004 rad
-
-
-/gps/ene/type Exp
-/gps/ene/min 100 keV
-/gps/ene/max 100. MeV
-/gps/ene/ezero 50 MeV
-
-/gps/particle ion
-/gps/ion %ion
-#/gps/ion 2 4 2
+/gps/energy 250. MeV

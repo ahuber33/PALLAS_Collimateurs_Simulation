@@ -51,17 +51,73 @@ PALLAS_CollSimGeometryConstruction::PALLAS_CollSimGeometryConstruction() : G4VUs
         .SetDefaultValue("false");
 
     // Commande GEOMETRY
+    gMessenger->DeclareProperty("SetStatusRoundCollimator", StatusRoundCollimator)
+        .SetGuidance("Set the boolean parameter.")
+        .SetParameterName("StatusRoundCollimator", false)
+        .SetDefaultValue("true");
+
+    gMessenger->DeclareProperty("SetVerticalCollimatorMaterial", VerticalCollimatorMaterial)
+        .SetGuidance("Set the boolean parameter.")
+        .SetParameterName("VerticalCollimatorMaterial", false)
+        .SetDefaultValue("G4_W");        
+
+    gMessenger->DeclareProperty("SetHorizontalCollimatorMaterial", HorizontalCollimatorMaterial)
+        .SetGuidance("Set the boolean parameter.")
+        .SetParameterName("HorizontalCollimatorMaterial", false)
+        .SetDefaultValue("G4_Pb");                
+
     gMessenger->DeclarePropertyWithUnit("SetCollimatorThickness", "mm", CollimatorThickness)
         .SetGuidance("Set the collimator thickness parameter.")
         .SetParameterName("CollimatorThickness", false)
         .SetDefaultValue("5.0 mm")
         .SetRange("CollimatorThickness >=0.0");
 
-    gMessenger->DeclarePropertyWithUnit("SetCollimatorInternalRadius", "mm", CollimatorInternalRadius)
+    gMessenger->DeclarePropertyWithUnit("SetVerticalCollimatorThickness", "mm", VerticalCollimatorThickness)
+        .SetGuidance("Set the vertical collimator thickness parameter.")
+        .SetParameterName("VerticalCollimatorThickness", false)
+        .SetDefaultValue("5.0 mm")
+        .SetRange("VerticalCollimatorThickness >=0.0");        
+
+    gMessenger->DeclarePropertyWithUnit("SetHorizontalCollimatorThickness", "mm", HorizontalCollimatorThickness)
+        .SetGuidance("Set the horizonntal collimator thickness parameter.")
+        .SetParameterName("HorizontalCollimatorThickness", false)
+        .SetDefaultValue("5.0 mm")
+        .SetRange("HorizontalCollimatorThickness >=0.0");
+
+    gMessenger->DeclarePropertyWithUnit("SetCollimatorVHDistance", "mm", CollimatorVHDistance)
+        .SetGuidance("Set the collimator distance between Vert & Hor plates.")
+        .SetParameterName("CollimatorVHDistance", false)
+        .SetDefaultValue("200.0 mm")
+        .SetRange("CollimatorVHDistance >=0.0");           
+
+    gMessenger->DeclareProperty("SetCollimatorInternalRadius", CollimatorInternalRadius)
         .SetGuidance("Set the collimator internal radius parameter.")
         .SetParameterName("CollimatorInternalRadius", false)
-        .SetDefaultValue("1.0 mm")
-        .SetRange("CollimatorInternalRadius >=0.0");
+        .SetDefaultValue("1.0");
+
+    gMessenger->DeclarePropertyWithUnit("SetCollimatorLength", "mm", CollimatorLength)
+        .SetGuidance("Set the collimator length parameter.")
+        .SetParameterName("CollimatorLength", false)
+        .SetDefaultValue("200.0 mm")
+        .SetRange("CollimatorLength >=0.0");        
+
+    gMessenger->DeclarePropertyWithUnit("SetCollimatorDistanceBetweenPlates", "mm", CollimatorDistanceBetweenPlates)
+        .SetGuidance("Set the collimator distance between plates parameter.")
+        .SetParameterName("CollimatorDistanceBetweenPlates", false)
+        .SetDefaultValue("200.0 mm")
+        .SetRange("CollimatorDistanceBetweenPlates >=0.0");                
+
+    gMessenger->DeclarePropertyWithUnit("SetOpenVerticalCollimator", "mm", OpenVerticalCollimator)
+        .SetGuidance("Set the open vertical collimator.")
+        .SetParameterName("OpenVerticalCollimator", false)
+        .SetDefaultValue("200.0 mm")
+        .SetRange("OpenVerticalCollimator >=0.0");  
+
+    gMessenger->DeclarePropertyWithUnit("SetOpenHorizontalCollimator", "mm", OpenHorizontalCollimator)
+        .SetGuidance("Set the open Horizontal collimator.")
+        .SetParameterName("OpenHorizontalCollimator", false)
+        .SetDefaultValue("10.0 mm")
+        .SetRange("OpenHorizontalCollimator >=0.0");                                   
 
     gMessenger->DeclarePropertyWithUnit("SetCollimatorExternalRadius", "mm", CollimatorExternalRadius)
         .SetGuidance("Set the collimator external radius parameter.")
@@ -146,7 +202,7 @@ void PALLAS_CollSimGeometryConstruction::SetLogicalVolumeColor(G4LogicalVolume *
     cyan->SetForceSolid(true);
     cyan->SetVisibility(true);
 
-    blue = new G4VisAttributes(G4Colour(0, 0, 1, 0.02));
+    blue = new G4VisAttributes(G4Colour(0, 0, 1, 0.5));
     //  blue->SetForceWireframe(true);
     blue->SetForceSolid(true);
     blue->SetVisibility(true);
@@ -208,11 +264,11 @@ void PALLAS_CollSimGeometryConstruction::CreateWorldAndHolder()
 
     // Create World Volume
     // This is just a big box to place all other logical volumes inside
-    G4Box *SolidWorld = new G4Box("SolidWorld", 10.1 * m, 10.1 * m, 10.1 * m);
+    G4Box *SolidWorld = new G4Box("SolidWorld",2.1 * m, 15.1 * m, 2.1 * m);
     LogicalWorld = new G4LogicalVolume(SolidWorld, Vacuum, "LogicalWorld", 0, 0, 0);
     SetLogicalVolumeColor(LogicalWorld, "invis");
 
-    G4Box *SolidHolder = new G4Box("SolidHolder", 10.05 * m, 10.05 * m, 10.05 * m);
+    G4Box *SolidHolder = new G4Box("SolidHolder", 2.05 * m, 15.05 * m, 2.05 * m);
     LogicalHolder = new G4LogicalVolume(SolidHolder, Vacuum, "LogicalHolder", 0, 0, 0);
     SetLogicalVolumeColor(LogicalHolder, "invis");
 
@@ -312,34 +368,10 @@ void PALLAS_CollSimGeometryConstruction::ConstructBField()
     }
 }
 
-void PALLAS_CollSimGeometryConstruction::ConstructCollimator()
-{
-    LogicalCollimator = Geom->GetRoundCollimator();
-    G4GeometryManager::GetInstance()->OpenGeometry();
-
-    auto pipe = static_cast<G4Tubs *>(G4LogicalVolumeStore::GetInstance()->GetVolume("RoundCollimator")->GetSolid());
-    pipe->SetInnerRadius(CollimatorInternalRadius);
-    pipe->SetOuterRadius(CollimatorExternalRadius);
-    pipe->SetZHalfLength(CollimatorThickness / 2);
-
-    SetLogicalVolumeColor(LogicalCollimator, "black");
-
-    G4RotationMatrix *rotationMatrix = new G4RotationMatrix();
-    rotationMatrix->rotateX(90.0 * deg);
-
-    G4ThreeVector translation(0.152 * mm, 3109.5 - CollimatorSpectrometerDistance, 0.08 * mm);
-
-    PhysicalCollimator = new G4PVPlacement(rotationMatrix,
-                                           translation,
-                                           LogicalCollimator,
-                                           "Collimator",
-                                           LogicalHolder,
-                                           false,
-                                           0);
-}
-
 void PALLAS_CollSimGeometryConstruction::ConstructCollimatorWithOutput()
 {
+    if(StatusRoundCollimator ==true)
+    {
     LogicalCollimator = Geom->GetRoundCollimator();
     LogicalFrontOutput = Geom->GetOutputCollimator();
     LogicalBackOutput = Geom->GetOutputCollimator();
@@ -357,10 +389,10 @@ void PALLAS_CollSimGeometryConstruction::ConstructCollimatorWithOutput()
     G4RotationMatrix *rotationMatrix = new G4RotationMatrix();
     rotationMatrix->rotateX(90.0 * deg);
 
-    G4ThreeVector translation(0.152 * mm, 3109.5 - CollimatorSpectrometerDistance, 0.08 * mm);
+    G4ThreeVector translation(-0.152 * mm, 3114.5 - CollimatorSpectrometerDistance - CollimatorThickness/2, 0.08 * mm);
 
-    Y_FrontOutput = (3109.5 - CollimatorSpectrometerDistance) + 0.5 + CollimatorThickness / 2;
-    Y_BackOutput = (3109.5 - CollimatorSpectrometerDistance) - 0.5 - CollimatorThickness / 2;
+    Y_FrontOutput = (3114.5 - CollimatorSpectrometerDistance) + 0.5 + CollimatorThickness / 2;
+    Y_BackOutput = (3114.5 - CollimatorSpectrometerDistance) - 0.5 - CollimatorThickness / 2;
 
     PhysicalCollimator = new G4PVPlacement(rotationMatrix,
                                            translation,
@@ -370,8 +402,8 @@ void PALLAS_CollSimGeometryConstruction::ConstructCollimatorWithOutput()
                                            false,
                                            0);
 
-    G4ThreeVector translationFront(0.152 * mm, Y_FrontOutput, 0.08 * mm);
-    G4ThreeVector translationBack(0.152 * mm, Y_BackOutput, 0.08 * mm);
+    G4ThreeVector translationFront(-0.152 * mm, Y_FrontOutput, 0.08 * mm);
+    G4ThreeVector translationBack(-0.152 * mm, Y_BackOutput, 0.08 * mm);
 
     PhysicalFrontOutput = new G4PVPlacement(rotationMatrix,
                                             translationFront,
@@ -388,7 +420,166 @@ void PALLAS_CollSimGeometryConstruction::ConstructCollimatorWithOutput()
                                            LogicalHolder,
                                            false,
                                            0);
+    }
+
+    else
+    {
+    LogicalCollimator = Geom->GetCollimator("Collimator");
+    Material = G4NistManager::Instance()->FindOrBuildMaterial(CollimatorMaterial);
+    LogicalCollimator->SetMaterial(Material);
+    LogicalFrontOutput = Geom->GetOutputCollimator();
+    LogicalBackOutput = Geom->GetOutputCollimator();
+    G4GeometryManager::GetInstance()->OpenGeometry();
+
+    auto pipe1 = static_cast<G4Box *>(G4LogicalVolumeStore::GetInstance()->GetVolume("Collimator")->GetSolid());
+    pipe1->SetXHalfLength(CollimatorLength/2);
+    pipe1->SetYHalfLength(CollimatorLength/2);
+    pipe1->SetZHalfLength(CollimatorThickness / 2);
+
+    SetLogicalVolumeColor(LogicalCollimator, "black");
+    SetLogicalVolumeColor(LogicalFrontOutput, "yellow");
+    SetLogicalVolumeColor(LogicalBackOutput, "red");
+
+    G4RotationMatrix *rotationMatrix = new G4RotationMatrix();
+    rotationMatrix->rotateX(90.0 * deg);
+
+    // G4ThreeVector translation1((-0.152-CollimatorDistanceBetweenPlates-CollimatorLength/2) * mm, 3114.5 - CollimatorSpectrometerDistance - CollimatorThickness/2, 0.08 * mm);
+    // G4ThreeVector translation2((-0.152+CollimatorDistanceBetweenPlates+CollimatorLength/2) * mm, 3114.5 - CollimatorSpectrometerDistance - CollimatorThickness/2, 0.08 * mm);
+
+    G4ThreeVector translation1(-0.152 * mm, 3114.5 - CollimatorSpectrometerDistance - CollimatorThickness/2, (0.08-CollimatorDistanceBetweenPlates-CollimatorLength/2) * mm);
+    G4ThreeVector translation2(-0.152 * mm, 3114.5 - CollimatorSpectrometerDistance - CollimatorThickness/2, (0.08+CollimatorDistanceBetweenPlates+CollimatorLength/2) * mm);
+
+    Y_FrontOutput = (3114.5 - CollimatorSpectrometerDistance - CollimatorThickness/2) + 0.5 + CollimatorThickness / 2;
+    Y_BackOutput = (3114.5 - CollimatorSpectrometerDistance- CollimatorThickness/2) - 0.5 - CollimatorThickness / 2;
+
+    PhysicalCollimator1 = new G4PVPlacement(rotationMatrix,
+                                           translation1,
+                                           LogicalCollimator,
+                                           "Collimator1",
+                                           LogicalHolder,
+                                           false,
+                                           0);
+
+
+    PhysicalCollimator2 = new G4PVPlacement(rotationMatrix,
+                                           translation2,
+                                           LogicalCollimator,
+                                           "Collimator2",
+                                           LogicalHolder,
+                                           false,
+                                           0);                                           
+
+
+    G4ThreeVector translationFront(-0.152 * mm, Y_FrontOutput, 0.08 * mm);
+    G4ThreeVector translationBack(-0.152 * mm, Y_BackOutput, 0.08 * mm);
+
+    PhysicalFrontOutput = new G4PVPlacement(rotationMatrix,
+                                            translationFront,
+                                            LogicalFrontOutput,
+                                            "FrontOutput",
+                                            LogicalHolder,
+                                            false,
+                                            0);
+
+    PhysicalBackOutput = new G4PVPlacement(rotationMatrix,
+                                           translationBack,
+                                           LogicalBackOutput,
+                                           "BackOutput",
+                                           LogicalHolder,
+                                           false,
+                                           0);                                           
+
+
+    }
+
 }
+
+
+void PALLAS_CollSimGeometryConstruction::ConstructVerticalCollimator()
+{
+
+LogicalVerticalCollimator = Geom->GetCollimator("V");
+Material = G4NistManager::Instance()->FindOrBuildMaterial(VerticalCollimatorMaterial);
+LogicalVerticalCollimator->SetMaterial(Material);
+G4GeometryManager::GetInstance()->OpenGeometry();
+
+auto pipe1 = static_cast<G4Box *>(G4LogicalVolumeStore::GetInstance()->GetVolume("V")->GetSolid());
+pipe1->SetXHalfLength(CollimatorLength/2);
+pipe1->SetYHalfLength(CollimatorLength/2);
+pipe1->SetZHalfLength(VerticalCollimatorThickness / 2);
+
+SetLogicalVolumeColor(LogicalVerticalCollimator, "blue");
+
+G4RotationMatrix *rotationMatrix = new G4RotationMatrix();
+rotationMatrix->rotateX(90.0 * deg);
+
+G4ThreeVector translation1((-0.152-OpenVerticalCollimator-CollimatorLength/2) * mm, 3114.5 - CollimatorSpectrometerDistance - HorizontalCollimatorThickness - CollimatorVHDistance -VerticalCollimatorThickness/2, 0.08 * mm);
+G4ThreeVector translation2((-0.152+OpenVerticalCollimator+CollimatorLength/2) * mm, 3114.5 - CollimatorSpectrometerDistance - HorizontalCollimatorThickness - CollimatorVHDistance -VerticalCollimatorThickness/2, 0.08 * mm);
+
+
+PhysicalVerticalCollimator1 = new G4PVPlacement(rotationMatrix,
+                                        translation1,
+                                        LogicalVerticalCollimator,
+                                        "VerticalCollimator1",
+                                        LogicalHolder,
+                                        false,
+                                        0);
+
+
+PhysicalVerticalCollimator2 = new G4PVPlacement(rotationMatrix,
+                                        translation2,
+                                        LogicalVerticalCollimator,
+                                        "VerticalCollimator2",
+                                        LogicalHolder,
+                                        false,
+                                        0);                                           
+
+}
+
+void PALLAS_CollSimGeometryConstruction::ConstructHorizontalCollimator()
+{
+
+LogicalHorizontalCollimator = Geom->GetCollimator("H");
+Material = G4NistManager::Instance()->FindOrBuildMaterial(HorizontalCollimatorMaterial);
+LogicalHorizontalCollimator->SetMaterial(Material);
+
+G4GeometryManager::GetInstance()->OpenGeometry();
+
+auto pipe1 = static_cast<G4Box *>(G4LogicalVolumeStore::GetInstance()->GetVolume("H")->GetSolid());
+pipe1->SetXHalfLength(CollimatorLength/2);
+pipe1->SetYHalfLength(CollimatorLength/2);
+pipe1->SetZHalfLength(HorizontalCollimatorThickness / 2);
+
+SetLogicalVolumeColor(LogicalHorizontalCollimator, "black");
+
+
+G4RotationMatrix *rotationMatrix = new G4RotationMatrix();
+rotationMatrix->rotateX(90.0 * deg);
+
+
+G4ThreeVector translation1(-0.152 * mm, 3114.5 - CollimatorSpectrometerDistance - HorizontalCollimatorThickness/2, (0.08 - OpenHorizontalCollimator-CollimatorLength/2) * mm);
+G4ThreeVector translation2(-0.152 * mm, 3114.5 - CollimatorSpectrometerDistance - HorizontalCollimatorThickness/2, (0.08 + OpenHorizontalCollimator+CollimatorLength/2) * mm);
+
+
+PhysicalHorizontalCollimator1 = new G4PVPlacement(rotationMatrix,
+                                        translation1,
+                                        LogicalHorizontalCollimator,
+                                        "HorizontalCollimator1",
+                                        LogicalHolder,
+                                        false,
+                                        0);
+
+
+PhysicalHorizontalCollimator2 = new G4PVPlacement(rotationMatrix,
+                                        translation2,
+                                        LogicalHorizontalCollimator,
+                                        "HorizontalCollimator2",
+                                        LogicalHolder,
+                                        false,
+                                        0);                                                                              
+
+}
+
 
 void PALLAS_CollSimGeometryConstruction::ConstructCellulePart()
 {
@@ -614,15 +805,28 @@ void PALLAS_CollSimGeometryConstruction::ConstructSection4Part()
         LogicalPALLAS_Dipole = Geom->GetPALLAS_Dipole();
         LogicalPALLAS_BS1YAG = Geom->GetPALLAS_BS1YAG();
         LogicalPALLAS_BSPEC1YAG = Geom->GetPALLAS_BSPEC1YAG();
+        LogicalPALLAS_DiagsChamber = Geom->GetPALLAS_DiagsChamber();
+        LogicalPALLAS_S4Tube = Geom->GetPALLAS_S4Tube();
+        LogicalPALLAS_S4Tube1 = Geom->GetPALLAS_S4Tube1();
+        LogicalPALLAS_S4Soufflet = Geom->GetPALLAS_S4Soufflet();
+        LogicalPALLAS_S4Croix = Geom->GetPALLAS_S4Croix();
+        LogicalFakeDiagsChamber = Geom->GetFakeDiagsChamber();
 
         SetLogicalVolumeColor(LogicalPALLAS_ChambreDipole, "cyan");
         SetLogicalVolumeColor(LogicalPALLAS_Dipole, "red");
         SetLogicalVolumeColor(LogicalPALLAS_BS1YAG, "yellow");
         SetLogicalVolumeColor(LogicalPALLAS_BSPEC1YAG, "yellow");
+        SetLogicalVolumeColor(LogicalPALLAS_DiagsChamber, "yellow");
+        SetLogicalVolumeColor(LogicalPALLAS_S4Tube, "yellow");
+        SetLogicalVolumeColor(LogicalPALLAS_S4Tube1, "yellow");
+        SetLogicalVolumeColor(LogicalPALLAS_S4Soufflet, "yellow");
+        SetLogicalVolumeColor(LogicalPALLAS_S4Croix, "yellow");
+        SetLogicalVolumeColor(LogicalFakeDiagsChamber, "yellow");
 
         PhysicalPALLAS_ChambreDipole = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0.152 * mm, -3449.5 * mm, -10.855 * mm)),
                                                          LogicalPALLAS_ChambreDipole, "ChambreDipole",
                                                          LogicalBFieldVolume, false, 0);
+
 
         PhysicalPALLAS_Dipole = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0.152 * mm, -3449.5 * mm, -10.855 * mm)),
                                                   LogicalPALLAS_Dipole, "Dipole",
@@ -635,6 +839,38 @@ void PALLAS_CollSimGeometryConstruction::ConstructSection4Part()
         PhysicalPALLAS_BSPEC1YAG = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
                                                      LogicalPALLAS_BSPEC1YAG, "BSPEC1_YAG",
                                                      LogicalHolder, false, 0);
+
+
+        // PhysicalPALLAS_DiagsChamber = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
+        //                                                 LogicalPALLAS_DiagsChamber, "DiagsChamber",
+        //                                                 LogicalHolder, false, 0);
+
+
+        PhysicalFakeDiagsChamber = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 3960 * mm, 150 * mm)),
+                                                        LogicalFakeDiagsChamber, "FakeDiagsChamber",
+                                                        LogicalHolder, false, 0);                                                        
+
+
+        PhysicalPALLAS_S4Tube = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
+                                                        LogicalPALLAS_S4Tube, "S4Tube",
+                                                        LogicalHolder, false, 0);
+
+
+        PhysicalPALLAS_S4Tube1 = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
+                                                        LogicalPALLAS_S4Tube1, "S4Tube1",
+                                                        LogicalHolder, false, 0);      
+
+
+        PhysicalPALLAS_S4Soufflet = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
+                                                        LogicalPALLAS_S4Soufflet, "S4Soufflet",
+                                                        LogicalHolder, false, 0);            
+
+
+        PhysicalPALLAS_S4Croix = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
+                                                        LogicalPALLAS_S4Croix, "S4Croix",
+                                                        LogicalHolder, false, 0);                                                                                                                                                      
+                                                            
+                                                        
     }
     else
     {
@@ -649,12 +885,12 @@ void PALLAS_CollSimGeometryConstruction::ConstructSection4DumpPart()
         LogicalPALLAS_BlindageBD = Geom->GetPALLAS_BlindageBD();
         LogicalPALLAS_BlindageCBD = Geom->GetPALLAS_BlindageCBD();
         LogicalPALLAS_ChassisDipoleYAG = Geom->GetPALLAS_ChassisDipoleYAG();
-        LogicalPALLAS_DiagsChamber = Geom->GetPALLAS_DiagsChamber();
+        
 
         SetLogicalVolumeColor(LogicalPALLAS_BlindageBD, "blue");
         SetLogicalVolumeColor(LogicalPALLAS_BlindageCBD, "blue");
         SetLogicalVolumeColor(LogicalPALLAS_ChassisDipoleYAG, "blue");
-        SetLogicalVolumeColor(LogicalPALLAS_DiagsChamber, "blue");
+        
 
         PhysicalPALLAS_BlindageBD = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
                                                       LogicalPALLAS_BlindageBD, "BlindageBD",
@@ -668,9 +904,6 @@ void PALLAS_CollSimGeometryConstruction::ConstructSection4DumpPart()
                                                             LogicalPALLAS_ChassisDipoleYAG, "ChassisDipoleYAG",
                                                             LogicalHolder, false, 0);
 
-        PhysicalPALLAS_DiagsChamber = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
-                                                        LogicalPALLAS_DiagsChamber, "DiagsChamber",
-                                                        LogicalHolder, false, 0);
     }
     else
     {
@@ -700,8 +933,9 @@ G4VPhysicalVolume *PALLAS_CollSimGeometryConstruction::Construct()
     //*********************** *********
     CreateWorldAndHolder();
     ConstructBField();
-    // ConstructCollimator();
-    ConstructCollimatorWithOutput();
+    //ConstructCollimatorWithOutput();
+    ConstructVerticalCollimator();
+    ConstructHorizontalCollimator();
     ConstructCellulePart();
     ConstructLIFPart();
     ConstructSection1Part();

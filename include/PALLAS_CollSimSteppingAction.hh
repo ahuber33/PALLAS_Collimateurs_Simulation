@@ -27,6 +27,7 @@ public:
   void UpdateFrontCollimatorInformations(PALLAS_CollSimEventAction *evtac);
   void UpdateBackCollimatorInformations(PALLAS_CollSimEventAction *evtac);
   void UpdateBremInformations(PALLAS_CollSimEventAction *evtac);
+  void UpdateYAGInformations(PALLAS_CollSimEventAction *evtac);
   void UserSteppingAction(const G4Step *);
   // int Flag_gamma;
 
@@ -48,6 +49,9 @@ private:
   G4double x;
   G4double y;
   G4double z;
+  G4double xpost;
+  G4double ypost;
+  G4double zpost;
   G4double px;
   G4double py;
   G4double pz;

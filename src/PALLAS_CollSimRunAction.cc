@@ -8,16 +8,9 @@
 PALLAS_CollSimRunAction::PALLAS_CollSimRunAction(char* suff):suffixe(suff){}
 PALLAS_CollSimRunAction::~PALLAS_CollSimRunAction(){}
 
-
-//-----------------------------------------------------
-//  BeginOfRunAction:  used to calculate the start time and
-//  to set up information in the run tree.
-//-----------------------------------------------------
-void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
-
-  G4String fileName = suffixe+".root";
-
-  start = time(NULL);     //start the timer clock to calculate run times
+void PALLAS_CollSimRunAction::InitializeRootFile(G4String fileName)
+{
+  f = new TFile(fileName.c_str(),"RECREATE");
 
   Tree_Input = new TTree("Input","Input Information");  //Tree to access Collimator information
   Tree_Collimator = new TTree("Collimator","Collimator Information");  //Tree to access Collimator information
@@ -72,7 +65,21 @@ void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
   RunBranch = Tree_YAG->Branch("x_exit", "vector<float>" , &StatsYAG.x_exit);
   RunBranch = Tree_YAG->Branch("y_exit", "vector<float>" , &StatsYAG.y_exit);
   RunBranch = Tree_YAG->Branch("z_exit", "vector<float>" , &StatsYAG.z_exit);
+  RunBranch = Tree_YAG->Branch("parentID", "vector<float>" , &StatsYAG.parentID);
   RunBranch = Tree_YAG->Branch("energy", "vector<float>" , &StatsYAG.energy);
+}
+
+//-----------------------------------------------------
+//  BeginOfRunAction:  used to calculate the start time and
+//  to set up information in the run tree.
+//-----------------------------------------------------
+void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
+
+  G4String fileName = suffixe+".root";
+
+  InitializeRootFile(fileName);
+  start = time(NULL);     //start the timer clock to calculate run times
+  
 
 
   //set the random seed to the CPU clock
@@ -100,12 +107,12 @@ void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
 void PALLAS_CollSimRunAction::EndOfRunAction(const G4Run*aRun){
 
   //update the temp root file
-  G4String fileName = suffixe+".root";
-  f = new TFile(fileName,"update");
+  // G4String fileName = suffixe+".root";
+  // f = new TFile(fileName,"update");
   Tree_Input->Write();
-  Tree_Collimator->Write();
+  //Tree_Collimator->Write();
   Tree_FrontCollimator->Write();
-  Tree_BackCollimator->Write();
+  //Tree_BackCollimator->Write();
   Tree_YAG->Write();
   f->Close();
 
