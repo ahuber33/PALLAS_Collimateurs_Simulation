@@ -61,8 +61,13 @@
 #include "G4DormandPrinceRK78.hh"
 #include "G4TsitourasRK45.hh"
 #include "G4GeometryTolerance.hh"
+#include "G4AutoLock.hh"
+#include "PALLAS_CollSimMagneticField.hh"
 
 class Geometry;
+class G4FieldManager;
+
+class PALLAS_CollSimMagneticField;
 
 class PALLAS_CollSimGeometryConstruction : public G4VUserDetectorConstruction
 {
@@ -76,7 +81,7 @@ public:
   void ConstructCollimatorWithOutput();
   void ConstructVerticalCollimator();
   void ConstructHorizontalCollimator();
-  void ConstructBField();
+  void ConstructBFieldVolume();
   void ConstructCellulePart();
   void ConstructLIFPart();
   void ConstructSection1Part();
@@ -84,7 +89,8 @@ public:
   void ConstructSection3Part();
   void ConstructSection4Part();
   void ConstructSection4DumpPart();
-  G4VPhysicalVolume *Construct();
+  void ConstructSDandField() override;
+  G4VPhysicalVolume *Construct() override;
   
 
 private:
@@ -103,11 +109,10 @@ private:
   G4bool StatusDisplaySection3Geometry=false;
   G4bool StatusDisplaySection4Geometry=false;
   G4bool StatusDisplaySection4DumpGeometry=false;
-  G4bool StatusMapBField=false;
   G4bool StatusRoundCollimator=false;
-  G4String CollimatorMaterial;
-  G4String VerticalCollimatorMaterial;
-  G4String HorizontalCollimatorMaterial;
+  G4String CollimatorMaterial = "G4_Al";
+  G4String VerticalCollimatorMaterial = "G4_Al";
+  G4String HorizontalCollimatorMaterial = "G4_Al";
 
   // Dimension values
   G4double CollimatorThickness=1.0*mm;
@@ -252,9 +257,9 @@ private:
   G4RotationMatrix Flip;
   G4RotationMatrix* RotationMatrix;
 
-  G4MagneticField *localmagField;
-  G4Mag_UsualEqRhs* fEquationlocal;
-  G4MagIntegratorStepper* localfStepperMag;
+  static G4ThreadLocal PALLAS_CollSimMagneticField* fMagneticField;
+  static G4ThreadLocal G4FieldManager* fFieldMgr;
+
 
 
 

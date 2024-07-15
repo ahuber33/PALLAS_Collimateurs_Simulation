@@ -1,0 +1,24 @@
+#ifndef PARTICLE_DATA_HH
+#define PARTICLE_DATA_HH
+
+#include <string>
+#include <mutex>
+#include <queue>
+
+// Structure pour stocker les données des particules
+struct ParticleData {
+    G4double x;
+    G4double xp;
+    G4double z;
+    G4double zp;
+    G4double s;
+    G4double delta;
+    G4int n;
+  };
+
+struct ThreadEventData {
+    std::queue<ParticleData> eventQueue;
+    std::mutex mutex;
+
+};
+#endif // PARTICLE_DATA_HH

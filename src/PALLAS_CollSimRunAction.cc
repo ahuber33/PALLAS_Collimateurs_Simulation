@@ -3,13 +3,30 @@
 //// Copyright: 2024 (C) Projet PALLAS
 
 #include "PALLAS_CollSimRunAction.hh"
+std::atomic<int> PALLAS_CollSimRunAction::activeThreads(0);
+G4Mutex PALLAS_CollSimRunAction::fileMutex = G4MUTEX_INITIALIZER;
 
+PALLAS_CollSimRunAction::PALLAS_CollSimRunAction(const char* suff):suffixe(suff)
+{}
 
-PALLAS_CollSimRunAction::PALLAS_CollSimRunAction(char* suff):suffixe(suff){}
-PALLAS_CollSimRunAction::~PALLAS_CollSimRunAction(){}
+PALLAS_CollSimRunAction::~PALLAS_CollSimRunAction()
+{}
 
-void PALLAS_CollSimRunAction::InitializeRootFile(G4String fileName)
-{
+//-----------------------------------------------------
+//  BeginOfRunAction:  used to calculate the start time and
+//  to set up information in the run tree.
+//-----------------------------------------------------
+void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
+
+  G4AutoLock lock(&fileMutex); // Verrouillage automatique du mutex
+
+  start = time(NULL);     //start the timer clock to calculate run times
+
+  int a=activeThreads;
+  G4String s = std::to_string(a);
+  
+  G4String fileName = s+".root";
+  G4cout << "Filename = " << fileName << G4endl;
   f = new TFile(fileName.c_str(),"RECREATE");
 
   Tree_Input = new TTree("Input","Input Information");  //Tree to access Collimator information
@@ -43,23 +60,23 @@ void PALLAS_CollSimRunAction::InitializeRootFile(G4String fileName)
   RunBranch = Tree_FrontCollimator->Branch("ParticleID", "vector<int>" , &StatsFrontCollimator.particleID);
   RunBranch = Tree_FrontCollimator->Branch("ParentID", "vector<int>" , &StatsFrontCollimator.parentID);
   RunBranch = Tree_FrontCollimator->Branch("E_exit", "vector<float>" , &StatsFrontCollimator.E_exit);
-  // RunBranch = Tree_FrontCollimator->Branch("x_exit", "vector<float>" , &StatsFrontCollimator.x_exit);
-  // RunBranch = Tree_FrontCollimator->Branch("y_exit", "vector<float>" , &StatsFrontCollimator.y_exit);
-  // RunBranch = Tree_FrontCollimator->Branch("z_exit", "vector<float>" , &StatsFrontCollimator.z_exit);
-  // RunBranch = Tree_FrontCollimator->Branch("px_exit", "vector<float>" , &StatsFrontCollimator.px_exit);
-  // RunBranch = Tree_FrontCollimator->Branch("py_exit", "vector<float>" , &StatsFrontCollimator.py_exit);
-  // RunBranch = Tree_FrontCollimator->Branch("pz_exit", "vector<float>" , &StatsFrontCollimator.pz_exit);
+  RunBranch = Tree_FrontCollimator->Branch("x_exit", "vector<float>" , &StatsFrontCollimator.x_exit);
+  RunBranch = Tree_FrontCollimator->Branch("y_exit", "vector<float>" , &StatsFrontCollimator.y_exit);
+  RunBranch = Tree_FrontCollimator->Branch("z_exit", "vector<float>" , &StatsFrontCollimator.z_exit);
+  RunBranch = Tree_FrontCollimator->Branch("px_exit", "vector<float>" , &StatsFrontCollimator.px_exit);
+  RunBranch = Tree_FrontCollimator->Branch("py_exit", "vector<float>" , &StatsFrontCollimator.py_exit);
+  RunBranch = Tree_FrontCollimator->Branch("pz_exit", "vector<float>" , &StatsFrontCollimator.pz_exit);
 
   //*****************************INFORMATION FROM THE BACK SURFACE**************************************
   RunBranch = Tree_BackCollimator->Branch("ParticleID", "vector<int>" , &StatsBackCollimator.particleID);
   RunBranch = Tree_BackCollimator->Branch("ParentID", "vector<int>" , &StatsBackCollimator.parentID);
   RunBranch = Tree_BackCollimator->Branch("E_exit", "vector<float>" , &StatsBackCollimator.E_exit);
-  // RunBranch = Tree_BackCollimator->Branch("x_exit", "vector<float>" , &StatsBackCollimator.x_exit);
-  // RunBranch = Tree_BackCollimator->Branch("y_exit", "vector<float>" , &StatsBackCollimator.y_exit);
-  // RunBranch = Tree_BackCollimator->Branch("z_exit", "vector<float>" , &StatsBackCollimator.z_exit);
-  // RunBranch = Tree_BackCollimator->Branch("px_exit", "vector<float>" , &StatsBackCollimator.px_exit);
-  // RunBranch = Tree_BackCollimator->Branch("py_exit", "vector<float>" , &StatsBackCollimator.py_exit);
-  // RunBranch = Tree_BackCollimator->Branch("pz_exit", "vector<float>" , &StatsBackCollimator.pz_exit);
+  RunBranch = Tree_BackCollimator->Branch("x_exit", "vector<float>" , &StatsBackCollimator.x_exit);
+  RunBranch = Tree_BackCollimator->Branch("y_exit", "vector<float>" , &StatsBackCollimator.y_exit);
+  RunBranch = Tree_BackCollimator->Branch("z_exit", "vector<float>" , &StatsBackCollimator.z_exit);
+  RunBranch = Tree_BackCollimator->Branch("px_exit", "vector<float>" , &StatsBackCollimator.px_exit);
+  RunBranch = Tree_BackCollimator->Branch("py_exit", "vector<float>" , &StatsBackCollimator.py_exit);
+  RunBranch = Tree_BackCollimator->Branch("pz_exit", "vector<float>" , &StatsBackCollimator.pz_exit);
 
   //************************************INFORMATION FROM THE YAG*****************************************
   RunBranch = Tree_YAG->Branch("x_exit", "vector<float>" , &StatsYAG.x_exit);
@@ -67,24 +84,14 @@ void PALLAS_CollSimRunAction::InitializeRootFile(G4String fileName)
   RunBranch = Tree_YAG->Branch("z_exit", "vector<float>" , &StatsYAG.z_exit);
   RunBranch = Tree_YAG->Branch("parentID", "vector<float>" , &StatsYAG.parentID);
   RunBranch = Tree_YAG->Branch("energy", "vector<float>" , &StatsYAG.energy);
-}
 
-//-----------------------------------------------------
-//  BeginOfRunAction:  used to calculate the start time and
-//  to set up information in the run tree.
-//-----------------------------------------------------
-void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
 
-  G4String fileName = suffixe+".root";
 
-  InitializeRootFile(fileName);
-  start = time(NULL);     //start the timer clock to calculate run times
-  
 
 
   //set the random seed to the CPU clock
   //G4Random::setTheEngine(new CLHEP::HepJamesRandom);
-  G4long seed = time(NULL);
+  G4long seed = time(NULL) + a;
   G4Random::setTheSeed(seed);
   //G4Random::setTheSeed(1712670533);
   G4cout << "seed = " << seed << G4endl;
@@ -96,6 +103,7 @@ void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
     UI->ApplyCommand("/vis/scene/notifyHandlers");
   }
 
+  activeThreads++;
 
 }  //end BeginOfRunAction
 
@@ -105,16 +113,16 @@ void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
 //  to write information to the run tree.
 //-----------------------------------------------------
 void PALLAS_CollSimRunAction::EndOfRunAction(const G4Run*aRun){
+  G4AutoLock lock(&fileMutex); // Verrouillage automatique du mutex
 
-  //update the temp root file
-  // G4String fileName = suffixe+".root";
-  // f = new TFile(fileName,"update");
-  Tree_Input->Write();
+  //Tree_Input->Write();
   //Tree_Collimator->Write();
-  Tree_FrontCollimator->Write();
+  //Tree_FrontCollimator->Write();
   //Tree_BackCollimator->Write();
   Tree_YAG->Write();
   f->Close();
+  delete f;
+  f=nullptr;
 
   if (G4VVisManager::GetConcreteInstance()){
     G4UImanager::GetUIpointer()->ApplyCommand("/vis/viewer/update");
@@ -145,26 +153,46 @@ void PALLAS_CollSimRunAction::EndOfRunAction(const G4Run*aRun){
 //---------------------------------------------------------
 
 void PALLAS_CollSimRunAction::UpdateStatisticsInput(RunTallyInput aRunTallyInput){
+  std::lock_guard<std::mutex> lock(fileMutex);
   StatsInput = aRunTallyInput;
-  Tree_Input->Fill();
+  if (Tree_Input)Tree_Input->Fill();
+  else{
+    G4cerr << "Error : Tree_Input is nullptr" << G4endl;
+  }
 }
 
 void PALLAS_CollSimRunAction::UpdateStatisticsCollimator(RunTallyCollimator aRunTallyCollimator){
+  std::lock_guard<std::mutex> lock(fileMutex);
   StatsCollimator = aRunTallyCollimator;
-  Tree_Collimator->Fill();
+  if (Tree_Collimator) Tree_Collimator->Fill();
+  else{
+    G4cerr << "Error : Tree_Collimator is nullptr" << G4endl;
+  }
 }
 
 void PALLAS_CollSimRunAction::UpdateStatisticsFrontCollimator(RunTallyFrontCollimator aRunTallyFrontCollimator){
+  std::lock_guard<std::mutex> lock(fileMutex);
   StatsFrontCollimator = aRunTallyFrontCollimator;
-  Tree_FrontCollimator->Fill();
+  if (Tree_FrontCollimator) Tree_FrontCollimator->Fill();
+  else{
+    G4cerr << "Error : Tree_FrontCollimator is nullptr" << G4endl;
+  }
 }
 
 void PALLAS_CollSimRunAction::UpdateStatisticsBackCollimator(RunTallyBackCollimator aRunTallyBackCollimator){
+  std::lock_guard<std::mutex> lock(fileMutex);
   StatsBackCollimator = aRunTallyBackCollimator;
-  Tree_BackCollimator->Fill();
+  if (Tree_BackCollimator) Tree_BackCollimator->Fill();
+  else{
+    G4cerr << "Error : Tree_BackCollimator is nullptr" << G4endl;
+  }
 }
 
 void PALLAS_CollSimRunAction::UpdateStatisticsYAG(RunTallyYAG aRunTallyYAG){
+  std::lock_guard<std::mutex> lock(fileMutex);
   StatsYAG = aRunTallyYAG;
-  Tree_YAG->Fill();
+  if (Tree_YAG) Tree_YAG->Fill();
+  else{
+    G4cerr << "Error : Tree_YAG is nullptr" << G4endl;
+  }
 }

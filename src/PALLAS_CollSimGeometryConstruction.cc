@@ -5,6 +5,10 @@
 #include "PALLAS_CollSimGeometryConstruction.hh"
 
 using namespace CLHEP;
+G4Mutex fieldManagerMutex = G4MUTEX_INITIALIZER;
+G4ThreadLocal PALLAS_CollSimMagneticField* PALLAS_CollSimGeometryConstruction::fMagneticField = nullptr;
+G4ThreadLocal G4FieldManager* PALLAS_CollSimGeometryConstruction::fFieldMgr = nullptr;
+
 
 // Constructor
 PALLAS_CollSimGeometryConstruction::PALLAS_CollSimGeometryConstruction() : G4VUserDetectorConstruction(), Geom()
@@ -131,17 +135,13 @@ PALLAS_CollSimGeometryConstruction::PALLAS_CollSimGeometryConstruction() : G4VUs
         .SetDefaultValue("100.0 mm")
         .SetRange("CollimatorSpectrometerDistance >=0.0");
 
-    // Commande FIELD
-    bMessenger->DeclareProperty("SetStatusMapBField", StatusMapBField)
-        .SetGuidance("Set the boolean parameter.")
-        .SetParameterName("StatusMapBField", false)
-        .SetDefaultValue("false");
-
     bMessenger->DeclarePropertyWithUnit("SetConstantBField", "tesla", ConstantBField)
-        .SetGuidance("Set the constant value of BField without map parameter.")
+        .SetGuidance("Set the constant BField value.")
         .SetParameterName("ConstantBField", false)
-        .SetDefaultValue("0.4 tesla")
+        .SetDefaultValue("0.0 tesla")
         .SetRange("ConstantBField >=0.0");
+
+        G4cout << "MESSENGER GEOMETRY BASE" << G4endl;
 }
 
 // Destructor
@@ -150,7 +150,6 @@ PALLAS_CollSimGeometryConstruction::~PALLAS_CollSimGeometryConstruction()
     delete Geom;
     delete fMessenger;
     delete gMessenger;
-    delete bMessenger;
 }
 
 void PALLAS_CollSimGeometryConstruction::SetLogicalVolumeColor(G4LogicalVolume *LogicalVolume, G4String Color)
@@ -280,11 +279,8 @@ void PALLAS_CollSimGeometryConstruction::CreateWorldAndHolder()
                                        LogicalWorld, false, 0);
 }
 
-void PALLAS_CollSimGeometryConstruction::ConstructBField()
+void PALLAS_CollSimGeometryConstruction::ConstructBFieldVolume()
 {
-
-    if (StatusMapBField)
-    {
         LogicalBFieldVolume = Geom->GetBFieldVolume();
 
         // // LogicalCollimator->SetVisAttributes(black);
@@ -293,79 +289,6 @@ void PALLAS_CollSimGeometryConstruction::ConstructBField()
         PhysicalBFieldVolume = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(-0.152 * mm, 3449.5 * mm, 10.855 * mm)),
                                                  LogicalBFieldVolume, "BFieldVolume",
                                                  LogicalHolder, false, 0);
-
-
-
-
-        // TO DO !!!!
-    }
-
-    else
-    {
-        LogicalBFieldVolume = Geom->GetBFieldVolume();
-
-        // // LogicalCollimator->SetVisAttributes(black);
-        SetLogicalVolumeColor(LogicalBFieldVolume, "gray");
-
-        PhysicalBFieldVolume = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(-0.152 * mm, 3449.5 * mm, 10.855 * mm)),
-                                                 LogicalBFieldVolume, "BFieldVolume",
-                                                 LogicalHolder, false, 0);
-
-        // #########################
-        //  DEFINE EM FIELD PART   #
-        // #########################
-
-        G4double fMinStep = 0.010 * mm; // minimal step of 1 mm is default
-        G4bool useFSALstp = false;
-
-        localmagField = new G4UniformMagField(G4ThreeVector(-ConstantBField, 0.0, 0.0));
-        // G4Mag_UsualEqRhs* fEquation = new G4Mag_UsualEqRhs(magField);
-        fEquationlocal = new G4Mag_UsualEqRhs(localmagField);
-
-        // G4FieldManager* MagFieldManager = G4TransportationManager::GetTransportationManager()->GetFieldManager();
-        //  fieldMgr->SetDetectorField(magField);
-        //  fieldMgr->CreateChordFinder(magField);
-
-        // Update field
-        // G4MagIntegratorStepper*fStepper;
-
-        // localfStepperMag = new G4ClassicalRK4( fEquationlocal ,8);
-        // localfStepperMag = new G4DormandPrince745( fEquationlocal,8 );
-        // localfStepperMag = new G4NystromRK4(fEquationlocal);
-        // localfStepperMag = new G4HelixExplicitEuler( fEquationlocal );
-        // localfStepperMag = new G4ExactHelixStepper( fEquationlocal );
-
-        // auto pIntegrationDriver = new G4IntegrationDriver<G4DormandPrince745>(fMinStep, localfStepperMag, 8);
-
-        // fFieldManager->SetDetectorField(magField);
-        G4FieldManager *LocalMagFieldManager = new G4FieldManager(localmagField);
-
-        // G4ChordFinder*fLocalChordFinder = new G4ChordFinder( localmagField, fMinStep, localfStepperMag);
-        // G4ChordFinder*fLocalChordFinder = new G4ChordFinder(pIntegrationDriver);
-        G4int driverId = 3; // B-field driver =3
-        auto pChordFinder = new G4ChordFinder(localmagField, fMinStep, nullptr, driverId);
-
-        // Set accuracy parameters
-        G4double deltaChord = 0.25 * um; // 3.0 mm by default
-        G4double epsMax = 1.0e-4;        // Pure number -- maximum relative integration error
-        G4double epsMin = 1e-5;          //
-        G4double deltaOneStep = 1 * um;
-        G4double deltaIntersection = 1 * um;
-
-        // fChordFinder->SetDeltaChord( deltaChord );
-        pChordFinder->SetDeltaChord(deltaChord);
-        LocalMagFieldManager->SetAccuraciesWithDeltaOneStep(deltaOneStep);
-        LocalMagFieldManager->SetMinimumEpsilonStep(epsMin);
-        LocalMagFieldManager->SetMaximumEpsilonStep(epsMax);
-        LocalMagFieldManager->SetDeltaIntersection(deltaIntersection);
-        LocalMagFieldManager->SetDeltaOneStep(0.01 * um);
-
-        // fFieldManager->CreateChordFinder(magField);
-        // fFieldManager->SetChordFinder(fChordFinder);
-        LocalMagFieldManager->SetChordFinder(pChordFinder);
-
-        LogicalBFieldVolume->SetFieldManager(LocalMagFieldManager, true);
-    }
 }
 
 void PALLAS_CollSimGeometryConstruction::ConstructCollimatorWithOutput()
@@ -494,7 +417,6 @@ void PALLAS_CollSimGeometryConstruction::ConstructCollimatorWithOutput()
 
 }
 
-
 void PALLAS_CollSimGeometryConstruction::ConstructVerticalCollimator()
 {
 
@@ -513,8 +435,8 @@ SetLogicalVolumeColor(LogicalVerticalCollimator, "blue");
 G4RotationMatrix *rotationMatrix = new G4RotationMatrix();
 rotationMatrix->rotateX(90.0 * deg);
 
-G4ThreeVector translation1((-0.152-OpenVerticalCollimator-CollimatorLength/2) * mm, 3114.5 - CollimatorSpectrometerDistance - HorizontalCollimatorThickness - CollimatorVHDistance -VerticalCollimatorThickness/2, 0.08 * mm);
-G4ThreeVector translation2((-0.152+OpenVerticalCollimator+CollimatorLength/2) * mm, 3114.5 - CollimatorSpectrometerDistance - HorizontalCollimatorThickness - CollimatorVHDistance -VerticalCollimatorThickness/2, 0.08 * mm);
+G4ThreeVector translation1((-0.152-OpenVerticalCollimator-CollimatorLength/2) * mm, 3114.5 - CollimatorSpectrometerDistance - VerticalCollimatorThickness/2, 0.08 * mm);
+G4ThreeVector translation2((-0.152+OpenVerticalCollimator+CollimatorLength/2) * mm, 3114.5 - CollimatorSpectrometerDistance - VerticalCollimatorThickness/2, 0.08 * mm);
 
 
 PhysicalVerticalCollimator1 = new G4PVPlacement(rotationMatrix,
@@ -557,8 +479,8 @@ G4RotationMatrix *rotationMatrix = new G4RotationMatrix();
 rotationMatrix->rotateX(90.0 * deg);
 
 
-G4ThreeVector translation1(-0.152 * mm, 3114.5 - CollimatorSpectrometerDistance - HorizontalCollimatorThickness/2, (0.08 - OpenHorizontalCollimator-CollimatorLength/2) * mm);
-G4ThreeVector translation2(-0.152 * mm, 3114.5 - CollimatorSpectrometerDistance - HorizontalCollimatorThickness/2, (0.08 + OpenHorizontalCollimator+CollimatorLength/2) * mm);
+G4ThreeVector translation1(-0.152 * mm, 3114.5 - CollimatorSpectrometerDistance - VerticalCollimatorThickness - CollimatorVHDistance - HorizontalCollimatorThickness/2, (0.08 - OpenHorizontalCollimator-CollimatorLength/2) * mm);
+G4ThreeVector translation2(-0.152 * mm, 3114.5 - CollimatorSpectrometerDistance - VerticalCollimatorThickness - CollimatorVHDistance - HorizontalCollimatorThickness/2, (0.08 + OpenHorizontalCollimator+CollimatorLength/2) * mm);
 
 
 PhysicalHorizontalCollimator1 = new G4PVPlacement(rotationMatrix,
@@ -579,7 +501,6 @@ PhysicalHorizontalCollimator2 = new G4PVPlacement(rotationMatrix,
                                         0);                                                                              
 
 }
-
 
 void PALLAS_CollSimGeometryConstruction::ConstructCellulePart()
 {
@@ -823,14 +744,22 @@ void PALLAS_CollSimGeometryConstruction::ConstructSection4Part()
         SetLogicalVolumeColor(LogicalPALLAS_S4Croix, "yellow");
         SetLogicalVolumeColor(LogicalFakeDiagsChamber, "yellow");
 
-        PhysicalPALLAS_ChambreDipole = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0.152 * mm, -3449.5 * mm, -10.855 * mm)),
+        // PhysicalPALLAS_ChambreDipole = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0.152 * mm, -3449.5 * mm, -10.855 * mm)),
+        //                                                  LogicalPALLAS_ChambreDipole, "ChambreDipole",
+        //                                                  LogicalBFieldVolume, false, 0);
+
+
+        PhysicalPALLAS_ChambreDipole = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0. * mm, 0 * mm, 0 * mm)),
                                                          LogicalPALLAS_ChambreDipole, "ChambreDipole",
-                                                         LogicalBFieldVolume, false, 0);
+                                                         LogicalHolder, false, 0);
 
+        // PhysicalPALLAS_Dipole = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0.152 * mm, -3449.5 * mm, -10.855 * mm)),
+        //                                           LogicalPALLAS_Dipole, "Dipole",
+        //                                           LogicalBFieldVolume, false, 0);
 
-        PhysicalPALLAS_Dipole = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0.152 * mm, -3449.5 * mm, -10.855 * mm)),
+        PhysicalPALLAS_Dipole = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0. * mm, 0 * mm, 0 * mm)),
                                                   LogicalPALLAS_Dipole, "Dipole",
-                                                  LogicalBFieldVolume, false, 0);
+                                                  LogicalHolder, false, 0);                                                  
 
         PhysicalPALLAS_BS1YAG = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
                                                   LogicalPALLAS_BS1YAG, "BS1_YAG",
@@ -911,6 +840,19 @@ void PALLAS_CollSimGeometryConstruction::ConstructSection4DumpPart()
     }
 }
 
+void PALLAS_CollSimGeometryConstruction::ConstructSDandField()
+{
+   // magnetic field ----------------------------------------------------------
+  fMagneticField = new PALLAS_CollSimMagneticField();
+  fMagneticField->SetField(ConstantBField);
+  fFieldMgr = new G4FieldManager();
+  fFieldMgr->SetDetectorField(fMagneticField);
+  fFieldMgr->CreateChordFinder(fMagneticField);
+  G4bool forceToAllDaughters = true;
+  LogicalBFieldVolume->SetFieldManager(fFieldMgr, forceToAllDaughters);
+
+}
+
 G4VPhysicalVolume *PALLAS_CollSimGeometryConstruction::Construct()
 {
     G4GeometryManager::GetInstance()->OpenGeometry();
@@ -927,12 +869,11 @@ G4VPhysicalVolume *PALLAS_CollSimGeometryConstruction::Construct()
     // #########################
     //  DEFINE GEOMETRY VOLUMES#
     // #########################
-
     //*********************************
     // Build scint et wrapping volumes*
     //*********************** *********
     CreateWorldAndHolder();
-    ConstructBField();
+    ConstructBFieldVolume();
     //ConstructCollimatorWithOutput();
     ConstructVerticalCollimator();
     ConstructHorizontalCollimator();
@@ -943,6 +884,8 @@ G4VPhysicalVolume *PALLAS_CollSimGeometryConstruction::Construct()
     ConstructSection3Part();
     ConstructSection4Part();
     ConstructSection4DumpPart();
+
+    G4cout << "END OF THE DETECTOR CONSTRUCTION" << G4endl;
 
     // Returns world with everything in it and all properties set
     return PhysicalWorld;

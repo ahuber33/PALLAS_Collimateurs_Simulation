@@ -8,7 +8,7 @@
 
 using namespace CLHEP;
 
-PALLAS_CollSimEventAction::PALLAS_CollSimEventAction(char *suff) : suffixe(suff) {}
+PALLAS_CollSimEventAction::PALLAS_CollSimEventAction(const char *suff) : suffixe(suff) {}
 
 PALLAS_CollSimEventAction::~PALLAS_CollSimEventAction() {}
 
@@ -73,10 +73,10 @@ void PALLAS_CollSimEventAction::EndOfEventAction(const G4Event *evt)
 
   if (StatsInput.energy>0)
   {
-    runac->UpdateStatisticsInput(StatsInput);
-    runac->UpdateStatisticsCollimator(StatsCollimator);
-    runac->UpdateStatisticsFrontCollimator(StatsFrontCollimator);
-    runac->UpdateStatisticsBackCollimator(StatsBackCollimator);
+    // runac->UpdateStatisticsInput(StatsInput);
+    // runac->UpdateStatisticsCollimator(StatsCollimator);
+    // runac->UpdateStatisticsFrontCollimator(StatsFrontCollimator);
+    // runac->UpdateStatisticsBackCollimator(StatsBackCollimator);
   }
 
   if (StatsYAG.energy.size()>0) runac->UpdateStatisticsYAG(StatsYAG);

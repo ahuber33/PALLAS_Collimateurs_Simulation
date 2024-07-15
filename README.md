@@ -24,9 +24,12 @@ It will generate x particle according to the vis.mac with QT and you will have a
 
 - If you want to have statistics without the visualization, use this command : 
 ```
-./PALLAS_CollSim [name of ROOT file] [number of events generated] [name of macro]
+./PALLAS_CollSim [name of ROOT file] [number of events generated] [number of threads] [name of macro]
+
 ```  
-Personnaly, I used the vrml.mac but you can create another one. Just to remember that you need to write the name of your macro when you launch the simulation.
+For example, with the "PALLAS_phasespace_qm(1411)_preCollimateur.txt" file, there is 106435 lines so 106435 events to generated with some macroparticles associated. According to the number of threads used, the simulation will create a ROOT file for each thread and at the end of the simulation. All ROOT files will be merged together with a name correspoding to the name given in [name of ROOT file]. The temporary ROOT files will be removed after the merge.
+
+Concernign the macro, personnaly I used the vrml.mac but you can create another one. Just to remember that you need to write the name of your macro when you launch the simulation.
 
 - In your macro, you need to specifiy some informations for the Messenger used :
 ```
@@ -121,15 +124,12 @@ Personnaly, I used the vrml.mac but you can create another one. Just to remember
 /gun/SetStatusGunParticle false
 /gun/SetParticleName geantino
 /gun/SetEnergyReference 247 MeV
-/gun/SetPhaseSpaceFilename PALLAS_phasespace_1411_preCollimateur.txt
-/gun/SetMacroChargeFilename PALLAS_qm1411_preCollimateur.txt
 ```
 - **/gun/** manages the PrimaryGeneratorAction with GunParticle :
     - SetStatusGunParticle defines if the simulation will use GunParticle or GPS as particle generator. If this value is **false**, it is **mandatory** to add or uncomment the /gps informations
     - SetParticleName defines the particle 
     - SetEnergyReference defines the energy reference mandatory to have the energy of each particle according to the phasespace file.
-    - SetPhaseSpaceFilename defines the name of the file that will be use to generate phase space of particles
-    - SetMacroChargeFilename defines the name of the file that will be use to generate a given number of particle accordint to the macro charge.
+    
 
 - If you want to use GPS, you can use for example this kind of messengers :
 ```
@@ -218,3 +218,15 @@ Personnaly, I used the vrml.mac but you can create another one. Just to remember
 - Each Trees is filled (sometimes under conditions) at the **EndOfEventAction**
 - If you want to access where the informations are extracted, go to **PALLAS_CollSimSteppingAction.cc**
 - A ROOT file with [name of ROOT file] given at the launch is created and wrote at the **EndOfEventAction** 
+
+
+
+## DRAW SIMULATION RESULTS
+
+- After the simulation, you can obtain some graphic visualization of the results according to the Plot_2VD.cc file.
+
+- To run the program, run this command :
+```
+root 'Plot_2VD.cc("[name of root file]")'
+```
+

@@ -27,19 +27,19 @@
 /vis/scene/add/hits
 /tracking/storeTrajectory 1
 
-/geometry/test/run
+#/geometry/test/run
 #/geometry/test/line_test
 /vis/scene/add/trajectories smooth
 #/vis/scene/add/magneticField
 #/vis/scene/add/electricField
 
 
-
+#/run/initialize
 
 /control/alias VerticalCollimatorThickness 20
 /control/alias HorizontalCollimatorThickness 60
 /control/alias CollimatorSpectrometerDistance 50
-/control/alias CollimatorVHDistance 10
+/control/alias CollimatorVHDistance 0
 /control/alias YParticleGenerationOffset 140
 
 ######################################################
@@ -59,8 +59,8 @@
 /geometry/SetCollimatorSpectrometerDistance {CollimatorSpectrometerDistance} mm
 /geometry/SetCollimatorVHDistance {CollimatorVHDistance} mm
 /gun/SetYParticleGenerationOffset {YParticleGenerationOffset} mm
-/geometry/SetOpenVerticalCollimator 0 mm
-/geometry/SetOpenHorizontalCollimator 0 mm
+/geometry/SetOpenVerticalCollimator 2 mm
+/geometry/SetOpenHorizontalCollimator 2 mm
 /geometry/SetCollimatorLength 100 mm
 
 
@@ -74,9 +74,8 @@
 /display/SetStatusDisplaySection4DumpGeometry false
 /run/reinitializeGeometry
 
-
-/field/SetStatusMapBField false
-/field/SetConstantBField 0.0 tesla #0.4 tesla
+#/field/SetStatusMapBField false
+/field/SetConstantBField 0.4 tesla
 
 /step/SetTrackingStatus false
 
@@ -87,22 +86,17 @@
 ######################################################
 ##### PART TO SIMULATE PARTICLE WITH PARTICLEGUN #####
 ######################################################
-/gun/SetStatusGunParticle true
-/gun/SetParticleName e-
+/gun/SetStatusGunParticle false
+/gun/SetParticleName geantino
 /gun/SetEnergyReference 247 MeV
-/gun/SetPhaseSpaceFilename PALLAS_phasespace_1411_preCollimateur.txt
-/gun/SetMacroChargeFilename PALLAS_qm1411_preCollimateur.txt
-
-
 
 
 ######################################################
 ### PART TO SIMULATE PARTICLE WITH GPS (no setgun) ###
 ######################################################
-/run/initialize
 /gps/number 1
 # PART TO SIMULATE 1 MEV ELECTRON !!!!!!!!
-/gps/particle geantino
+/gps/particle e-
 
 /gps/pos/type Point
 /gps/pos/centre -0.162 0.0 0.18 mm
@@ -117,4 +111,4 @@
 #/grdm/nucleusLimits 60 60 27 27
 
 
-/run/beamOn 1
+/run/beamOn 10

@@ -4,11 +4,18 @@
 
 #include "PALLAS_CollSimPrimaryGeneratorAction.hh"
 
+std::atomic<size_t> currentParticleNumber{0};
+
 G4UImanager *UI = G4UImanager::GetUIpointer();
-PALLAS_CollSimPrimaryGeneratorAction::PALLAS_CollSimPrimaryGeneratorAction(const char *N) : s_NEventsGenerated(N),
-                                                                                      G4VUserPrimaryGeneratorAction(),
-                                                                                      particleGun(nullptr),
-                                                                                      currentEvent(0)
+PALLAS_CollSimPrimaryGeneratorAction::PALLAS_CollSimPrimaryGeneratorAction(size_t N, size_t numThreads, std::vector<std::queue<ParticleData>> threadEventQueue, const std::vector<ParticleData> &particleData)
+    : NEventsGenerated(N),
+      numThreads(numThreads),
+      G4VUserPrimaryGeneratorAction(),
+      particleGun(nullptr),
+      threadEventQueue(threadEventQueue),
+      fParticleData(particleData),
+      currentEvent(0)
+
 {
 
   pMessenger = new G4GenericMessenger(this, "/gun/", "Control commands for my application");
@@ -23,16 +30,6 @@ PALLAS_CollSimPrimaryGeneratorAction::PALLAS_CollSimPrimaryGeneratorAction(const
       .SetParameterName("ParticleName", false)
       .SetDefaultValue("geantino");
 
-  pMessenger->DeclareProperty("SetPhaseSpaceFilename", PhaseSpaceFilename)
-      .SetGuidance("Set the phase space filename.")
-      .SetParameterName("PhaseSpaceFilename", true)
-      .SetDefaultValue("test.txt");
-
-  pMessenger->DeclareProperty("SetMacroChargeFilename", MacroChargeFilename)
-      .SetGuidance("Set the macro charge filename.")
-      .SetParameterName("MacroChargeFilename", true)
-      .SetDefaultValue("test_qm.txt");
-
   pMessenger->DeclarePropertyWithUnit("SetEnergyReference", "MeV", EnergyReference)
       .SetGuidance("Set the energy reference.")
       .SetParameterName("EnergyReference", false)
@@ -40,13 +37,15 @@ PALLAS_CollSimPrimaryGeneratorAction::PALLAS_CollSimPrimaryGeneratorAction(const
       .SetRange("EnergyReference >=0.0");
 
   pMessenger->DeclarePropertyWithUnit("SetYParticleGenerationOffset", "mm", YParticleGenerationOffset)
-        .SetGuidance("Set the YParticleGeneration parameter.")
-        .SetParameterName("YParticleGenerationOffset", false)
-        .SetDefaultValue("100.0 mm")
-        .SetRange("YParticleGenerationOffset >=0.0");      
+      .SetGuidance("Set the YParticleGeneration parameter.")
+      .SetParameterName("YParticleGenerationOffset", false)
+      .SetDefaultValue("100.0 mm")
+      .SetRange("YParticleGenerationOffset >=0.0");
 
   particleGun = new G4ParticleGun(1);
   particleSource = new G4GeneralParticleSource();
+
+  //G4cout << "StatusGun = " << StatusGunParticle << G4endl;
 }
 
 PALLAS_CollSimPrimaryGeneratorAction::~PALLAS_CollSimPrimaryGeneratorAction()
@@ -56,134 +55,7 @@ PALLAS_CollSimPrimaryGeneratorAction::~PALLAS_CollSimPrimaryGeneratorAction()
   delete pMessenger;
 }
 
-size_t PALLAS_CollSimPrimaryGeneratorAction::charToSizeT(const char *str)
-{
-  char *end;
-  errno = 0; // Réinitialiser errno avant l'appel
 
-  // Conversion de char* en unsigned long long (compatible avec size_t)
-  unsigned long long num = std::strtoull(str, &end, 10);
-
-  if (errno != 0 || *end != '\0')
-  {
-    throw std::invalid_argument("Erreur de conversion");
-  }
-
-  return static_cast<size_t>(num);
-}
-
-void PALLAS_CollSimPrimaryGeneratorAction::ReadNumberFile(const std::string &filename)
-{
-  std::ifstream infile(filename);
-  if (!infile)
-  {
-    G4cerr << "Could not open file " << filename << G4endl;
-    return;
-  }
-
-  int numParticles;
-  int i = 0;
-  double macrocharge;
-  EventNumberOfParticles.clear();
-
-  NEventsGenerated = charToSizeT(s_NEventsGenerated);
-
-  std::string line;
-
-  while (std::getline(infile, line))
-  {
-    if (line[0] == '#')
-      continue; // Skip comments
-    std::istringstream iss(line);
-    iss >> macrocharge;
-    numParticles = macrocharge / (1.6e-17); //SCALE 100 !!!!!
-    // G4cout << "\n Number of PART = " << numParticles << G4endl;
-    EventNumberOfParticles.push_back(numParticles);
-    if (i <= NEventsGenerated)
-      TotalNParticles += numParticles;
-    i++;
-  }
-
-  G4cout << "\nTOTAL EVENTS = " << TotalNParticles << G4endl;
-  G4cout << "\n"
-         << G4endl;
-
-  infile.close();
-}
-
-void PALLAS_CollSimPrimaryGeneratorAction::ReadParticleFile(const std::string &filename)
-{
-  std::ifstream infile(filename);
-  particleDataList.clear();
-
-  if (!infile.is_open())
-  {
-    G4cerr << "Error opening file : " << filename << G4endl;
-    return;
-  }
-
-  std::string line;
-
-  while (std::getline(infile, line))
-  {
-    if (line[0] == '#')
-      continue; // Skip comments
-    std::istringstream iss(line);
-    ParticleData pdata;
-    iss >> pdata.x >> pdata.xp >> pdata.z >> pdata.zp >> pdata.s >> pdata.delta;
-    // G4cout << "\nx : " << pdata.x << G4endl;
-    // G4cout << "xp : " << pdata.xp << G4endl;
-    // G4cout << "z : " << pdata.z << G4endl;
-    // G4cout << "zp : " << pdata.zp << G4endl;
-    // G4cout << "s : " << pdata.s << G4endl;
-    // G4cout << "delta : " << pdata.delta << G4endl;
-
-    particleDataList.push_back(pdata);
-  }
-
-  infile.close();
-}
-
-void PALLAS_CollSimPrimaryGeneratorAction::GunParticleInitialization()
-{
-  currentEvent = 0;
-  currentParticleNumber = 0;
-  TotalNParticles = 0;
-
-  ReadParticleFile(PhaseSpaceFilename);
-  ReadNumberFile(MacroChargeFilename);
-
-  if (particleDataList.empty())
-  {
-    G4cerr << "No particle data available : RUN ABORT" << G4endl;
-    G4RunManager::GetRunManager()->AbortRun();
-    return;
-  }
-
-  if (particleDataList.size() != EventNumberOfParticles.size())
-  {
-    G4cerr << "Difference between Phase space & Macrocharge vector size : RUN ABORT" << G4endl;
-    G4cout << "phase size = " << particleDataList.size() << G4endl;
-    G4cout << "qm size = " << EventNumberOfParticles.size() << G4endl;
-    G4RunManager::GetRunManager()->AbortRun();
-    return;
-  }
-}
-
-void PALLAS_CollSimPrimaryGeneratorAction::GPSInitialization()
-{
-  TotalNParticles = charToSizeT(s_NEventsGenerated);
-}
-
-void PALLAS_CollSimPrimaryGeneratorAction::AlwaysInSetVerification()
-{
-  if (currentEvent >= particleDataList.size())
-  {
-    G4cerr << "No more particle data avalaible => ENDING RUN !!!" << G4endl;
-    G4RunManager::GetRunManager()->AbortRun();
-    return;
-  }
-}
 
 void PALLAS_CollSimPrimaryGeneratorAction::SetParticleName()
 {
@@ -225,13 +97,17 @@ void PALLAS_CollSimPrimaryGeneratorAction::ShowProgress(double progress, std::ch
   // Set the precision for floating point output
   std::cout << std::fixed << std::setprecision(1) << std::endl;
 
-  std::cout << "=> Estimated remaining time = " << estimatedRemainingTime/60.0 << " min" << "\r";
+  std::cout << "=> Estimated remaining time = " << estimatedRemainingTime / 60.0 << " min" << "\r";
   std::cout.flush();
-
 }
+
+
+
 
 void PALLAS_CollSimPrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
 {
+  G4int threadID = G4Threading::G4GetThreadId();
+
   if (!isStartTimeInitialized)
   {
     startTime = std::chrono::high_resolution_clock::now();
@@ -240,52 +116,70 @@ void PALLAS_CollSimPrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
 
   if (StatusGunParticle == true)
   {
-    if (currentEvent == 0)
-      GunParticleInitialization();
+    //G4cout << "Thread Event queue " << threadID << "  size = " << threadEventQueue[threadID].size() << G4endl;
+
+    // Extraire les données d'événements de la file d'attente
+    ParticleData pdata = threadEventQueue[threadID].front();
+    threadEventQueue[threadID].pop();
+
+    //G4cout << "Size pdata = " << threadEventQueue[threadID].size() << G4endl;
 
     SetParticleName();
 
-    const ParticleData &pdata = particleDataList[currentEvent];
-    currentEvent++;
-
     G4double yp = sqrt(1 / (pdata.xp * pdata.xp + pdata.zp * pdata.zp + 1));
 
-    xOffset = -0.152; //mm
-    sOffset = 3114.5 - YParticleGenerationOffset; //mm
-    zOffset = 0.08; //mm
+    xOffset = -0.152;                             // mm
+    sOffset = 3114.5 - YParticleGenerationOffset; // mm
+    zOffset = 0.08;                               // mm
+
+    // G4cout << " X = " << pdata.x * 1000 + xOffset << G4endl;
+    // G4cout << " N = " << pdata.n << G4endl;
 
     particleGun->SetParticleDefinition(particleDefinition);
-    particleGun->SetParticleEnergy(EnergyReference * (1+pdata.delta));
-    particleGun->SetParticlePosition(G4ThreeVector((pdata.x*1000 + xOffset) * mm, (pdata.s*1000 + sOffset) * mm, (pdata.z*1000 + zOffset) * mm));
+    particleGun->SetParticleEnergy(EnergyReference * (1 + pdata.delta));
+    particleGun->SetParticlePosition(G4ThreeVector((pdata.x * 1000 + xOffset) * mm, (pdata.s * 1000 + sOffset) * mm, (pdata.z * 1000 + zOffset) * mm));
     particleGun->SetParticleMomentumDirection(G4ThreeVector(pdata.xp, yp, pdata.zp));
 
     // G4cout << "pdata.s = " << pdata.s*1000 << G4endl;
     // G4cout << "Y = " << pdata.s*1000+sOffset << G4endl;
 
-    eventID = anEvent->GetEventID();
-    nEvent = EventNumberOfParticles.at(eventID);
-    //nEvent = 1;
-    // G4cout << "nEvent = " << nEvent << G4endl;
-    currentParticleNumber += nEvent;
-    //G4cout << "N event = " << nEvent << G4endl;
-
-    for (int i = 0; i < nEvent; i++)
+    for (int i = 0; i < pdata.n; i++)
     {
       particleGun->GeneratePrimaryVertex(anEvent);
     }
 
-    AlwaysInSetVerification();
+  
+    if (threadEventQueue[threadID].empty())
+    {
+      G4cerr << "Thread event queue is empty or not initialized!" << G4endl;
+      // G4RunManager::GetRunManager()->AbortEvent();
+      G4RunManager::GetRunManager()->TerminateEventLoop();
+      G4RunManager::GetRunManager()->AbortRun();
+      // G4RunManager::GetRunManager()->RunTermination();
+
+      G4cout << "STOP THREAD" << G4endl;
+      return;
+    }
+
+    if (threadID==0)
+    {
+      currentParticleNumber+=pdata.n;
+      ShowProgress(double(numThreads * currentParticleNumber) / double(NEventsGenerated), startTime);
+      // G4cout << "Num threads = " << numThreads << G4endl;
+      // G4cout << "CurrentParticle Number = " << currentParticleNumber << G4endl;
+      // G4cout << "TotalNParticle = " << TotalNParticles << G4endl;
+      // G4cout << "progress = " << double(numThreads * currentParticleNumber) / double(NEventsGenerated) << G4endl;
+    }
   }
 
   else
   {
-    if (currentEvent == 0)
-      GPSInitialization();
-
     particleSource->GeneratePrimaryVertex(anEvent);
     currentParticleNumber++;
     currentEvent++;
+    ShowProgress(double(currentEvent) / double(NEventsGenerated), startTime);
   }
+    
 
-  if (TotalNParticles >1000) ShowProgress(double(currentParticleNumber) / double(TotalNParticles), startTime);
+  currentEvent++;
 }

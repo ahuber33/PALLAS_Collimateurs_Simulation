@@ -1,22 +1,31 @@
 #/control/alias NEventsToGenerate 106435 #PALLAS_qm1411_preCollimateur.txt
 
+/control/alias VerticalCollimatorThickness %VCT
+/control/alias HorizontalCollimatorThickness %HCT
+/control/alias CollimatorSpectrometerDistance 50
+/control/alias CollimatorVHDistance %CVHD
+/control/alias YParticleGenerationOffset %YPGO #Sum of precedent values
+
 ######################################################
 ########## PART FOR MESSENGER INFORMATIONS ###########
 ######################################################
 /geometry/SetStatusRoundCollimator false
-/geometry/SetCollimatorMaterial %Material
-
-/geometry/SetCollimatorThickness %Thickness mm
-/gun/SetCollimatorThickness %Thickness mm #Important to have the same value than above !!!!
-
-/geometry/SetCollimatorInternalRadius 10.0 mm
+/geometry/SetCollimatorThickness 150 mm
+/geometry/SetCollimatorInternalRadius 10 mm
 /geometry/SetCollimatorExternalRadius 100 mm
-/geometry/SetCollimatorLength 500 mm
-/geometry/SetCollimatorDistanceBetweenPlates %Ecart mm
+/geometry/SetCollimatorDistanceBetweenPlates 0 mm
 
-/geometry/SetCollimatorSpectrometerDistance 50 mm
-/gun/SetCollimatorSpectrometerDistance 50 mm #Important to have the same value than above !!!!
+/geometry/SetVerticalCollimatorMaterial %VM
+/geometry/SetHorizontalCollimatorMaterial %HM
 
+/geometry/SetVerticalCollimatorThickness {VerticalCollimatorThickness} mm
+/geometry/SetHorizontalCollimatorThickness {HorizontalCollimatorThickness} mm
+/geometry/SetCollimatorSpectrometerDistance {CollimatorSpectrometerDistance} mm
+/geometry/SetCollimatorVHDistance {CollimatorVHDistance} mm
+/gun/SetYParticleGenerationOffset {YParticleGenerationOffset} mm
+/geometry/SetOpenVerticalCollimator %OVC mm
+/geometry/SetOpenHorizontalCollimator %OHC mm
+/geometry/SetCollimatorLength 100 mm
 
 
 
@@ -30,17 +39,10 @@
 /run/reinitializeGeometry
 
 
-
 /field/SetStatusMapBField false
 /field/SetConstantBField 0.0 tesla #0.4 tesla
 
 /step/SetTrackingStatus true
-
-/tracking/verbose 0
-/run/verbose 1
-/geometry/navigator/verbose 0
-/geometry/test/run
-
 
 
 

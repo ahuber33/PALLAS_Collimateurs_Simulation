@@ -91,7 +91,7 @@ struct RunTallyYAG {
 class PALLAS_CollSimEventAction : public G4UserEventAction
 {
 public:
-  PALLAS_CollSimEventAction(char*);
+  PALLAS_CollSimEventAction(const char*);
   ~PALLAS_CollSimEventAction();
 
 public:

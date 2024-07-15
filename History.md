@@ -107,9 +107,21 @@
 
 
 ## Commit #8 le 20/06/2024 [PALLAS_CollSim.0.3.1]
-- Mise à jour de certains fichiers GDML qui entrainaient des soucis de tracking car surement pas aprfaitment défini dans le fichier .stp
+- Mise à jour de certains fichiers GDML qui entrainaient des soucis de tracking car surement pas parfaitment défini dans le fichier .stp
 - Le fichier GDML DiagsChamber a d'ailleurs un souci qui a été corrigé en plaçant un cylindre de même diamètre et de même épaisseur à cet endroit
 - Changement dans l'appel de la fonction GetCollimator() afin de pouvoir l'appeler plusieurs fois pour définir les différents collimateurs. Il est maintenant nécessaire de fournir un string à la fonction permettant d'avoir un nom différent à chaque appel
 - Ajout de l'information parentID dans le tree YAG
 - Changement dans la macro et dans le code permettant de générer de façon automatique un collimateur vertical et un autre horizontal. Le README a d'aileurs été modifié.
-- Les simulations étanttrop longues (>2 mois), la macro charge a été modifiée d'un facteur 100 (1.6e-17 a lieu de 1.6e-19) qui correspondait exactement à la charge d'un électron.
+- Les simulations étant trop longues (>2 mois), la macro charge a été modifiée d'un facteur 100 (1.6e-17 au lieu de 1.6e-19) qui correspondait exactement à la charge d'un électron.
+
+
+## Commit #9 le 15/07/2024 [PALLAS_CollSim.0.4.0]
+- Changement de la structure du code pour pouvoir utiliser le multithreading
+- Changement de la ligne de lancement de simulation qui doit désormais indiquer le nombre de threads à utiliser.
+- Création d'un ActionInitialization afin de pouvoir implémenter le multithreading (obligatoire)
+- Création d'un ParticleData.hh afin de pouvoir y stocker les structures de données nécessaires aux inputs
+- Les fichiers sont désormais lus au lancement de la simulation. en fonction du nombre d'évènements désirés et du nombre de threads utilisés, les données sont réparties dans des listes d'attentes (queues) afin de pouvoir être lues ensuite dans le PrimaryGeneratorAction afin de générer les particules
+- Les fichiers, lu au départ de la simualtion dans le main, sont écrits en dur dans le code désormais. Les Messenger dans le PrimaryGenerator ont été enlevés.
+- La définition du champ magnétique a du être modifiée afin d'être thread-safe. La nouvelle méthode se base sur les exemples de GEANT4 avec la fonction ConstructSDandField(). Le volume LogicalBFieldVolume est ainsi crée et on associe ensuite dans la fonction SDandField le champ crée à ce volume logique. La défintion du champ magnétique est alors géré par les fichiers PALLAS_CollSimMagneticField.cc et hh
+- Chaque thread lancé va créer son propre fichier root qui est protégé via des mutex (création, remplissage, écriture, fermeture). A la fin de la simulation, les différents fichiers sont mergés via la commande hadd vers un fichier dont le nom dépend de la variable affectée dans la ligne de lancement de simulation. A la suite du merge, les fichiers temporaires sont effacés.
+- L'affichage de l'avancement de la simualation est basé sur le thread ID 0 (suffisant)

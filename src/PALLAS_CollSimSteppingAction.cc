@@ -140,7 +140,7 @@ void PALLAS_CollSimSteppingAction::UpdateYAGInformations(PALLAS_CollSimEventActi
   // G4cout << "x = " << x << G4endl;
   // G4cout << "y = " << y << G4endl;
   // G4cout << "z = " << z << G4endl;
-  // G4cout << "energy = " << energy << G4endl;
+   //G4cout << "energy = " << energy << G4endl;
 
   if (TrackingStatus ==false) theTrack->SetTrackStatus(fStopAndKill);
 }
@@ -178,36 +178,35 @@ void PALLAS_CollSimSteppingAction::UserSteppingAction(const G4Step *aStep)
   pz = aStep->GetPreStepPoint()->GetMomentumDirection().z();
 
 
-  // #######################################################################
-  // #######################################################################
-  // ###########################START EM INFOS PART#########################
-  // #######################################################################
-  // #######################################################################
+  // // #######################################################################
+  // // #######################################################################
+  // // ###########################START EM INFOS PART#########################
+  // // #######################################################################
+  // // #######################################################################
 
-  if (parentID == 0 && stepNo == 1) GetInputInformations(evtac);
-  
+  // if (parentID == 0 && stepNo == 1) GetInputInformations(evtac);
 
-  if (creatorProcess != NULL)
-  {
-    creatorProcessName = creatorProcess->GetProcessName();
-    SetFlagGammaEnergyDeposition();
-    UpdateBremInformations(evtac);
-  }
+  // if (creatorProcess != NULL)
+  // {
+  //   creatorProcessName = creatorProcess->GetProcessName();
+  //   SetFlagGammaEnergyDeposition();
+  //   UpdateBremInformations(evtac);
+  // }
 
-  if (volumeNamePreStep == "Collimator")
-    UpdateCollimatorInformations(evtac);
+  // if (volumeNamePreStep == "Collimator")
+  //   UpdateCollimatorInformations(evtac);
 
-  if (volumeNamePreStep == "Collimator1" && volumeNamePostStep == "FrontOutput")
-    UpdateFrontCollimatorInformations(evtac);
-
-  if (volumeNamePreStep == "Collimator2" && volumeNamePostStep == "FrontOutput")
-    UpdateFrontCollimatorInformations(evtac);    
-
-  // if (volumeNamePreStep == "Holder" && volumeNamePostStep == "FrontOutput")
+  // if (volumeNamePreStep == "Collimator1" && volumeNamePostStep == "FrontOutput")
   //   UpdateFrontCollimatorInformations(evtac);
 
-  if (volumeNamePreStep == "Collimator" && volumeNamePostStep == "BackOutput")
-    UpdateBackCollimatorInformations(evtac);
+  // if (volumeNamePreStep == "Collimator2" && volumeNamePostStep == "FrontOutput")
+  //   UpdateFrontCollimatorInformations(evtac);    
+
+  // // if (volumeNamePreStep == "Holder" && volumeNamePostStep == "FrontOutput")
+  // //   UpdateFrontCollimatorInformations(evtac);
+
+  // if (volumeNamePreStep == "Collimator" && volumeNamePostStep == "BackOutput")
+  //   UpdateBackCollimatorInformations(evtac);
 
   if (aStep->GetPostStepPoint()->GetPhysicalVolume()->GetName() == "World")
     theTrack->SetTrackStatus(fStopAndKill);
@@ -218,7 +217,12 @@ void PALLAS_CollSimSteppingAction::UserSteppingAction(const G4Step *aStep)
     theTrack->SetTrackStatus(fStopAndKill);
    }
     
-    G4cout << " y =" << y << G4endl;
+
+
+
+
+
+    //G4cout << " y =" << y << G4endl;
 
   // if (aStep->GetPostStepPoint()->GetPhysicalVolume()->GetName() == "Collimator")
   //   theTrack->SetTrackStatus(fStopAndKill);

@@ -13,6 +13,9 @@
 #include "G4UImanager.hh"
 #include "G4VVisManager.hh"
 #include "TFile.h"
+#include "G4AnalysisManager.hh"
+#include <mutex>
+#include <G4AutoLock.hh>
 
 
 //class G4Run;
@@ -21,7 +24,7 @@ class PALLAS_CollSimRunAction : public G4UserRunAction
 {
 
 public:
-  PALLAS_CollSimRunAction(char*);
+  PALLAS_CollSimRunAction(const char*);
   ~PALLAS_CollSimRunAction();
 
 public:
@@ -29,7 +32,6 @@ public:
   void EndOfRunAction(const G4Run*);
 
   //adds the photon fates from an event to the run tree
-  void InitializeRootFile(G4String fileName);
   void UpdateStatisticsInput(RunTallyInput);
   void UpdateStatisticsCollimator(RunTallyCollimator);
   void UpdateStatisticsFrontCollimator(RunTallyFrontCollimator);
@@ -52,6 +54,8 @@ private:
   TTree *Tree_YAG=nullptr;
   TBranch *RunBranch=nullptr;
   time_t start;
+  static std::atomic<int> activeThreads;
+  static G4Mutex fileMutex;
   
 
 };
