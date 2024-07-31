@@ -30,6 +30,7 @@ std::vector<ParticleData> ReadParticleData(const std::string &filename, size_t m
   std::string line;
   int lineCount = 0;
   double macrocharge = 0;
+  double totparticles=0;
 
   while (std::getline(infile, line) && lineCount < maxLines)
   {
@@ -48,9 +49,12 @@ std::vector<ParticleData> ReadParticleData(const std::string &filename, size_t m
     //G4cout << "n : " << pdata.n << G4endl;
     data.push_back(pdata);
     lineCount++;
+    totparticles+=pdata.n;
   }
 
   infile.close();
+
+  G4cout << "N TOT PARTICLES GENERATED WILL BE : " << totparticles << G4endl;
 
   return data;
 }
@@ -76,19 +80,28 @@ int main(int argc, char **argv)
 
   size_t NEvents=1;
   size_t Ncores=1;
+  G4RunManager *runManager;
 
   if (argc == 5)
   {
+    runManager = new G4MTRunManager;
     NEvents = std::stoul(argv[2]);
     Ncores = std::stoul(argv[3]);
+    //runManager = new G4MTRunManager;
+    runManager->SetNumberOfThreads(Ncores);
+  }
+
+  else
+  {
+    runManager = new G4RunManager;
   }
 
   size_t eventsPerThread = NEvents / Ncores;
   size_t remainder = NEvents % Ncores;
 
   // Construct the default run manager
-  G4RunManager *runManager = new G4MTRunManager;
-  runManager->SetNumberOfThreads(Ncores);
+  
+
 
   G4String PhaseSpaceFilename = "PALLAS_phasespace_qm(1411)_preCollimateur.txt";
   std::vector<ParticleData> particleData = ReadParticleData(PhaseSpaceFilename, NEvents);
@@ -153,8 +166,9 @@ int main(int argc, char **argv)
   {
     G4cout << "Batch MODE" << G4endl;
     G4String command = "/control/execute ";
-    G4String fileName = argv[4];
-    UI->ApplyCommand(command + fileName);
+    G4String macro = argv[4];
+    G4String fileName = argv[1];
+    UI->ApplyCommand(command + macro);
     UI->ApplyCommand("control/suppressAbortion");
 
     char startcommand[100];
@@ -170,7 +184,7 @@ int main(int argc, char **argv)
     for (int i=1; i<=Ncores; i++)
     {
       stringValue = std::to_string(i);
-      genFile = stringValue+".root";
+      genFile = fileName + "_" + stringValue+".root";
       generatedFiles.push_back(genFile);
     }
 

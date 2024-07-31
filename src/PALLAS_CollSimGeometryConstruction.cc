@@ -141,6 +141,11 @@ PALLAS_CollSimGeometryConstruction::PALLAS_CollSimGeometryConstruction() : G4VUs
         .SetDefaultValue("0.0 tesla")
         .SetRange("ConstantBField >=0.0");
 
+    bMessenger->DeclareProperty("SetStatusMapBField", StatusMapBField)
+        .SetGuidance("Set the boolean parameter.")
+        .SetParameterName("StatuMapBField", false)
+        .SetDefaultValue("false");
+
         G4cout << "MESSENGER GEOMETRY BASE" << G4endl;
 }
 
@@ -845,6 +850,7 @@ void PALLAS_CollSimGeometryConstruction::ConstructSDandField()
    // magnetic field ----------------------------------------------------------
   fMagneticField = new PALLAS_CollSimMagneticField();
   fMagneticField->SetField(ConstantBField);
+  fMagneticField->SetMapBFieldStatus(StatusMapBField);
   fFieldMgr = new G4FieldManager();
   fFieldMgr->SetDetectorField(fMagneticField);
   fFieldMgr->CreateChordFinder(fMagneticField);

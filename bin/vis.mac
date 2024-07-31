@@ -36,11 +36,11 @@
 
 #/run/initialize
 
-/control/alias VerticalCollimatorThickness 20
-/control/alias HorizontalCollimatorThickness 60
+/control/alias VerticalCollimatorThickness 110
+/control/alias HorizontalCollimatorThickness 30
 /control/alias CollimatorSpectrometerDistance 50
 /control/alias CollimatorVHDistance 0
-/control/alias YParticleGenerationOffset 140
+/control/alias YParticleGenerationOffset 190
 
 ######################################################
 ########## PART FOR MESSENGER INFORMATIONS ###########
@@ -74,8 +74,8 @@
 /display/SetStatusDisplaySection4DumpGeometry false
 /run/reinitializeGeometry
 
-#/field/SetStatusMapBField false
-/field/SetConstantBField 0.4 tesla
+/field/SetStatusMapBField false
+/field/SetConstantBField 0.75 tesla
 
 /step/SetTrackingStatus false
 
@@ -111,4 +111,4 @@
 #/grdm/nucleusLimits 60 60 27 27
 
 
-/run/beamOn 10
+/run/beamOn 1

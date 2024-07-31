@@ -150,7 +150,7 @@ Concernign the macro, personnaly I used the vrml.mac but you can create another 
 
 ## ACCESS TO SIMULATION INFORMATIONS
 
-- 4 Trees are created in the **BeginOfRunAction** :
+- 6 Trees can be created in the **BeginOfRunAction** :
     -   **Tree_Input** with the inputs information from particle generation :
         - x : X position red from input file
         - xoffset : Offset needed to be in the center of spectrometer tube according to step file. Currently, this value is fixed at -0.152 mm
@@ -205,13 +205,19 @@ Concernign the macro, personnaly I used the vrml.mac but you can create another 
         - py_exit : Y Momentum of the aprticle
         - pz_exit : Z Momentum of the particle        
         
-    - **Tree_YAG** with the informations of interacting particles with YAG :
+    - **Tree_BSYAG** with the informations of interacting particles with YAG when the magnet is OFF:
         - x_exit : X Position of the particle
         - y_exit : Y Position of the particle
         - z_exit : Z Position of the particle
         - parentID : ParentID of the particle
         - energy : Energy of the particle
-
+        
+    - **Tree_BSPECYAG** with the informations of interacting particles with YAG when the magnet is ON:
+        - x_exit : X Position of the particle
+        - y_exit : Y Position of the particle
+        - z_exit : Z Position of the particle
+        - parentID : ParentID of the particle
+        - energy : Energy of the particle
 
 - Each variables is initialized at the **BeginOfEventAction**
 - You can find all the variable functions on the **PALLAS_ColSimEventAction.hh**
@@ -223,10 +229,10 @@ Concernign the macro, personnaly I used the vrml.mac but you can create another 
 
 ## DRAW SIMULATION RESULTS
 
-- After the simulation, you can obtain some graphic visualization of the results according to the Plot_2VD.cc file.
+- After the simulation, you can obtain some graphic visualization of the results according to the Plot_2VD.cc file (Magnet OFF) or Plot_HV_devie.cc (Magnet ON).
 
 - To run the program, run this command :
 ```
-root 'Plot_2VD.cc("[name of root file]")'
+root '[name file].cc("[name of root file]")'
 ```
 

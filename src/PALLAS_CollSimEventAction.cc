@@ -58,12 +58,19 @@ void PALLAS_CollSimEventAction::BeginOfEventAction(const G4Event *evt)
   StatsBackCollimator.py_exit.clear();
   StatsBackCollimator.pz_exit.clear();
 
-  //YAG
-  StatsYAG.x_exit.clear();
-  StatsYAG.y_exit.clear();
-  StatsYAG.z_exit.clear();
-  StatsYAG.parentID.clear();
-  StatsYAG.energy.clear();
+  //BS YAG
+  StatsBSYAG.x_exit.clear();
+  StatsBSYAG.y_exit.clear();
+  StatsBSYAG.z_exit.clear();
+  StatsBSYAG.parentID.clear();
+  StatsBSYAG.energy.clear();
+
+  //BSPEC YAG
+  StatsBSPECYAG.x_exit.clear();
+  StatsBSPECYAG.y_exit.clear();
+  StatsBSPECYAG.z_exit.clear();
+  StatsBSPECYAG.parentID.clear();
+  StatsBSPECYAG.energy.clear();
 }
 
 void PALLAS_CollSimEventAction::EndOfEventAction(const G4Event *evt)
@@ -73,13 +80,14 @@ void PALLAS_CollSimEventAction::EndOfEventAction(const G4Event *evt)
 
   if (StatsInput.energy>0)
   {
-    // runac->UpdateStatisticsInput(StatsInput);
-    // runac->UpdateStatisticsCollimator(StatsCollimator);
+    runac->UpdateStatisticsInput(StatsInput);
+    runac->UpdateStatisticsCollimator(StatsCollimator);
     // runac->UpdateStatisticsFrontCollimator(StatsFrontCollimator);
     // runac->UpdateStatisticsBackCollimator(StatsBackCollimator);
   }
 
-  if (StatsYAG.energy.size()>0) runac->UpdateStatisticsYAG(StatsYAG);
+  if (StatsBSYAG.energy.size()>0) runac->UpdateStatisticsBSYAG(StatsBSYAG);
+  if (StatsBSPECYAG.energy.size()>0) runac->UpdateStatisticsBSPECYAG(StatsBSPECYAG);
 
   //G4cout << "Etot verif = " << StatsCollimator.E_dep_verif << G4endl;
 }

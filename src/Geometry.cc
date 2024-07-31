@@ -66,7 +66,7 @@ G4LogicalVolume *Geometry::GetBFieldVolume()
   Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_Galactic");
 
   G4Box *Box = new G4Box("Box",                                   // its name
-                         (302) * mm, (670) / 2 * mm, (706.5) / 2 * mm); // its size
+                         (302) * mm, (700) / 2 * mm, (706.5) / 2 * mm); // its size
 
   LogicalVolume = new G4LogicalVolume(Box, Material, "OutputCollimator", 0, 0, 0);
 

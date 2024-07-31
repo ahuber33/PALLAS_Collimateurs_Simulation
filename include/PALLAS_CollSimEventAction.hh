@@ -75,17 +75,29 @@ struct RunTallyBackCollimator {
 };
 
 
-struct RunTallyYAG {
+struct RunTallyBSYAG {
   std::vector<float> x_exit;
   std::vector<float> y_exit;
   std::vector<float> z_exit;
   std::vector<float> parentID;
   std::vector<float> energy;
 
-  inline int operator ==(const RunTallyYAG& right) const
+  inline int operator ==(const RunTallyBSYAG& right) const
   {return (this==&right);}
 };
 
+
+
+struct RunTallyBSPECYAG {
+  std::vector<float> x_exit;
+  std::vector<float> y_exit;
+  std::vector<float> z_exit;
+  std::vector<float> parentID;
+  std::vector<float> energy;
+
+  inline int operator ==(const RunTallyBSPECYAG& right) const
+  {return (this==&right);}
+};
 
 
 class PALLAS_CollSimEventAction : public G4UserEventAction
@@ -183,21 +195,38 @@ public:
   float GetPzExitBack(G4float a){return StatsBackCollimator.pz_exit.at(a);}
 
 
-  void AddXExitYAG(G4float d){StatsYAG.x_exit.push_back(d);}
-  int GetXExitYAGSize(){return StatsYAG.x_exit.size();}
-  float GetXExitYAG(G4float a){return StatsYAG.x_exit.at(a);}
-  void AddYExitYAG(G4float d){StatsYAG.y_exit.push_back(d);}
-  int GetYExitYAGSize(){return StatsYAG.y_exit.size();}
-  float GetYExitYAG(G4float a){return StatsYAG.y_exit.at(a);}
-  void AddZExitYAG(G4float d){StatsYAG.z_exit.push_back(d);}
-  int GetZExitYAGSize(){return StatsYAG.z_exit.size();}
-  float GetZExitYAG(G4float a){return StatsYAG.z_exit.at(a);}
-  void AddEnergyYAG(G4float d){StatsYAG.energy.push_back(d);}
-  int GetEnergyYAGSize(){return StatsYAG.energy.size();}
-  float GetEnergyYAG(G4float a){return StatsYAG.energy.at(a);}
-  void AddParentIDYAG(G4float d){StatsYAG.parentID.push_back(d);}
-  int GetParentIDYAGSize(){return StatsYAG.parentID.size();}
-  float GetParentIDYAG(G4float a){return StatsYAG.parentID.at(a);}
+  void AddXExitBSYAG(G4float d){StatsBSYAG.x_exit.push_back(d);}
+  int GetXExitBSYAGSize(){return StatsBSYAG.x_exit.size();}
+  float GetXExitBSYAG(G4float a){return StatsBSYAG.x_exit.at(a);}
+  void AddYExitBSYAG(G4float d){StatsBSYAG.y_exit.push_back(d);}
+  int GetYExitBSYAGSize(){return StatsBSYAG.y_exit.size();}
+  float GetYExitBSYAG(G4float a){return StatsBSYAG.y_exit.at(a);}
+  void AddZExitBSYAG(G4float d){StatsBSYAG.z_exit.push_back(d);}
+  int GetZExitBSYAGSize(){return StatsBSYAG.z_exit.size();}
+  float GetZExitBSYAG(G4float a){return StatsBSYAG.z_exit.at(a);}
+  void AddEnergyBSYAG(G4float d){StatsBSYAG.energy.push_back(d);}
+  int GetEnergyBSYAGSize(){return StatsBSYAG.energy.size();}
+  float GetEnergyBSYAG(G4float a){return StatsBSYAG.energy.at(a);}
+  void AddParentIDBSYAG(G4float d){StatsBSYAG.parentID.push_back(d);}
+  int GetParentIDBSYAGSize(){return StatsBSYAG.parentID.size();}
+  float GetParentIDBSYAG(G4float a){return StatsBSYAG.parentID.at(a);}
+
+
+  void AddXExitBSPECYAG(G4float d){StatsBSPECYAG.x_exit.push_back(d);}
+  int GetXExitBSPECYAGSize(){return StatsBSPECYAG.x_exit.size();}
+  float GetXExitBSPECYAG(G4float a){return StatsBSPECYAG.x_exit.at(a);}
+  void AddYExitBSPECYAG(G4float d){StatsBSPECYAG.y_exit.push_back(d);}
+  int GetYExitBSPECYAGSize(){return StatsBSPECYAG.y_exit.size();}
+  float GetYExitBSPECYAG(G4float a){return StatsBSPECYAG.y_exit.at(a);}
+  void AddZExitBSPECYAG(G4float d){StatsBSPECYAG.z_exit.push_back(d);}
+  int GetZExitBSPECYAGSize(){return StatsBSPECYAG.z_exit.size();}
+  float GetZExitBSPECYAG(G4float a){return StatsBSPECYAG.z_exit.at(a);}
+  void AddEnergyBSPECYAG(G4float d){StatsBSPECYAG.energy.push_back(d);}
+  int GetEnergyBSPECYAGSize(){return StatsBSPECYAG.energy.size();}
+  float GetEnergyBSPECYAG(G4float a){return StatsBSPECYAG.energy.at(a);}
+  void AddParentIDBSPECYAG(G4float d){StatsBSPECYAG.parentID.push_back(d);}
+  int GetParentIDBSPECYAGSize(){return StatsBSPECYAG.parentID.size();}
+  float GetParentIDBSPECYAG(G4float a){return StatsBSPECYAG.parentID.at(a);}
 
 private:
 
@@ -207,7 +236,8 @@ private:
   RunTallyCollimator StatsCollimator;
   RunTallyFrontCollimator StatsFrontCollimator;
   RunTallyBackCollimator StatsBackCollimator;
-  RunTallyYAG StatsYAG;
+  RunTallyBSYAG StatsBSYAG;
+  RunTallyBSPECYAG StatsBSPECYAG;
   G4String suffixe;
   
 };

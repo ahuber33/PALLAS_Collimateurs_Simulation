@@ -27,7 +27,8 @@ public:
   void UpdateFrontCollimatorInformations(PALLAS_CollSimEventAction *evtac);
   void UpdateBackCollimatorInformations(PALLAS_CollSimEventAction *evtac);
   void UpdateBremInformations(PALLAS_CollSimEventAction *evtac);
-  void UpdateYAGInformations(PALLAS_CollSimEventAction *evtac);
+  void UpdateBSYAGInformations(PALLAS_CollSimEventAction *evtac);
+  void UpdateBSPECYAGInformations(PALLAS_CollSimEventAction *evtac);
   void UserSteppingAction(const G4Step *);
   // int Flag_gamma;
 

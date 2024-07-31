@@ -130,13 +130,28 @@ void PALLAS_CollSimSteppingAction::GetInputInformations(PALLAS_CollSimEventActio
   if (TrackingStatus ==false) theTrack->SetTrackStatus(fStopAndKill);
 }
 
-void PALLAS_CollSimSteppingAction::UpdateYAGInformations(PALLAS_CollSimEventAction *evtac)
+void PALLAS_CollSimSteppingAction::UpdateBSYAGInformations(PALLAS_CollSimEventAction *evtac)
 {
-  evtac->AddXExitYAG(xpost);
-  evtac->AddYExitYAG(ypost);
-  evtac->AddZExitYAG(zpost);
-  evtac->AddParentIDYAG(parentID);
-  evtac->AddEnergyYAG(energy);
+  evtac->AddXExitBSYAG(xpost);
+  evtac->AddYExitBSYAG(ypost);
+  evtac->AddZExitBSYAG(zpost);
+  evtac->AddParentIDBSYAG(parentID);
+  evtac->AddEnergyBSYAG(energy);
+  // G4cout << "x = " << x << G4endl;
+  // G4cout << "y = " << y << G4endl;
+  // G4cout << "z = " << z << G4endl;
+   //G4cout << "energy = " << energy << G4endl;
+
+  if (TrackingStatus ==false) theTrack->SetTrackStatus(fStopAndKill);
+}
+
+void PALLAS_CollSimSteppingAction::UpdateBSPECYAGInformations(PALLAS_CollSimEventAction *evtac)
+{
+  evtac->AddXExitBSPECYAG(xpost);
+  evtac->AddYExitBSPECYAG(ypost);
+  evtac->AddZExitBSPECYAG(zpost);
+  evtac->AddParentIDBSPECYAG(parentID);
+  evtac->AddEnergyBSPECYAG(energy);
   // G4cout << "x = " << x << G4endl;
   // G4cout << "y = " << y << G4endl;
   // G4cout << "z = " << z << G4endl;
@@ -184,7 +199,7 @@ void PALLAS_CollSimSteppingAction::UserSteppingAction(const G4Step *aStep)
   // // #######################################################################
   // // #######################################################################
 
-  // if (parentID == 0 && stepNo == 1) GetInputInformations(evtac);
+  if (parentID == 0 && stepNo == 1) GetInputInformations(evtac);
 
   // if (creatorProcess != NULL)
   // {
@@ -193,8 +208,8 @@ void PALLAS_CollSimSteppingAction::UserSteppingAction(const G4Step *aStep)
   //   UpdateBremInformations(evtac);
   // }
 
-  // if (volumeNamePreStep == "Collimator")
-  //   UpdateCollimatorInformations(evtac);
+  if (volumeNamePreStep == "Collimator")
+  UpdateCollimatorInformations(evtac);
 
   // if (volumeNamePreStep == "Collimator1" && volumeNamePostStep == "FrontOutput")
   //   UpdateFrontCollimatorInformations(evtac);
@@ -213,7 +228,13 @@ void PALLAS_CollSimSteppingAction::UserSteppingAction(const G4Step *aStep)
 
    if (volumeNamePostStep == "BS1_YAG")
    {
-    UpdateYAGInformations(evtac);
+    UpdateBSYAGInformations(evtac);
+    theTrack->SetTrackStatus(fStopAndKill);
+   }
+
+   if (volumeNamePostStep == "BSPEC1_YAG")
+   {
+    UpdateBSPECYAGInformations(evtac);
     theTrack->SetTrackStatus(fStopAndKill);
    }
     

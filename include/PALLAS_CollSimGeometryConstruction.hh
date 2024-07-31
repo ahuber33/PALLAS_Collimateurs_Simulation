@@ -110,6 +110,7 @@ private:
   G4bool StatusDisplaySection4Geometry=false;
   G4bool StatusDisplaySection4DumpGeometry=false;
   G4bool StatusRoundCollimator=false;
+  G4bool StatusMapBField=false;
   G4String CollimatorMaterial = "G4_Al";
   G4String VerticalCollimatorMaterial = "G4_Al";
   G4String HorizontalCollimatorMaterial = "G4_Al";

@@ -36,7 +36,8 @@ public:
   void UpdateStatisticsCollimator(RunTallyCollimator);
   void UpdateStatisticsFrontCollimator(RunTallyFrontCollimator);
   void UpdateStatisticsBackCollimator(RunTallyBackCollimator);
-  void UpdateStatisticsYAG(RunTallyYAG);
+  void UpdateStatisticsBSYAG(RunTallyBSYAG);
+  void UpdateStatisticsBSPECYAG(RunTallyBSPECYAG);
   
 
 private:
@@ -45,13 +46,15 @@ private:
   RunTallyCollimator StatsCollimator;
   RunTallyFrontCollimator StatsFrontCollimator;
   RunTallyBackCollimator StatsBackCollimator;
-  RunTallyYAG StatsYAG;
+  RunTallyBSYAG StatsBSYAG;
+  RunTallyBSPECYAG StatsBSPECYAG;
   TFile *f=nullptr;
   TTree *Tree_Input=nullptr;
   TTree *Tree_Collimator=nullptr;
   TTree *Tree_FrontCollimator=nullptr;
   TTree *Tree_BackCollimator=nullptr;
-  TTree *Tree_YAG=nullptr;
+  TTree *Tree_BSYAG=nullptr;
+  TTree *Tree_BSPECYAG=nullptr;
   TBranch *RunBranch=nullptr;
   time_t start;
   static std::atomic<int> activeThreads;

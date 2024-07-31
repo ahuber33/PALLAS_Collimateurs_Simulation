@@ -116,7 +116,7 @@ void PALLAS_CollSimPrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
 
   if (StatusGunParticle == true)
   {
-    //G4cout << "Thread Event queue " << threadID << "  size = " << threadEventQueue[threadID].size() << G4endl;
+    // G4cout << "Thread Event queue " << threadID << "  size = " << threadEventQueue[threadID].size() << G4endl;
 
     // Extraire les données d'événements de la file d'attente
     ParticleData pdata = threadEventQueue[threadID].front();

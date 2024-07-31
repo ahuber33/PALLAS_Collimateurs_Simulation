@@ -1,11 +1,11 @@
 #/control/alias NEventsToGenerate 106435 #PALLAS_qm1411_preCollimateur.txt
 
 
-/control/alias VerticalCollimatorThickness 50
+/control/alias VerticalCollimatorThickness 110
 /control/alias HorizontalCollimatorThickness 30
 /control/alias CollimatorSpectrometerDistance 50
 /control/alias CollimatorVHDistance 0
-/control/alias YParticleGenerationOffset 130 #Sum of precedent values
+/control/alias YParticleGenerationOffset 190 #Sum of precedent values
 
 ######################################################
 ########## PART FOR MESSENGER INFORMATIONS ###########
@@ -24,8 +24,8 @@
 /geometry/SetCollimatorSpectrometerDistance {CollimatorSpectrometerDistance} mm
 /geometry/SetCollimatorVHDistance {CollimatorVHDistance} mm
 /gun/SetYParticleGenerationOffset {YParticleGenerationOffset} mm
-/geometry/SetOpenVerticalCollimator 0.4 mm
-/geometry/SetOpenHorizontalCollimator 0.2 mm
+/geometry/SetOpenVerticalCollimator 0. mm
+/geometry/SetOpenHorizontalCollimator 0. mm
 /geometry/SetCollimatorLength 100 mm
 
 
@@ -40,10 +40,10 @@
 /run/reinitializeGeometry
 
 
-#/field/SetStatusMapBField false
-/field/SetConstantBField 0.0 tesla #0.4 tesla
+/field/SetStatusMapBField false
+/field/SetConstantBField 0.75 tesla #0.4 tesla
 
-/step/SetTrackingStatus true
+/step/SetTrackingStatus false
 
 
 /tracking/verbose 0
@@ -68,7 +68,7 @@
 ######################################################
 ### PART TO SIMULATE PARTICLE WITH GPS (no setgun) ###
 ######################################################
-/run/initialize
+#/run/initialize
 #/run/printProgress 10000
 
 /gps/number 1
