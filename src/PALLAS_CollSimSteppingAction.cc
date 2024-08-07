@@ -201,27 +201,27 @@ void PALLAS_CollSimSteppingAction::UserSteppingAction(const G4Step *aStep)
 
   if (parentID == 0 && stepNo == 1) GetInputInformations(evtac);
 
-  // if (creatorProcess != NULL)
-  // {
-  //   creatorProcessName = creatorProcess->GetProcessName();
-  //   SetFlagGammaEnergyDeposition();
-  //   UpdateBremInformations(evtac);
-  // }
+  if (creatorProcess != NULL)
+  {
+    creatorProcessName = creatorProcess->GetProcessName();
+    SetFlagGammaEnergyDeposition();
+    UpdateBremInformations(evtac);
+  }
 
   if (volumeNamePreStep == "Collimator")
   UpdateCollimatorInformations(evtac);
 
-  // if (volumeNamePreStep == "Collimator1" && volumeNamePostStep == "FrontOutput")
+  if (volumeNamePreStep == "Collimator1" && volumeNamePostStep == "FrontOutput")
+    UpdateFrontCollimatorInformations(evtac);
+
+  if (volumeNamePreStep == "Collimator2" && volumeNamePostStep == "FrontOutput")
+    UpdateFrontCollimatorInformations(evtac);    
+
+  // if (volumeNamePreStep == "Holder" && volumeNamePostStep == "FrontOutput")
   //   UpdateFrontCollimatorInformations(evtac);
 
-  // if (volumeNamePreStep == "Collimator2" && volumeNamePostStep == "FrontOutput")
-  //   UpdateFrontCollimatorInformations(evtac);    
-
-  // // if (volumeNamePreStep == "Holder" && volumeNamePostStep == "FrontOutput")
-  // //   UpdateFrontCollimatorInformations(evtac);
-
-  // if (volumeNamePreStep == "Collimator" && volumeNamePostStep == "BackOutput")
-  //   UpdateBackCollimatorInformations(evtac);
+  if (volumeNamePreStep == "Collimator" && volumeNamePostStep == "BackOutput")
+    UpdateBackCollimatorInformations(evtac);
 
   if (aStep->GetPostStepPoint()->GetPhysicalVolume()->GetName() == "World")
     theTrack->SetTrackStatus(fStopAndKill);

@@ -77,7 +77,7 @@
 /field/SetStatusMapBField false
 /field/SetConstantBField 0.75 tesla
 
-/step/SetTrackingStatus false
+/step/SetTrackingStatus true
 
 /tracking/verbose 1
 /run/verbose 1
@@ -86,9 +86,15 @@
 ######################################################
 ##### PART TO SIMULATE PARTICLE WITH PARTICLEGUN #####
 ######################################################
-/gun/SetStatusGunParticle false
-/gun/SetParticleName geantino
+/gun/SetStatusGunParticle true
+/gun/SetParticleName e-
 /gun/SetEnergyReference 247 MeV
+
+/gun/SetStatusONNX true
+/laser/SetOffsetLaserFocus 558 ## um
+/laser/SetNormVecPotential 1.43
+/laser/SetFracDopTargetChamber 0.0188 # %(/100)
+/laser/SetPressure 58.6 #mbar
 
 
 ######################################################

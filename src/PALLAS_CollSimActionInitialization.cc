@@ -11,13 +11,15 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-PALLAS_CollSimActionInitialization::PALLAS_CollSimActionInitialization(const char *suff, size_t N, size_t Ncores, std::vector<std::queue<ParticleData>> threadEventQueues, const std::vector<ParticleData>& data)
+PALLAS_CollSimActionInitialization::PALLAS_CollSimActionInitialization(const char *suff, size_t N, size_t Ncores, std::vector<std::queue<ParticleData>> threadEventQueues, const std::vector<ParticleData>& data, G4bool pFileReader, G4bool pMT)
                                                                         : G4VUserActionInitialization(), 
                                                                         suffixe(suff),
                                                                         threadEventQueues(threadEventQueues),
                                                                         NEventsGenerated(N),
                                                                         numThreads(Ncores),
-                                                                        fParticleData(data)
+                                                                        fParticleData(data),
+                                                                        flag_FileReader(pFileReader),
+                                                                        flag_MT(pMT)
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -29,7 +31,7 @@ PALLAS_CollSimActionInitialization::~PALLAS_CollSimActionInitialization()
 
 void PALLAS_CollSimActionInitialization::BuildForMaster() const
 {
-    SetUserAction(new PALLAS_CollSimRunAction(suffixe));
+    SetUserAction(new PALLAS_CollSimRunAction(suffixe, flag_MT));
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -37,9 +39,9 @@ void PALLAS_CollSimActionInitialization::BuildForMaster() const
 void PALLAS_CollSimActionInitialization::Build() const
 {
 
-    SetUserAction(new PALLAS_CollSimPrimaryGeneratorAction(NEventsGenerated, numThreads, threadEventQueues, fParticleData));
+    SetUserAction(new PALLAS_CollSimPrimaryGeneratorAction(NEventsGenerated, numThreads, threadEventQueues, fParticleData, flag_FileReader, flag_MT));
 
-    PALLAS_CollSimRunAction *runAction = new PALLAS_CollSimRunAction(suffixe);
+    PALLAS_CollSimRunAction *runAction = new PALLAS_CollSimRunAction(suffixe, flag_MT);
     PALLAS_CollSimEventAction *eventAction = new PALLAS_CollSimEventAction(suffixe);
     SetUserAction(runAction);
     SetUserAction(eventAction);

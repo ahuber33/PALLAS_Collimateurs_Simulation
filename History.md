@@ -130,3 +130,13 @@
 - Changement de l'appel au RunManager dans le fichier main afin que le RunManagerMT soit appelé dans le cas où il y a le bon nombre d'arguments pour lancer une simulation et dans le cas contraire le RunManager de base est appelé afin de rendre les simulations avec visualisations plus rapides pour debug.
 - Utilisation du 2e YAG sur l'axe devié avec utilisaiton du champ magnétique. Changement du nom de l'ensemble des variables correspondant au 1er YAG (YAG -> BSYAG) et création de l'ensemble des fonctions/variables correspondant au 2e YAG (BSPECYAG)
 - Importation de la map réelle du champ B via les fichiers PALLAS_CollSimMagneticField. Map 3D avec ajustement selon les 2 axes où le champ peut varier (à aprtir du centre des deux axes) => Plot_BField.cc. Plus rapide pour l'accès à la valeur du champ d'utiliser une fonction avec la fonction Eval que de relire à chaque fois l'intégralité du tableau afin de savoir à quelle ligne on se situe pour lire la valeur correspondante de B.
+
+## Commit #11 le 07/08/2024 [PALLAS_CollSim.0.4.2]
+- Incorporation du modèle de Machine Learning développé à la base par l'IJCLab (Pierre Drobniak notamment) et mise en forme dans GEANT4 à l'aide de Alexey Sytov. Ce modèle permet de générer des outputs de génération d'électrons à partir d'inputs de laser/plasmas. Le modèle se base sur une importante base de données issues de nombreuses simulations PIC.
+- Remise en forme du code afin de pouvoir traiter l'intégralité des configurations à savoir :
+    - Simulation avec lecture de fichiers en input sans MT
+    - Simulation avec lecture de fichiers en input avec MT
+    - Simulation sans lecture de fichiers en input sans model ONNX
+    - Simulation sans lecture de fichiers en input avec model ONNX
+    - Simulation rapide avec GPS
+- Pour cela, 2 flags (flag_FileReader & flag_MT) sont nécessaires par le biais de la ligne permettant le lancement de la simulation à savoir si c'est ON ou OFF. Si les paramètres ne sont pas bien définis où s'il manque une information, une G4Exception est affichée tout en arrêtant la simulation.

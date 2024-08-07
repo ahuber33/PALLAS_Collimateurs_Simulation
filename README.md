@@ -9,8 +9,7 @@ git clone https://github.com/ahuber33/PALLAS_Collimateurs_Simulation
 
 - Go to build Folder and use this command :
 ```
-cmake -DGeant4_DIR=$G4COMP ../
-make -j4
+ cmake -DGeant4_DIR=$G4COMP ../ -DOnnxRuntime_LIBRARY=../onnxruntime-linux-x64-1.17.1/lib/libonnxruntime.so.1.17.1
 ```  
 then compile it with make
 
@@ -24,12 +23,14 @@ It will generate x particle according to the vis.mac with QT and you will have a
 
 - If you want to have statistics without the visualization, use this command : 
 ```
-./PALLAS_CollSim [name of ROOT file] [number of events generated] [number of threads] [name of macro]
+./PALLAS_CollSim [name of ROOT file] [number of events generated] [name of macro] [FileReader ON/OFF] [MultiThreading ON/OFF] [number of threads]
 
 ```  
-For example, with the "PALLAS_phasespace_qm(1411)_preCollimateur.txt" file, there is 106435 lines so 106435 events to generated with some macroparticles associated. According to the number of threads used, the simulation will create a ROOT file for each thread and at the end of the simulation. All ROOT files will be merged together with a name correspoding to the name given in [name of ROOT file]. The temporary ROOT files will be removed after the merge.
+For example, if you want to use the "PALLAS_phasespace_qm(1411)_preCollimateur.txt" file, you need to activate the FileReader [ON]. In this file, there is 106435 lines so 106435 events to generated with some macroparticles associated. According to the number of threads used if MT is ON, the simulation will create a ROOT file for each thread and at the end of the simulation. All ROOT files will be merged together with a name correspoding to the name given in [name of ROOT file]. The temporary ROOT files will be removed after the merge.
 
-Concernign the macro, personnaly I used the vrml.mac but you can create another one. Just to remember that you need to write the name of your macro when you launch the simulation.
+Note that it's not necessary to indicate a "number of threads] if the condition on MT is OFF. In opposite, you need to put a value if MT is ON.
+
+Concerning the macro, personnaly I used the vrml.mac but you can create another one. Just to remember that you need to write the name of your macro when you launch the simulation.
 
 - In your macro, you need to specifiy some informations for the Messenger used :
 ```
@@ -73,9 +74,9 @@ Concernign the macro, personnaly I used the vrml.mac but you can create another 
 
 
 /field/SetStatusMapBField false
-/field/SetConstantBField 0.0 tesla #0.4 tesla
+/field/SetConstantBField 0.75 tesla #0.4 tesla
 
-/step/SetTrackingStatus false
+/step/SetTrackingStatus true
 
 ```
 - **alias** defines some values with YParticleGenerationOffset which depends on the 4 precedent values. Necessayre to be used in macro Script bash
@@ -121,15 +122,25 @@ Concernign the macro, personnaly I used the vrml.mac but you can create another 
 ######################################################
 ##### PART TO SIMULATE PARTICLE WITH PARTICLEGUN #####
 ######################################################
-/gun/SetStatusGunParticle false
-/gun/SetParticleName geantino
+/gun/SetStatusGunParticle true
+/gun/SetParticleName e-
 /gun/SetEnergyReference 247 MeV
+/gun/SetStatusONNX true
 ```
 - **/gun/** manages the PrimaryGeneratorAction with GunParticle :
     - SetStatusGunParticle defines if the simulation will use GunParticle or GPS as particle generator. If this value is **false**, it is **mandatory** to add or uncomment the /gps informations
     - SetParticleName defines the particle 
     - SetEnergyReference defines the energy reference mandatory to have the energy of each particle according to the phasespace file.
+    - SetStatusONNX defines if the simulation will use this model to generate particles or not. If not, you will need to activate the FileReader parameter if you want to generate a bunch of particles similar at what happend in PALLAS configuration. If not, you will have a "normal" generation of particles according to the part wrote in PALLAS_CollSimPrimaryGeneratorAction.cc
     
+- If you want to use the ONNX model, you need to specify the inputs parameter needed by the ML model :   
+```
+/laser/SetOffsetLaserFocus 558 # um
+/laser/SetNormVecPotential 1.43
+/laser/SetFracDopTargetChamber 0.0188 # %(/100)
+/laser/SetPressure 58.6 #mbar
+``` 
+For more informations about theses parameters and the model, go check this article : https://link.aps.org/doi/10.1103/PhysRevAccelBeams.26.091302
 
 - If you want to use GPS, you can use for example this kind of messengers :
 ```

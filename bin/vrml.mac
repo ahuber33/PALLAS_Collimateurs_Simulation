@@ -62,7 +62,11 @@
 /gun/SetParticleName e-
 /gun/SetEnergyReference 247 MeV
 
-
+/gun/SetStatusONNX false
+/laser/SetOffsetLaserFocus 0.0441427 
+/laser/SetNormVecPotential 0.03696395
+/laser/SetFracDopTargetChamber 0.14718525
+/laser/SetPressure 0.92301997
 
 
 ######################################################

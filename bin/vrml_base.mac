@@ -40,7 +40,7 @@
 
 
 /field/SetStatusMapBField false
-/field/SetConstantBField 0.0 tesla #0.4 tesla
+/field/SetConstantBField 0.75 tesla #0.4 tesla
 
 /step/SetTrackingStatus true
 
@@ -53,10 +53,12 @@
 /gun/SetStatusGunParticle true
 /gun/SetParticleName e-
 /gun/SetEnergyReference 247 MeV
-/gun/SetPhaseSpaceFilename PALLAS_phasespace_1411_preCollimateur.txt
-/gun/SetMacroChargeFilename PALLAS_qm1411_preCollimateur.txt
 
-
+/gun/SetStatusONNX false
+/laser/SetOffsetLaserFocus 0.0441427 
+/laser/SetNormVecPotential 0.03696395
+/laser/SetFracDopTargetChamber 0.14718525
+/laser/SetPressure 0.92301997
 
 
 ######################################################

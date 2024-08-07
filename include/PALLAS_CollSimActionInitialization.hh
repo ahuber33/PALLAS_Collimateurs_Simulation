@@ -15,7 +15,7 @@ class PALLAS_CollSimPrimaryGeneratorAction;
 class PALLAS_CollSimActionInitialization : public G4VUserActionInitialization
 {
 public:
-  PALLAS_CollSimActionInitialization(const char*, size_t, size_t, std::vector<std::queue<ParticleData>>, const std::vector<ParticleData>&);
+  PALLAS_CollSimActionInitialization(const char*, size_t, size_t, std::vector<std::queue<ParticleData>>, const std::vector<ParticleData>&, bool, bool);
   virtual ~PALLAS_CollSimActionInitialization();
   size_t charToSizeT(G4String str);
 
@@ -25,6 +25,8 @@ public:
     G4String suffixe;
     size_t NEventsGenerated;
     size_t numThreads;
+    G4bool flag_FileReader=false;
+    G4bool flag_MT=false;
     std::vector<ParticleData> fParticleData;
     std::vector<std::queue<ParticleData>> threadEventQueues;
 };

@@ -6,7 +6,9 @@
 std::atomic<int> PALLAS_CollSimRunAction::activeThreads(0);
 G4Mutex PALLAS_CollSimRunAction::fileMutex = G4MUTEX_INITIALIZER;
 
-PALLAS_CollSimRunAction::PALLAS_CollSimRunAction(const char* suff):suffixe(suff)
+PALLAS_CollSimRunAction::PALLAS_CollSimRunAction(const char* suff, G4bool pMT)
+                                                :suffixe(suff),
+                                                flag_MT(pMT)
 {}
 
 PALLAS_CollSimRunAction::~PALLAS_CollSimRunAction()
@@ -23,10 +25,20 @@ void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
   start = time(NULL);     //start the timer clock to calculate run times
 
   int a=activeThreads;
-  G4String s = std::to_string(a);
-  
-  G4String fileName = suffixe + "_" +s+".root";
+
+  if (flag_MT == true) 
+  {
+    G4String s = std::to_string(a);
+    fileName = suffixe + "_" +s+".root";
+  }
+
+  else 
+  {
+    fileName = suffixe +".root";
+  }
+
   G4cout << "Filename = " << fileName << G4endl;
+
   f = new TFile(fileName.c_str(),"RECREATE");
 
   Tree_Input = new TTree("Input","Input Information");  //Tree to access Collimator information
@@ -122,8 +134,8 @@ void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
 void PALLAS_CollSimRunAction::EndOfRunAction(const G4Run*aRun){
   G4AutoLock lock(&fileMutex); // Verrouillage automatique du mutex
   f->cd();
-  //Tree_Input->Write();
-  Tree_Collimator->Write();
+  Tree_Input->Write();
+  //Tree_Collimator->Write();
   //Tree_FrontCollimator->Write();
   //Tree_BackCollimator->Write();
   Tree_BSYAG->Write();

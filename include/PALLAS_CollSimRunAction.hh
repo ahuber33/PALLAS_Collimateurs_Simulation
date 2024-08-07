@@ -24,7 +24,7 @@ class PALLAS_CollSimRunAction : public G4UserRunAction
 {
 
 public:
-  PALLAS_CollSimRunAction(const char*);
+  PALLAS_CollSimRunAction(const char*, G4bool);
   ~PALLAS_CollSimRunAction();
 
 public:
@@ -42,12 +42,14 @@ public:
 
 private:
   G4String suffixe;
+  G4String fileName;
   RunTallyInput StatsInput;
   RunTallyCollimator StatsCollimator;
   RunTallyFrontCollimator StatsFrontCollimator;
   RunTallyBackCollimator StatsBackCollimator;
   RunTallyBSYAG StatsBSYAG;
   RunTallyBSPECYAG StatsBSPECYAG;
+  G4bool flag_MT;
   TFile *f=nullptr;
   TTree *Tree_Input=nullptr;
   TTree *Tree_Collimator=nullptr;
