@@ -44,7 +44,7 @@ public:
   ~Geometry();
 
 public:
-  G4LogicalVolume *GetCollimator(G4String name);
+  G4LogicalVolume* GetCollimator(G4String name);
   G4LogicalVolume *GetOutputCollimator();
   G4LogicalVolume *GetRoundCollimator();
   G4LogicalVolume *GetBFieldVolume();
@@ -94,6 +94,8 @@ public:
   G4LogicalVolume *GetPALLAS_S4Tube1();
   G4LogicalVolume *GetPALLAS_S4Soufflet();
   G4LogicalVolume *GetPALLAS_S4Croix();
+
+  void Cleanup();
   
 
   //****************COMMON********************
@@ -107,14 +109,13 @@ private:
   PALLAS_CollSimMaterials *scintProp;
   PALLAS_CollSimGeometryConstruction *SimGeometry;
   G4GenericMessenger* gMessenger;
+  G4Material *Material;
+  G4LogicalVolume* LogicalVolume;  // Garde la trace de l'allocation
+  G4Box* Box;  // Garde la trace de l'allocation
+  G4Tubs* Tubs;  // Garde la trace de l'allocation
+  G4GDMLParser* parser;
 
   static const G4String path_bin;
-
-  // Materials
-  G4Material *Material;
-
-  // Logical Volumes
-  G4LogicalVolume *LogicalVolume;
 
   // Physical Dimensions
   G4double CollimatorInternalRadius;

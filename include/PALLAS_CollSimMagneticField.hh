@@ -16,6 +16,9 @@
 
 /// Magnetic field
 
+// Taille du tableau de gradients
+const size_t NumQuadrupoles = 4;
+
 class PALLAS_CollSimMagneticField : public G4MagneticField
 {
   public:
@@ -24,13 +27,20 @@ class PALLAS_CollSimMagneticField : public G4MagneticField
 
     void GetFieldValue(const G4double point[4], double* bField) const override;
 
-    void SetField(G4double val);
+    void SetDipoleField(G4double val);
+        // Méthode généralisée pour définir le gradient d'un quadrupole
+    void SetGradient(size_t index, G4double gradient);
+
+    // Méthode pour obtenir le gradient d'un quadrupole (pour vérifier)
+    G4double GetGradient(size_t index) const;
     void SetMapBFieldStatus(G4bool val);
 
   private:
 
     void DefineCommands();
-    G4double ConstantBField = 0.0*CLHEP::tesla;
+    G4double ConstantDipoleBField = 0.0*CLHEP::tesla;
+        // Tableau des gradients pour les quadrupoles Q1 à Q4
+    std::array<G4double, NumQuadrupoles> gradients = {0.0, 0.0, 0.0, 0.0}; // tesla/meter
     G4bool StatusMapBField=false;
 };
 

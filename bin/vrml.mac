@@ -2,30 +2,30 @@
 
 
 /control/alias VerticalCollimatorThickness 110
-/control/alias HorizontalCollimatorThickness 30
+/control/alias HorizontalCollimatorThickness 60
 /control/alias CollimatorSpectrometerDistance 50
 /control/alias CollimatorVHDistance 0
-/control/alias YParticleGenerationOffset 190 #Sum of precedent values
+/control/alias YParticleGenerationOffset 220 #Sum of precedent values
 
 ######################################################
 ########## PART FOR MESSENGER INFORMATIONS ###########
 ######################################################
 /geometry/SetStatusRoundCollimator false
-/geometry/SetCollimatorThickness 150 mm
+/geometry/SetCollimatorThickness 110 mm
 /geometry/SetCollimatorInternalRadius 10 mm
 /geometry/SetCollimatorExternalRadius 100 mm
 /geometry/SetCollimatorDistanceBetweenPlates 0 mm
 
-/geometry/SetVerticalCollimatorMaterial G4_Pb
-/geometry/SetHorizontalCollimatorMaterial G4_W
+/geometry/SetVerticalCollimatorMaterial G4_W
+/geometry/SetHorizontalCollimatorMaterial G4_Pb
 
 /geometry/SetVerticalCollimatorThickness {VerticalCollimatorThickness} mm
 /geometry/SetHorizontalCollimatorThickness {HorizontalCollimatorThickness} mm
 /geometry/SetCollimatorSpectrometerDistance {CollimatorSpectrometerDistance} mm
 /geometry/SetCollimatorVHDistance {CollimatorVHDistance} mm
 /gun/SetYParticleGenerationOffset {YParticleGenerationOffset} mm
-/geometry/SetOpenVerticalCollimator 0. mm
-/geometry/SetOpenHorizontalCollimator 0. mm
+/geometry/SetOpenVerticalCollimator 0.4 mm
+/geometry/SetOpenHorizontalCollimator 0.2 mm
 /geometry/SetCollimatorLength 100 mm
 
 
@@ -41,14 +41,18 @@
 
 
 /field/SetStatusMapBField false
-/field/SetConstantBField 0.75 tesla #0.4 tesla
+/field/SetConstantDipoleBField 0. tesla #0.4 tesla
+/field/SetQ1Gradient 0.0 #tesla/m
+/field/SetQ2Gradient 0.0
+/field/SetQ3Gradient 0.0
+/field/SetQ4Gradient 0.0
 
-/step/SetTrackingStatus false
+
+/step/SetTrackingStatus true
 
 
 /tracking/verbose 0
 /run/verbose 1
-/geometry/navigator/verbose 0
 #/geometry/test/run
 
 
@@ -76,7 +80,7 @@
 #/run/printProgress 10000
 
 /gps/number 1
-/gps/particle e-
+/gps/particle geantino
 
 /gps/pos/type Point
 /gps/pos/centre -0.152 0.0 0.08 mm

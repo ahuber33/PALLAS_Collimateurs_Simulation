@@ -28,7 +28,7 @@ It will generate x particle according to the vis.mac with QT and you will have a
 ```  
 For example, if you want to use the "PALLAS_phasespace_qm(1411)_preCollimateur.txt" file, you need to activate the FileReader [ON]. In this file, there is 106435 lines so 106435 events to generated with some macroparticles associated. According to the number of threads used if MT is ON, the simulation will create a ROOT file for each thread and at the end of the simulation. All ROOT files will be merged together with a name correspoding to the name given in [name of ROOT file]. The temporary ROOT files will be removed after the merge.
 
-Note that it's not necessary to indicate a "number of threads] if the condition on MT is OFF. In opposite, you need to put a value if MT is ON.
+Note that it's not necessary to indicate a [number of threads] if the condition on MT is OFF. In opposite, you need to put a value if MT is ON.
 
 Concerning the macro, personnaly I used the vrml.mac but you can create another one. Just to remember that you need to write the name of your macro when you launch the simulation.
 

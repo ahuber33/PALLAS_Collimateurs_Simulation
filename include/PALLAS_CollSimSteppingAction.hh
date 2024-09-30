@@ -42,11 +42,13 @@ private:
   G4int particleID;
   G4String endproc;
   G4int parentID;
+  G4int trackID;
   G4int stepNo;
   G4String volumeNamePreStep;
   G4String volumeNamePostStep;
   G4float energy;
   G4float energyDeposited;
+  G4float Edep;
   G4double x;
   G4double y;
   G4double z;

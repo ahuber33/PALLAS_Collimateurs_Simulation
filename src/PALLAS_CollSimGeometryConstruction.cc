@@ -135,11 +135,31 @@ PALLAS_CollSimGeometryConstruction::PALLAS_CollSimGeometryConstruction() : G4VUs
         .SetDefaultValue("100.0 mm")
         .SetRange("CollimatorSpectrometerDistance >=0.0");
 
-    bMessenger->DeclarePropertyWithUnit("SetConstantBField", "tesla", ConstantBField)
-        .SetGuidance("Set the constant BField value.")
-        .SetParameterName("ConstantBField", false)
+    bMessenger->DeclarePropertyWithUnit("SetConstantDipoleBField", "tesla", ConstantDipoleBField)
+        .SetGuidance("Set the constant Dipole BField value.")
+        .SetParameterName("ConstantDipoleBField", false)
         .SetDefaultValue("0.0 tesla")
-        .SetRange("ConstantBField >=0.0");
+        .SetRange("ConstantDipoleBField >=0.0");
+
+    bMessenger->DeclareProperty("SetQ1Gradient", Q1Gradient)
+        .SetGuidance("Set the Q1 Gradient BField value.")
+        .SetParameterName("Q1Gradient", false)
+        .SetDefaultValue("0.0");
+
+    bMessenger->DeclareProperty("SetQ2Gradient", Q2Gradient)
+        .SetGuidance("Set the Q2 Gradient BField value.")
+        .SetParameterName("Q2Gradient", false)
+        .SetDefaultValue("0.0");
+
+    bMessenger->DeclareProperty("SetQ3Gradient", Q3Gradient)
+        .SetGuidance("Set the Q3 Gradient BField value.")
+        .SetParameterName("Q3Gradient", false)
+        .SetDefaultValue("0.0");
+
+    bMessenger->DeclareProperty("SetQ4Gradient", Q4Gradient)
+        .SetGuidance("Set the Q4 Gradient BField value.")
+        .SetParameterName("Q4Gradient", false)
+        .SetDefaultValue("0.0");
 
     bMessenger->DeclareProperty("SetStatusMapBField", StatusMapBField)
         .SetGuidance("Set the boolean parameter.")
@@ -849,7 +869,7 @@ void PALLAS_CollSimGeometryConstruction::ConstructSDandField()
 {
    // magnetic field ----------------------------------------------------------
   fMagneticField = new PALLAS_CollSimMagneticField();
-  fMagneticField->SetField(ConstantBField);
+  fMagneticField->SetDipoleField(ConstantDipoleBField);
   fMagneticField->SetMapBFieldStatus(StatusMapBField);
   fFieldMgr = new G4FieldManager();
   fFieldMgr->SetDetectorField(fMagneticField);

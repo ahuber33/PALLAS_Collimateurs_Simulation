@@ -7,13 +7,13 @@
 
 // Structure pour stocker les données des particules
 struct ParticleData {
-    G4double x;
-    G4double xp;
-    G4double z;
-    G4double zp;
-    G4double s;
-    G4double delta;
-    G4int n;
+    G4double x=0.0;
+    G4double xp=0.0;
+    G4double z=0.0;
+    G4double zp=0.0;
+    G4double s=0.0;
+    G4double delta=0.0;
+    G4int n=0;
   };
 
 struct ThreadEventData {

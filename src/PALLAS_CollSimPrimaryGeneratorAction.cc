@@ -183,6 +183,19 @@ void PALLAS_CollSimPrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
 
     if (flag_FileReader == true && flag_MT == true)
     {
+
+      if (threadEventQueue[threadID].empty())
+      {
+        G4cerr << "Thread event queue is empty or not initialized!" << G4endl;
+        G4RunManager::GetRunManager()->TerminateEventLoop();
+        G4RunManager::GetRunManager()->AbortRun();
+
+        G4cout << "STOP THREAD" << G4endl;
+        return;
+      }
+
+      else
+      {
       threadID = G4Threading::G4GetThreadId();
 
       // Extraire les données d'événements de la file d'attente
@@ -202,17 +215,9 @@ void PALLAS_CollSimPrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
         particleGun->GeneratePrimaryVertex(anEvent);
       }
 
-      if (threadEventQueue[threadID].empty())
-      {
-        G4cerr << "Thread event queue is empty or not initialized!" << G4endl;
-        G4RunManager::GetRunManager()->TerminateEventLoop();
-        G4RunManager::GetRunManager()->AbortRun();
-
-        G4cout << "STOP THREAD" << G4endl;
-        return;
-      }
-
       currentParticleNumber += pdata.n;
+      }
+      
     }
 
     // ######################################################################################
@@ -221,6 +226,18 @@ void PALLAS_CollSimPrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
 
     if (flag_FileReader == true && flag_MT == false)
     {
+      if (threadEventQueue[0].empty())
+      {
+        G4cerr << "Thread event queue is empty or not initialized!" << G4endl;
+        G4RunManager::GetRunManager()->TerminateEventLoop();
+        G4RunManager::GetRunManager()->AbortRun();
+
+        G4cout << "STOP Simulation" << G4endl;
+        return;
+      }
+
+      else
+      {
       // Extraire les données d'événements de la file d'attente
       ParticleData pdata = threadEventQueue[0].front();
       threadEventQueue[0].pop();
@@ -237,17 +254,9 @@ void PALLAS_CollSimPrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
         particleGun->GeneratePrimaryVertex(anEvent);
       }
 
-      if (threadEventQueue[0].empty())
-      {
-        G4cerr << "Thread event queue is empty or not initialized!" << G4endl;
-        G4RunManager::GetRunManager()->TerminateEventLoop();
-        G4RunManager::GetRunManager()->AbortRun();
-
-        G4cout << "STOP Simulation" << G4endl;
-        return;
-      }
 
       currentParticleNumber += pdata.n;
+      }
     }
 
     // ######################################################################################

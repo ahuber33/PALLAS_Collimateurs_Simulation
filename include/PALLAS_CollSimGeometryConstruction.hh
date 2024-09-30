@@ -63,6 +63,7 @@
 #include "G4GeometryTolerance.hh"
 #include "G4AutoLock.hh"
 #include "PALLAS_CollSimMagneticField.hh"
+#include "G4SystemOfUnits.hh"
 
 class Geometry;
 class G4FieldManager;
@@ -123,7 +124,11 @@ private:
   G4double CollimatorInternalRadius=0*mm;
   G4double CollimatorExternalRadius=20*mm;
   G4double CollimatorSpectrometerDistance=0*mm;
-  G4double ConstantBField =0.4*tesla;
+  G4double ConstantDipoleBField =0.4*tesla;
+  G4double Q1Gradient =0.0;
+  G4double Q2Gradient =0.0;
+  G4double Q3Gradient =0.0;
+  G4double Q4Gradient =0.0;
   G4double CollimatorLength=200*mm;
   G4double CollimatorDistanceBetweenPlates = 10*mm;
   G4double OpenVerticalCollimator = 10*mm;

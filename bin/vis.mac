@@ -51,8 +51,8 @@
 /geometry/SetCollimatorExternalRadius 100 mm
 /geometry/SetCollimatorDistanceBetweenPlates 0 mm
 
-/geometry/SetVerticalCollimatorMaterial G4_W
-/geometry/SetHorizontalCollimatorMaterial G4_Pb
+/geometry/SetVerticalCollimatorMaterial G4_Pb
+/geometry/SetHorizontalCollimatorMaterial G4_W
 
 /geometry/SetVerticalCollimatorThickness {VerticalCollimatorThickness} mm
 /geometry/SetHorizontalCollimatorThickness {HorizontalCollimatorThickness} mm
@@ -75,7 +75,11 @@
 /run/reinitializeGeometry
 
 /field/SetStatusMapBField false
-/field/SetConstantBField 0.75 tesla
+/field/SetConstantDipoleBField 0.75 tesla #0.4 tesla
+/field/SetQ1Gradient 0.0 tesla/meter
+/field/SetQ2Gradient 0.0 tesla/meter
+/field/SetQ3Gradient 0.0 tesla/meter
+/field/SetQ4Gradient 0.0 tesla/meter 
 
 /step/SetTrackingStatus true
 
@@ -90,7 +94,7 @@
 /gun/SetParticleName e-
 /gun/SetEnergyReference 247 MeV
 
-/gun/SetStatusONNX true
+/gun/SetStatusONNX false
 /laser/SetOffsetLaserFocus 558 ## um
 /laser/SetNormVecPotential 1.43
 /laser/SetFracDopTargetChamber 0.0188 # %(/100)
@@ -102,7 +106,7 @@
 ######################################################
 /gps/number 1
 # PART TO SIMULATE 1 MEV ELECTRON !!!!!!!!
-/gps/particle e-
+/gps/particle geantino
 
 /gps/pos/type Point
 /gps/pos/centre -0.162 0.0 0.18 mm
@@ -117,4 +121,4 @@
 #/grdm/nucleusLimits 60 60 27 27
 
 
-/run/beamOn 1
+/run/beamOn 2

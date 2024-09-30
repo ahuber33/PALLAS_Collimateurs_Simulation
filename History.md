@@ -140,3 +140,12 @@
     - Simulation sans lecture de fichiers en input avec model ONNX
     - Simulation rapide avec GPS
 - Pour cela, 2 flags (flag_FileReader & flag_MT) sont nécessaires par le biais de la ligne permettant le lancement de la simulation à savoir si c'est ON ou OFF. Si les paramètres ne sont pas bien définis où s'il manque une information, une G4Exception est affichée tout en arrêtant la simulation.
+
+## Commit #12 le 30/09/2024 [PALLAS_CollSim.0.4.3]
+- Corrections de bugs mineurs (Déclaration complète de certaines variables)
+- Ajout de la prise en compte de l'énergie déposée dans les scintillateurs. Modification de l'algo en se basant sur le PostStep plutot que le PreStep. Précédemment, à aprtir du moment où une particule entrait en contact avec le scintillateur, on arrêtait la particule et on enregistrait son énergie. Hors cela ne prend pas en compte la possibilité que le gamma n'interagisse pas avec le scintillateur. Désormais, le suivi est activé dans le scintillateur.
+- Optimisation de certaines parties de code par le biais de template (UpdateStatistics)
+- Optimsisation et nettoyage de PALLAS_CollSim.cc
+- Création de nouvelles variables et messengers pour la future implémentation des quadrupoles -> Changement dans les macros effectués
+- SetConstantBField modifié en SetConstantDipoleBField.
+- Modification des fichiers MagnetifField en accord avec les éléments précédents.

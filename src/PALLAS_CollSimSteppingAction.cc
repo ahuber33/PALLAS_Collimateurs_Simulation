@@ -26,13 +26,7 @@ PALLAS_CollSimSteppingAction::~PALLAS_CollSimSteppingAction()
 
 bool PALLAS_CollSimSteppingAction::SetFlagGammaEnergyDeposition()
 {
-  if (particleID == 22)
-    flag_Gamma = true;
-
-  if (creatorProcessName == "phot" || creatorProcessName == "compt" || creatorProcessName == "conv")
-    flag_Gamma = true;
-  else
-    flag_Gamma = false;
+  flag_Gamma = (particleID == 22 || creatorProcessName == "phot" || creatorProcessName == "compt" || creatorProcessName == "conv");
 
   return flag_Gamma;
 }
@@ -132,30 +126,73 @@ void PALLAS_CollSimSteppingAction::GetInputInformations(PALLAS_CollSimEventActio
 
 void PALLAS_CollSimSteppingAction::UpdateBSYAGInformations(PALLAS_CollSimEventAction *evtac)
 {
-  evtac->AddXExitBSYAG(xpost);
-  evtac->AddYExitBSYAG(ypost);
-  evtac->AddZExitBSYAG(zpost);
-  evtac->AddParentIDBSYAG(parentID);
-  evtac->AddEnergyBSYAG(energy);
-  // G4cout << "x = " << x << G4endl;
-  // G4cout << "y = " << y << G4endl;
-  // G4cout << "z = " << z << G4endl;
-   //G4cout << "energy = " << energy << G4endl;
+  if(evtac->ReturnFlagBSYAG() == false)
+  {
+    evtac->AddXExitBSYAG(xpost);
+    evtac->AddYExitBSYAG(ypost);
+    evtac->AddZExitBSYAG(zpost);
+    evtac->AddParentIDBSYAG(parentID);
+    evtac->AddEnergyBSYAG(energy);
+    evtac->ActiveFlagBSYAG();
+
+    //SG4cout << "ParentID = " << parentID << G4endl;
+    //G4cout << "TrackID = " << trackID << G4endl;
+    //G4cout << "x = " << x << G4endl;
+    //G4cout << "y = " << y << G4endl;
+    //G4cout << "z = " << z << G4endl;
+    //G4cout << "energy = " << energy << G4endl;
+  }
+  
+  evtac->AddDepositedEnergyBSYAG(energyDeposited);
+  
+  //G4cout << "energy dep = " << energyDeposited << G4endl;
+  //G4cout << "energy dep TOT = " << evtac->GetDepositedEnergyBSYAG() << G4endl;
+
+
+  if (volumeNamePostStep == "Holder" || (energy-energyDeposited) ==0)
+  {
+    evtac->AddTotalDepositedEnergyBSYAG(evtac->GetDepositedEnergyBSYAG());
+    //G4cout << "Chgmt de track => Edep particule précédente = " << evtac->GetDepositedEnergyBSYAG() << G4endl;  
+    evtac->ResetDepositedEnergyBSYAG();
+    evtac->ResetFlagBSYAG();
+  }
 
   if (TrackingStatus ==false) theTrack->SetTrackStatus(fStopAndKill);
 }
 
 void PALLAS_CollSimSteppingAction::UpdateBSPECYAGInformations(PALLAS_CollSimEventAction *evtac)
 {
-  evtac->AddXExitBSPECYAG(xpost);
-  evtac->AddYExitBSPECYAG(ypost);
-  evtac->AddZExitBSPECYAG(zpost);
-  evtac->AddParentIDBSPECYAG(parentID);
-  evtac->AddEnergyBSPECYAG(energy);
-  // G4cout << "x = " << x << G4endl;
-  // G4cout << "y = " << y << G4endl;
-  // G4cout << "z = " << z << G4endl;
-   //G4cout << "energy = " << energy << G4endl;
+  if(evtac->ReturnFlagBSPECYAG() == false)
+  {
+    evtac->AddXExitBSPECYAG(xpost);
+    evtac->AddYExitBSPECYAG(ypost);
+    evtac->AddZExitBSPECYAG(zpost);
+    evtac->AddParentIDBSPECYAG(parentID);
+    evtac->AddEnergyBSPECYAG(energy);
+    evtac->ActiveFlagBSPECYAG();
+
+    //SG4cout << "ParentID = " << parentID << G4endl;
+    //G4cout << "TrackID = " << trackID << G4endl;
+    // G4cout << "x = " << x << G4endl;
+    // G4cout << "y = " << y << G4endl;
+    // G4cout << "z = " << z << G4endl;
+    //G4cout << "energy = " << energy << G4endl;
+  }
+
+  evtac->AddDepositedEnergyBSPECYAG(energyDeposited);
+
+  //G4cout << "energy dep = " << energyDeposited << G4endl;
+  //G4cout << "energy dep TOT = " << evtac->GetDepositedEnergyBSPECYAG() << G4endl;
+
+
+  if (volumeNamePostStep == "Holder" || (energy-energyDeposited) ==0)
+  {
+    evtac->AddTotalDepositedEnergyBSPECYAG(evtac->GetDepositedEnergyBSPECYAG());
+    //G4cout << "Chgmt de track => Edep particule précédente = " << evtac->GetDepositedEnergyBSPECYAG() << G4endl;  
+    evtac->ResetDepositedEnergyBSPECYAG();
+    evtac->ResetFlagBSPECYAG();
+  }
+  
 
   if (TrackingStatus ==false) theTrack->SetTrackStatus(fStopAndKill);
 }
@@ -176,6 +213,7 @@ void PALLAS_CollSimSteppingAction::UserSteppingAction(const G4Step *aStep)
   endproc = aStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
   auto creatorProcess = theTrack->GetCreatorProcess();
   parentID = aStep->GetTrack()->GetParentID();
+  trackID = aStep->GetTrack()->GetTrackID();
   stepNo = aStep->GetTrack()->GetCurrentStepNumber();
   energy = aStep->GetPreStepPoint()->GetKineticEnergy() / MeV;
   volumeNamePreStep = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();
@@ -226,16 +264,16 @@ void PALLAS_CollSimSteppingAction::UserSteppingAction(const G4Step *aStep)
   if (aStep->GetPostStepPoint()->GetPhysicalVolume()->GetName() == "World")
     theTrack->SetTrackStatus(fStopAndKill);
 
-   if (volumeNamePostStep == "BS1_YAG")
+   if (volumeNamePreStep == "BS1_YAG")
    {
     UpdateBSYAGInformations(evtac);
-    theTrack->SetTrackStatus(fStopAndKill);
+    //theTrack->SetTrackStatus(fStopAndKill);
    }
 
-   if (volumeNamePostStep == "BSPEC1_YAG")
+   if (volumeNamePreStep == "BSPEC1_YAG")
    {
     UpdateBSPECYAGInformations(evtac);
-    theTrack->SetTrackStatus(fStopAndKill);
+    //theTrack->SetTrackStatus(fStopAndKill);
    }
     
 

@@ -17,60 +17,19 @@ PALLAS_CollSimEventAction::~PALLAS_CollSimEventAction() {}
 void PALLAS_CollSimEventAction::BeginOfEventAction(const G4Event *evt)
 {
   // Input
-  StatsInput.x = 0;
-  StatsInput.xoffset = 0;
-  StatsInput.xp = 0;
-  StatsInput.y = 0;
-  StatsInput.yoffset = 0;
-  StatsInput.yp = 0;
-  StatsInput.s = 0;
-  StatsInput.soffset = 0;
-  StatsInput.delta = 0;
-  StatsInput.energy = 0;
-  StatsInput.Nevent = 0;
+  StatsInput = {};
 
   // Collimator
-  StatsCollimator.E_start = 0;
-  StatsCollimator.E_dep = 0;
-  StatsCollimator.E_dep_e = 0;
-  StatsCollimator.E_dep_g = 0;
-  StatsCollimator.Energy_Brem_created.clear();
+  StatsCollimator = {};
 
-  // FRONT Collimator
-  StatsFrontCollimator.particleID.clear();
-  StatsFrontCollimator.parentID.clear();
-  StatsFrontCollimator.E_exit.clear();
-  StatsFrontCollimator.x_exit.clear();
-  StatsFrontCollimator.y_exit.clear();
-  StatsFrontCollimator.z_exit.clear();
-  StatsFrontCollimator.px_exit.clear();
-  StatsFrontCollimator.py_exit.clear();
-  StatsFrontCollimator.pz_exit.clear();
-
-  // BACK Collimator
-  StatsBackCollimator.particleID.clear();
-  StatsBackCollimator.parentID.clear();
-  StatsBackCollimator.E_exit.clear();
-  StatsBackCollimator.x_exit.clear();
-  StatsBackCollimator.y_exit.clear();
-  StatsBackCollimator.z_exit.clear();
-  StatsBackCollimator.px_exit.clear();
-  StatsBackCollimator.py_exit.clear();
-  StatsBackCollimator.pz_exit.clear();
-
-  //BS YAG
-  StatsBSYAG.x_exit.clear();
-  StatsBSYAG.y_exit.clear();
-  StatsBSYAG.z_exit.clear();
-  StatsBSYAG.parentID.clear();
-  StatsBSYAG.energy.clear();
-
-  //BSPEC YAG
-  StatsBSPECYAG.x_exit.clear();
-  StatsBSPECYAG.y_exit.clear();
-  StatsBSPECYAG.z_exit.clear();
-  StatsBSPECYAG.parentID.clear();
-  StatsBSPECYAG.energy.clear();
+  // FRONT & BACK Collimator
+  StatsFrontCollimator = {};
+  StatsBackCollimator = {};
+  
+  //BS & BSPEC YAG
+  StatsBSYAG = {};
+  StatsBSPECYAG = {};
+  
 }
 
 void PALLAS_CollSimEventAction::EndOfEventAction(const G4Event *evt)
@@ -81,13 +40,13 @@ void PALLAS_CollSimEventAction::EndOfEventAction(const G4Event *evt)
   if (StatsInput.energy>0)
   {
     runac->UpdateStatisticsInput(StatsInput);
-    runac->UpdateStatisticsCollimator(StatsCollimator);
+    //runac->UpdateStatisticsCollimator(StatsCollimator);
     // runac->UpdateStatisticsFrontCollimator(StatsFrontCollimator);
     // runac->UpdateStatisticsBackCollimator(StatsBackCollimator);
   }
 
-  if (StatsBSYAG.energy.size()>0) runac->UpdateStatisticsBSYAG(StatsBSYAG);
-  if (StatsBSPECYAG.energy.size()>0) runac->UpdateStatisticsBSPECYAG(StatsBSPECYAG);
+  if (!StatsBSYAG.energy.empty()) runac->UpdateStatisticsBSYAG(StatsBSYAG);
+  if (!StatsBSPECYAG.energy.empty()) runac->UpdateStatisticsBSPECYAG(StatsBSPECYAG);
 
   //G4cout << "Etot verif = " << StatsCollimator.E_dep_verif << G4endl;
 }

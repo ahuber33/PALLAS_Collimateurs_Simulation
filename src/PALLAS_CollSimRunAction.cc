@@ -49,17 +49,17 @@ void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
   Tree_BSPECYAG = new TTree("BSPECYAG","BSPEC YAG Information");  //Tree to access Back Collimator infos
 
   //*****************************INFORMATION FROM THE INPUT*******************************************
-  RunBranch = Tree_Input->Branch("x", &StatsInput.x, "x/F" );
-  RunBranch = Tree_Input->Branch("xoffset", &StatsInput.xoffset, "xoffset/F" );
-  RunBranch = Tree_Input->Branch("xp", &StatsInput.xp, "xp/F" );
-  RunBranch = Tree_Input->Branch("y", &StatsInput.y, "y/F" );
-  RunBranch = Tree_Input->Branch("yoffset", &StatsInput.yoffset, "yoffset/F" );
-  RunBranch = Tree_Input->Branch("yp", &StatsInput.yp, "yp/F" );
-  RunBranch = Tree_Input->Branch("s", &StatsInput.s, "s/F" );
-  RunBranch = Tree_Input->Branch("soffset", &StatsInput.soffset, "soffset/F" );
-  RunBranch = Tree_Input->Branch("p", &StatsInput.p, "p/F" );
-  RunBranch = Tree_Input->Branch("delta", &StatsInput.delta, "delta/F" );
-  RunBranch = Tree_Input->Branch("energy", &StatsInput.energy, "energy/F" );
+  // RunBranch = Tree_Input->Branch("x", &StatsInput.x, "x/F" );
+  // RunBranch = Tree_Input->Branch("xoffset", &StatsInput.xoffset, "xoffset/F" );
+  // RunBranch = Tree_Input->Branch("xp", &StatsInput.xp, "xp/F" );
+  // RunBranch = Tree_Input->Branch("y", &StatsInput.y, "y/F" );
+  // RunBranch = Tree_Input->Branch("yoffset", &StatsInput.yoffset, "yoffset/F" );
+  // RunBranch = Tree_Input->Branch("yp", &StatsInput.yp, "yp/F" );
+  // RunBranch = Tree_Input->Branch("s", &StatsInput.s, "s/F" );
+  // RunBranch = Tree_Input->Branch("soffset", &StatsInput.soffset, "soffset/F" );
+  // RunBranch = Tree_Input->Branch("p", &StatsInput.p, "p/F" );
+  // RunBranch = Tree_Input->Branch("delta", &StatsInput.delta, "delta/F" );
+  // RunBranch = Tree_Input->Branch("energy", &StatsInput.energy, "energy/F" );
   RunBranch = Tree_Input->Branch("Nevent", &StatsInput.Nevent, "Nevent/I" );
 
   //*****************************INFORMATION FROM THE COLLIMATOR**************************************
@@ -97,6 +97,7 @@ void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
   RunBranch = Tree_BSYAG->Branch("z_exit", "vector<float>" , &StatsBSYAG.z_exit);
   RunBranch = Tree_BSYAG->Branch("parentID", "vector<float>" , &StatsBSYAG.parentID);
   RunBranch = Tree_BSYAG->Branch("energy", "vector<float>" , &StatsBSYAG.energy);
+  RunBranch = Tree_BSYAG->Branch("deposited_energy", "vector<float>" , &StatsBSYAG.total_deposited_energy);
 
 //************************************INFORMATION FROM THE BSPEC YAG*****************************************
   RunBranch = Tree_BSPECYAG->Branch("x_exit", "vector<float>" , &StatsBSPECYAG.x_exit);
@@ -104,6 +105,7 @@ void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
   RunBranch = Tree_BSPECYAG->Branch("z_exit", "vector<float>" , &StatsBSPECYAG.z_exit);
   RunBranch = Tree_BSPECYAG->Branch("parentID", "vector<float>" , &StatsBSPECYAG.parentID);
   RunBranch = Tree_BSPECYAG->Branch("energy", "vector<float>" , &StatsBSPECYAG.energy);
+  RunBranch = Tree_BSPECYAG->Branch("deposited_energy", "vector<float>" , &StatsBSPECYAG.total_deposited_energy);
 
 
 
@@ -172,56 +174,38 @@ void PALLAS_CollSimRunAction::EndOfRunAction(const G4Run*aRun){
 //  For each event update the statistics in the Run tree
 //---------------------------------------------------------
 
-void PALLAS_CollSimRunAction::UpdateStatisticsInput(RunTallyInput aRunTallyInput){
-  std::lock_guard<std::mutex> lock(fileMutex);
-  StatsInput = aRunTallyInput;
-  if (Tree_Input)Tree_Input->Fill();
-  else{
-    G4cerr << "Error : Tree_Input is nullptr" << G4endl;
-  }
+template <typename T>
+void PALLAS_CollSimRunAction::UpdateStatistics(T& stats, const T& newStats, TTree* tree) {
+    std::lock_guard<std::mutex> lock(fileMutex);  // Protéger avec un verrou
+    stats = newStats;  // Assigner les nouvelles statistiques
+    if (tree) {
+        tree->Fill();  // Remplir l'arbre
+    } else {
+        G4cerr << "Error: Tree is nullptr" << G4endl;
+    }
 }
 
-void PALLAS_CollSimRunAction::UpdateStatisticsCollimator(RunTallyCollimator aRunTallyCollimator){
-  std::lock_guard<std::mutex> lock(fileMutex);
-  StatsCollimator = aRunTallyCollimator;
-  if (Tree_Collimator) Tree_Collimator->Fill();
-  else{
-    G4cerr << "Error : Tree_Collimator is nullptr" << G4endl;
-  }
+// Implémentations spécifiques utilisant le template
+void PALLAS_CollSimRunAction::UpdateStatisticsInput(RunTallyInput aRunTallyInput) {
+    UpdateStatistics(StatsInput, aRunTallyInput, Tree_Input);
 }
 
-void PALLAS_CollSimRunAction::UpdateStatisticsFrontCollimator(RunTallyFrontCollimator aRunTallyFrontCollimator){
-  std::lock_guard<std::mutex> lock(fileMutex);
-  StatsFrontCollimator = aRunTallyFrontCollimator;
-  if (Tree_FrontCollimator) Tree_FrontCollimator->Fill();
-  else{
-    G4cerr << "Error : Tree_FrontCollimator is nullptr" << G4endl;
-  }
+void PALLAS_CollSimRunAction::UpdateStatisticsCollimator(RunTallyCollimator aRunTallyCollimator) {
+    UpdateStatistics(StatsCollimator, aRunTallyCollimator, Tree_Collimator);
 }
 
-void PALLAS_CollSimRunAction::UpdateStatisticsBackCollimator(RunTallyBackCollimator aRunTallyBackCollimator){
-  std::lock_guard<std::mutex> lock(fileMutex);
-  StatsBackCollimator = aRunTallyBackCollimator;
-  if (Tree_BackCollimator) Tree_BackCollimator->Fill();
-  else{
-    G4cerr << "Error : Tree_BackCollimator is nullptr" << G4endl;
-  }
+void PALLAS_CollSimRunAction::UpdateStatisticsFrontCollimator(RunTallyFrontCollimator aRunTallyFrontCollimator) {
+    UpdateStatistics(StatsFrontCollimator, aRunTallyFrontCollimator, Tree_FrontCollimator);
 }
 
-void PALLAS_CollSimRunAction::UpdateStatisticsBSYAG(RunTallyBSYAG aRunTallyBSYAG){
-  std::lock_guard<std::mutex> lock(fileMutex);
-  StatsBSYAG = aRunTallyBSYAG;
-  if (Tree_BSYAG) Tree_BSYAG->Fill();
-  else{
-    G4cerr << "Error : Tree_BSYAG is nullptr" << G4endl;
-  }
+void PALLAS_CollSimRunAction::UpdateStatisticsBackCollimator(RunTallyBackCollimator aRunTallyBackCollimator) {
+    UpdateStatistics(StatsBackCollimator, aRunTallyBackCollimator, Tree_BackCollimator);
 }
 
-void PALLAS_CollSimRunAction::UpdateStatisticsBSPECYAG(RunTallyBSPECYAG aRunTallyBSPECYAG){
-  std::lock_guard<std::mutex> lock(fileMutex);
-  StatsBSPECYAG = aRunTallyBSPECYAG;
-  if (Tree_BSPECYAG) Tree_BSPECYAG->Fill();
-  else{
-    G4cerr << "Error : Tree_BSPECYAG is nullptr" << G4endl;
-  }
+void PALLAS_CollSimRunAction::UpdateStatisticsBSYAG(RunTallyBSYAG aRunTallyBSYAG) {
+    UpdateStatistics(StatsBSYAG, aRunTallyBSYAG, Tree_BSYAG);
+}
+
+void PALLAS_CollSimRunAction::UpdateStatisticsBSPECYAG(RunTallyBSPECYAG aRunTallyBSPECYAG) {
+    UpdateStatistics(StatsBSPECYAG, aRunTallyBSPECYAG, Tree_BSPECYAG);
 }

@@ -31,6 +31,8 @@ public:
   void BeginOfRunAction(const G4Run*);
   void EndOfRunAction(const G4Run*);
 
+  template<typename T>
+  void UpdateStatistics(T& stats, const T& newStats, TTree* tree);
   //adds the photon fates from an event to the run tree
   void UpdateStatisticsInput(RunTallyInput);
   void UpdateStatisticsCollimator(RunTallyCollimator);
@@ -38,6 +40,7 @@ public:
   void UpdateStatisticsBackCollimator(RunTallyBackCollimator);
   void UpdateStatisticsBSYAG(RunTallyBSYAG);
   void UpdateStatisticsBSPECYAG(RunTallyBSPECYAG);
+
   
 
 private:

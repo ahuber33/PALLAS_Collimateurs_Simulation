@@ -124,7 +124,7 @@ void PALLAS_CollSimMagneticField::GetFieldValue(const G4double point[4], double 
   {
     if (y < 3599 && y > 3270)
     {
-      bField[0] = -ConstantBField;
+      bField[0] = -ConstantDipoleBField;
       bField[1] = 0.;
       bField[2] = 0.;
     }
@@ -144,10 +144,10 @@ void PALLAS_CollSimMagneticField::GetFieldValue(const G4double point[4], double 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void PALLAS_CollSimMagneticField::SetField(G4double fieldValue)
+void PALLAS_CollSimMagneticField::SetDipoleField(G4double fieldValue)
 {
-  ConstantBField = fieldValue;
-  // G4cout << "SETFIELD FONCTION : " << ConstantBField << G4endl;
+  ConstantDipoleBField = fieldValue;
+  // G4cout << "SETFIELD FONCTION : " << ConstantDipoleBField << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -158,4 +158,27 @@ void PALLAS_CollSimMagneticField::SetMapBFieldStatus(G4bool status)
   // G4cout << "SETSTATUS MAP BFIELD : " << StatusMapBField << G4endl;
 }
 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void PALLAS_CollSimMagneticField::SetGradient(size_t index, G4double gradient)
+{
+  if (index < NumQuadrupoles)
+  {
+    gradients[index] = gradient;
+    G4cout << "SET Q" << index + 1 << " Gradient : " << gradient << G4endl;
+  }
+}
+
+G4double PALLAS_CollSimMagneticField::GetGradient(size_t index) const
+{
+  if (index < NumQuadrupoles)
+  {
+    return gradients[index];
+  }
+  else
+  {
+    G4cerr << "Error: Invalid quadrupole index " << index << G4endl;
+    return 0.0;
+  }
+}
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

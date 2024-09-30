@@ -12,34 +12,67 @@
 
 class G4Event;
 
+// Structure générique pour gérer les sorties de coordonnées et d'énergies
+template<typename T>
+struct CoordExitData {
+    std::vector<T> x_exit;
+    std::vector<T> y_exit;
+    std::vector<T> z_exit;
+
+    void AddXExit(T d) { x_exit.push_back(d); }
+    size_t GetXExitSize() const { return x_exit.size(); }
+    T GetXExit(size_t a) const { return x_exit.at(a); }
+
+    void AddYExit(T d) { y_exit.push_back(d); }
+    size_t GetYExitSize() const { return y_exit.size(); }
+    T GetYExit(size_t a) const { return y_exit.at(a); }
+
+    void AddZExit(T d) { z_exit.push_back(d); }
+    size_t GetZExitSize() const { return z_exit.size(); }
+    T GetZExit(size_t a) const { return z_exit.at(a); }
+};
+
+
+// Structure pour gérer les collimateurs (avant et arrière) => EXEMPLE A SUIVRE POUR PLUS TARD
+// struct RunTallyCollimator : public CoordExitData<float> {
+//     std::vector<int> particleID;
+//     std::vector<int> parentID;
+//     std::vector<float> E_exit;
+//     std::vector<float> px_exit, py_exit, pz_exit;
+//     float E_start = 0.0f;
+//     float E_dep = 0.0f;
+//     float E_dep_e = 0.0f;
+//     float E_dep_g = 0.0f;
+//     std::vector<float> Energy_Brem_created;
+
+//     void AddParticleID(int id) { particleID.push_back(id); }
+//     size_t GetParticleIDSize() const { return particleID.size(); }
+//     int GetParticleID(size_t a) const { return particleID.at(a); }
+// };
+
 
 struct RunTallyInput {
-  float x;
-  float xoffset;
-  float xp;
-  float y;
-  float yoffset;
-  float yp;
-  float s;
-  float soffset;
-  float p;
-  float delta;
-  float energy;
-  int Nevent;
+  float x = 0.0;
+  float xoffset = 0.0;
+  float xp = 0.0;
+  float y = 0.0;
+  float yoffset = 0.0;
+  float yp = 0.0;
+  float s = 0.0;
+  float soffset = 0.0;
+  float p = 0.0;
+  float delta = 0.0;
+  float energy = 0.0;
+  int Nevent = 0.0;
 
-  inline int operator ==(const RunTallyInput& right) const
-  {return (this==&right);}
 };
 
 struct RunTallyCollimator {
-  float E_start;
-  float E_dep;
-  float E_dep_e;
-  float E_dep_g;
+  float E_start = 0.0;
+  float E_dep = 0.0;
+  float E_dep_e = 0.0;
+  float E_dep_g = 0.0;
   std::vector<float> Energy_Brem_created;
-
-  inline int operator ==(const RunTallyCollimator& right) const
-  {return (this==&right);}
 };
 
 
@@ -54,8 +87,7 @@ struct RunTallyFrontCollimator {
   std::vector<float> py_exit;
   std::vector<float> pz_exit;
 
-  inline int operator ==(const RunTallyFrontCollimator& right) const
-  {return (this==&right);}
+
 };
 
 
@@ -70,8 +102,7 @@ struct RunTallyBackCollimator {
   std::vector<float> py_exit;
   std::vector<float> pz_exit;
 
-  inline int operator ==(const RunTallyBackCollimator& right) const
-  {return (this==&right);}
+
 };
 
 
@@ -81,9 +112,11 @@ struct RunTallyBSYAG {
   std::vector<float> z_exit;
   std::vector<float> parentID;
   std::vector<float> energy;
+  float deposited_energy = 0.0;
+  std::vector<float> total_deposited_energy;
+  G4bool flag_BSYAG = false;
 
-  inline int operator ==(const RunTallyBSYAG& right) const
-  {return (this==&right);}
+
 };
 
 
@@ -94,9 +127,11 @@ struct RunTallyBSPECYAG {
   std::vector<float> z_exit;
   std::vector<float> parentID;
   std::vector<float> energy;
+  float deposited_energy = 0.0;
+  std::vector<float> total_deposited_energy;
+  G4bool flag_BSPECYAG = false;
 
-  inline int operator ==(const RunTallyBSPECYAG& right) const
-  {return (this==&right);}
+
 };
 
 
@@ -204,9 +239,18 @@ public:
   void AddZExitBSYAG(G4float d){StatsBSYAG.z_exit.push_back(d);}
   int GetZExitBSYAGSize(){return StatsBSYAG.z_exit.size();}
   float GetZExitBSYAG(G4float a){return StatsBSYAG.z_exit.at(a);}
+  void ActiveFlagBSYAG(){StatsBSYAG.flag_BSYAG =true;}
+  void ResetFlagBSYAG(){StatsBSYAG.flag_BSYAG =false;}
+  G4bool ReturnFlagBSYAG(){return StatsBSYAG.flag_BSYAG;}
   void AddEnergyBSYAG(G4float d){StatsBSYAG.energy.push_back(d);}
   int GetEnergyBSYAGSize(){return StatsBSYAG.energy.size();}
   float GetEnergyBSYAG(G4float a){return StatsBSYAG.energy.at(a);}
+  void AddDepositedEnergyBSYAG(G4float d){StatsBSYAG.deposited_energy+=d;}
+  void ResetDepositedEnergyBSYAG(){StatsBSYAG.deposited_energy=0;}
+  float GetDepositedEnergyBSYAG(){return StatsBSYAG.deposited_energy;}
+  void AddTotalDepositedEnergyBSYAG(G4float d){StatsBSYAG.total_deposited_energy.push_back(d);}
+  int GetTotalDepositedEnergyBSYAGSize(){return StatsBSYAG.total_deposited_energy.size();}
+  float GetTotalDepositedEnergyBSYAG(G4float a){return StatsBSYAG.total_deposited_energy.at(a);}
   void AddParentIDBSYAG(G4float d){StatsBSYAG.parentID.push_back(d);}
   int GetParentIDBSYAGSize(){return StatsBSYAG.parentID.size();}
   float GetParentIDBSYAG(G4float a){return StatsBSYAG.parentID.at(a);}
@@ -221,12 +265,31 @@ public:
   void AddZExitBSPECYAG(G4float d){StatsBSPECYAG.z_exit.push_back(d);}
   int GetZExitBSPECYAGSize(){return StatsBSPECYAG.z_exit.size();}
   float GetZExitBSPECYAG(G4float a){return StatsBSPECYAG.z_exit.at(a);}
+  void ActiveFlagBSPECYAG(){StatsBSPECYAG.flag_BSPECYAG =true;}
+  void ResetFlagBSPECYAG(){StatsBSPECYAG.flag_BSPECYAG =false;}
+  G4bool ReturnFlagBSPECYAG(){return StatsBSPECYAG.flag_BSPECYAG;}
   void AddEnergyBSPECYAG(G4float d){StatsBSPECYAG.energy.push_back(d);}
   int GetEnergyBSPECYAGSize(){return StatsBSPECYAG.energy.size();}
   float GetEnergyBSPECYAG(G4float a){return StatsBSPECYAG.energy.at(a);}
+  void AddDepositedEnergyBSPECYAG(G4float d){StatsBSPECYAG.deposited_energy+=d;}
+  void ResetDepositedEnergyBSPECYAG(){StatsBSPECYAG.deposited_energy=0;}
+  float GetDepositedEnergyBSPECYAG(){return StatsBSPECYAG.deposited_energy;}
+  void AddTotalDepositedEnergyBSPECYAG(G4float d){StatsBSPECYAG.total_deposited_energy.push_back(d);}
+  int GetTotalDepositedEnergyBSPECYAGSize(){return StatsBSPECYAG.total_deposited_energy.size();}
+  float GetTotalDepositedEnergyBSPECYAG(G4float a){return StatsBSPECYAG.total_deposited_energy.at(a);}
   void AddParentIDBSPECYAG(G4float d){StatsBSPECYAG.parentID.push_back(d);}
   int GetParentIDBSPECYAGSize(){return StatsBSPECYAG.parentID.size();}
   float GetParentIDBSPECYAG(G4float a){return StatsBSPECYAG.parentID.at(a);}
+
+
+  // EXEMPLE A SUIVRE POUR PLUS TARD AFIN D OPTIMISER LE CODE !!!!
+  // void AddFrontCollimatorData(int particleID, float E_exit, float x, float y, float z) {
+  //       StatsFrontCollimator.AddParticleID(particleID);
+  //       StatsFrontCollimator.E_exit.push_back(E_exit);
+  //       StatsFrontCollimator.AddXExit(x);
+  //       StatsFrontCollimator.AddYExit(y);
+  //       StatsFrontCollimator.AddZExit(z);
+  //   }
 
 private:
 
@@ -238,6 +301,8 @@ private:
   RunTallyBackCollimator StatsBackCollimator;
   RunTallyBSYAG StatsBSYAG;
   RunTallyBSPECYAG StatsBSPECYAG;
+
+  
   G4String suffixe;
   
 };
