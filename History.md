@@ -149,3 +149,6 @@
 - Création de nouvelles variables et messengers pour la future implémentation des quadrupoles -> Changement dans les macros effectués
 - SetConstantBField modifié en SetConstantDipoleBField.
 - Modification des fichiers MagnetifField en accord avec les éléments précédents.
+
+## Commit #13 le 30/09/2024 [PALLAS_CollSim.0.4.3]
+- MAJ du README !!!

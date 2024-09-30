@@ -74,7 +74,11 @@ Concerning the macro, personnaly I used the vrml.mac but you can create another 
 
 
 /field/SetStatusMapBField false
-/field/SetConstantBField 0.75 tesla #0.4 tesla
+/field/SetConstantDipoleBField 0. tesla #0.4 tesla
+/field/SetQ1Gradient 0.0 #tesla/m
+/field/SetQ2Gradient 0.0
+/field/SetQ3Gradient 0.0
+/field/SetQ4Gradient 0.0
 
 /step/SetTrackingStatus true
 
@@ -110,7 +114,11 @@ Concerning the macro, personnaly I used the vrml.mac but you can create another 
 
 - **/field/** manages the magnetic field inside the spectrometer :
     - SetStatusMapBField allows to the user to choose the application of a B Map (if available) or a constant B value.
-    - SetConstantBField defines the value of magnetic field if the SetStatusMapBField is set to false
+    - SetConstantDipoleBField defines the value of magnetic field's Dipole if the SetStatusMapBField is set to false
+    - SetQ1Gradient defines the gradient value of Q1
+    - SetQ2Gradient defines the gradient value of Q2
+    - SetQ3Gradient defines the gradient value of Q3
+    - SetQ4Gradient defines the gradient value of Q4
 
 - **/step/** manages the informations inside the SteppingAction :
     - SetTrackingStatus allows to user to activate/desactivate the tracking of particles. It can be useful for inputs verification.
