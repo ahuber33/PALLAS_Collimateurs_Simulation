@@ -152,3 +152,12 @@
 
 ## Commit #13 le 30/09/2024 [PALLAS_CollSim.0.4.3]
 - MAJ du README !!!
+
+## Commit #14 le 10/12/2024 [PALLAS_CollSim.0.5.0]
+- MAJ des chemins pour trouver les librairies de ONNX de façon automatique peu importe la session utilisée
+- Nettoyage des Trees utilisés en début d'étude (RunTallyCollimator, RunTallyFrontCollimator, RunTallyBackCollimator) et des fonctions associées
+- Ajout de 2 nouveaux Trees pour tracker l'énergie déposée dans les collimateurs (précédente méthode entrainait des erreurs à cause de la précision sur des grands nombres). Maintenant, à chaque particule, on enregistre quelle énergie est déposée dans chacun des collimateurs ce qui permet ensuite lors de l'analyse de sommer ces éléments.
+- Ajout de 2 autres Trees permettant de regrouper les informations concernant le nombre d'itérations de cetains processus ayant eu lien au sein des collimateurs. Création des fonctions associées.
+- Ajout de l'information ParticleID dans les Trees YAG et créationd es diverses fonctions d'accès
+- Ajout de la physique neutronique pour pouvoir suivre la création et les interactions des neutrons dans la simulation notamment via les processus photonNuclear et Radioactivation ainsi que tous les processus en lien avec l'interaction neutronique
+- Cela a entrainé une refonte du fichier Physics en utilisant dorénavant les fonctions "RegisterPhysics"

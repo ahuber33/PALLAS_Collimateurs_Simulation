@@ -184,13 +184,36 @@ For more informations about theses parameters and the model, go check this artic
         - energy : From delta information and Energy reference, the energy of a particle
         - Nevent : According to the macrocharge file, it corresponds to the number of particles generated for a given pahsespace configuration.
 
-    - **Tree_Collimator** is the tree with the particles informations from particles/collimator interaction :
-        - E_start : Energy of the particle at the entrance of collimator (interaction)
-        - E_dep : Energy deposited by particles on the collimator
-        - E_dep_e : Part of energy deposited on the collimator by electrons
-        - E_dep_g : Part of energy deposited on the collimator by gammas
+    - **Tree_HorizontalCollGlobal** with the informations of principal processus occuring in Horizontal collimator:
+        - photonNculear
+        - Radioactivation
+        - Brem (commented to avoid having excessively large files)
+        - hadElastic
+        - neutronInelastic
+        - nCapture
+        - nFission
+        - conv
+        - phot
+        - compt
+        - annihil
+        - Other
 
-    - **Tree_FrontCollimator** with the informations of particles passing through the collimator:
+    - **Tree_VerticalCollGlobal** with the informations of principal processus occuring in Vertical collimator:
+        - photonNculear
+        - Radioactivation
+        - Brem (commented to avoid having excessively large files)
+        - hadElastic
+        - neutronInelastic
+        - nCapture
+        - nFission
+        - conv
+        - phot
+        - compt
+        - annihil
+        - Other
+
+
+    - **Tree_HorizontalColl** with the informations concerning the energy deposited in Horizontal collimator:
         - particleID : ID of the particle 
             - e- =11
             - e+ = -11
@@ -198,16 +221,11 @@ For more informations about theses parameters and the model, go check this artic
             - proton = 2212
             - neutron = 2112
             - for more informations, look at PDG encoding GEANT4
-        - parentID : Primary particle or secondary particle ?
-        - E_exit : Energy of the particle
-        - x_exit : X Position of the particle
-        - y exit : Y Position of the particle
-        - z_exit : Z Position of the particle
-        - px_exit : X Momentum of the particle
-        - py_exit : Y Momentum of the aprticle
-        - pz_exit : Z Momentum of the particle
+        - energy : Kinetic energy of the particle before the interaction
+        - deposited_energy : Sum of all energy deposited 
 
-    - **Tree_BackCollimator** with the informations of particles passing which go back towards the rear of the collimator:
+
+    - **Tree_VerticalColl** with the informations concerning the energy deposited in Vertical collimator:
         - particleID : ID of the particle 
             - e- =11
             - e+ = -11
@@ -215,14 +233,9 @@ For more informations about theses parameters and the model, go check this artic
             - proton = 2212
             - neutron = 2112
             - for more informations, look at PDG encoding GEANT4
-        - parentID : Primary particle or secondary particle ?
-        - E_exit : Energy of the particle
-        - x_exit : X Position of the particle
-        - y exit : Y Position of the particle
-        - z_exit : Z Position of the particle
-        - px_exit : X Momentum of the particle
-        - py_exit : Y Momentum of the aprticle
-        - pz_exit : Z Momentum of the particle        
+        - energy : Kinetic energy of the particle before the interaction
+        - deposited_energy : Sum of all energy deposited 
+
         
     - **Tree_BSYAG** with the informations of interacting particles with YAG when the magnet is OFF:
         - x_exit : X Position of the particle
