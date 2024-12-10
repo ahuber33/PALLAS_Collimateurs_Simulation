@@ -3,22 +3,28 @@
 # This module defines the `onnxruntime` imported target that encodes all
 # necessary information in its target properties.
 
+# Définir des chemins relatifs en utilisant CMAKE_CURRENT_LIST_DIR
+set(ONNXRUNTIME_BASE_PATH "${CMAKE_CURRENT_LIST_DIR}/../onnxruntime-linux-x64-1.17.1")
+
 find_library(
   OnnxRuntime_LIBRARY
   NAMES onnxruntime
-  PATH_SUFFIXES lib lib32 lib64
-  DOC "The ONNXRuntime library")
+  PATHS "${ONNXRUNTIME_BASE_PATH}/lib"
+  DOC "The ONNXRuntime library"
+)
 
 find_path(
   OnnxRuntime_INCLUDE_DIR
   NAMES onnxruntime_cxx_api.h
-  PATH_SUFFIXES include include/onnxruntime
-  DOC "The ONNXRuntime include directory")
+  PATHS "${ONNXRUNTIME_BASE_PATH}/include"
+  DOC "The ONNXRuntime include directory"
+)
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(
   OnnxRuntime
-  REQUIRED_VARS OnnxRuntime_LIBRARY OnnxRuntime_INCLUDE_DIR)
+  REQUIRED_VARS OnnxRuntime_LIBRARY OnnxRuntime_INCLUDE_DIR
+)
 
 add_library(OnnxRuntime SHARED IMPORTED)
 set_property(TARGET OnnxRuntime PROPERTY IMPORTED_LOCATION ${OnnxRuntime_LIBRARY})

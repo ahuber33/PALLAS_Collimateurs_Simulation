@@ -67,42 +67,24 @@ struct RunTallyInput {
 
 };
 
-struct RunTallyCollimator {
-  float E_start = 0.0;
-  float E_dep = 0.0;
-  float E_dep_e = 0.0;
-  float E_dep_g = 0.0;
-  std::vector<float> Energy_Brem_created;
+
+struct RunTallyHorizontalColl {
+  std::vector<int> parentID;
+  std::vector<int> particleID;  
+  std::vector<float> energy;
+  float Edep;
+  bool flag_particle;
+  
 };
 
 
-struct RunTallyFrontCollimator {
-  std::vector<int> particleID;
+struct RunTallyVerticalColl {
   std::vector<int> parentID;
-  std::vector<float> E_exit;
-  std::vector<float> x_exit;
-  std::vector<float> y_exit;
-  std::vector<float> z_exit;
-  std::vector<float> px_exit;
-  std::vector<float> py_exit;
-  std::vector<float> pz_exit;
-
-
-};
-
-
-struct RunTallyBackCollimator {
   std::vector<int> particleID;
-  std::vector<int> parentID;
-  std::vector<float> E_exit;
-  std::vector<float> x_exit;
-  std::vector<float> y_exit;
-  std::vector<float> z_exit;
-  std::vector<float> px_exit;
-  std::vector<float> py_exit;
-  std::vector<float> pz_exit;
-
-
+  std::vector<float> energy;
+  bool flag_particle;
+  float Edep;
+  
 };
 
 
@@ -110,7 +92,8 @@ struct RunTallyBSYAG {
   std::vector<float> x_exit;
   std::vector<float> y_exit;
   std::vector<float> z_exit;
-  std::vector<float> parentID;
+  std::vector<int> parentID;
+  std::vector<int> particleID;
   std::vector<float> energy;
   float deposited_energy = 0.0;
   std::vector<float> total_deposited_energy;
@@ -125,7 +108,8 @@ struct RunTallyBSPECYAG {
   std::vector<float> x_exit;
   std::vector<float> y_exit;
   std::vector<float> z_exit;
-  std::vector<float> parentID;
+  std::vector<int> parentID;
+  std::vector<int> particleID;
   std::vector<float> energy;
   float deposited_energy = 0.0;
   std::vector<float> total_deposited_energy;
@@ -160,75 +144,35 @@ public:
   void AddNeventStart(){StatsInput.Nevent++;}
   int GetNeventStart(){return StatsInput.Nevent;}
 
-  //Functions for Collimator Tree
-  void SetEstartCollimator(G4float d){StatsCollimator.E_start=d;}
-  float GetEstartCollimator(){return StatsCollimator.E_start;}
-  void AddEdepCollimator(G4float d){StatsCollimator.E_dep+=d;}
-  float GetEdepCollimator(){return StatsCollimator.E_dep;}
-  void AddEdepElectronCollimator(G4float d){StatsCollimator.E_dep_e+=d;}
-  float GetEdepElectronCollimator(){return StatsCollimator.E_dep_e;}
-  void AddEdepGammaCollimator(G4float d){StatsCollimator.E_dep_g+=d;}
-  float GetEdepGammaCollimator(){return StatsCollimator.E_dep_g;}
-  void AddEBremCreated(G4float d){StatsCollimator.Energy_Brem_created.push_back(d);}
-  int GetEBremCreatedSize(){return StatsCollimator.Energy_Brem_created.size();}
-  float GetEBremCreatedEnergy(G4int a){return StatsCollimator.Energy_Brem_created.at(a);}
+  void ActiveFlagHorizontalColl(){StatsHorizontalColl.flag_particle =true;}
+  void ResetFlagHorizontalColl(){StatsHorizontalColl.flag_particle =false;}
+  G4bool ReturnFlagHorizontalColl(){return StatsHorizontalColl.flag_particle;}
+  void AddEnergyHorizontalColl(G4float d){StatsHorizontalColl.energy.push_back(d);}
+  int GetEnergyHorizontalCollSize(){return StatsHorizontalColl.energy.size();}
+  float GetEnergyHorizontalColl(G4float a){return StatsHorizontalColl.energy.at(a);}
+  void AddParentIDHorizontalColl(G4float d){StatsHorizontalColl.parentID.push_back(d);}
+  int GetParentIDHorizontalCollSize(){return StatsHorizontalColl.parentID.size();}
+  float GetParentIDHorizontalColl(G4float a){return StatsHorizontalColl.parentID.at(a);}
+  void AddParticleIDHorizontalColl(G4int d){StatsHorizontalColl.particleID.push_back(d);}
+  int GetParticleIDHorizontalCollSize(){return StatsHorizontalColl.particleID.size();}
+  float GetParticleIDHorizontalColl(G4int a){return StatsHorizontalColl.particleID.at(a);}
+  void AddEdepHorizontalColl(G4float d){StatsHorizontalColl.Edep +=d;}
+  float GetEdepHorizontalColl(){return StatsHorizontalColl.Edep;}
 
-  void AddParticleIDFront(G4float d){StatsFrontCollimator.particleID.push_back(d);}
-  int GetParticleIDFrontSize(){return StatsFrontCollimator.particleID.size();}
-  float GetParticleIDFront(G4float a){return StatsFrontCollimator.particleID.at(a);}
-  void AddParentIDFront(G4float d){StatsFrontCollimator.parentID.push_back(d);}
-  int GetParentIDFrontSize(){return StatsFrontCollimator.parentID.size();}
-  float GetParentIDFront(G4float a){return StatsFrontCollimator.parentID.at(a);}
-  void AddEnergyExitFront(G4float d){StatsFrontCollimator.E_exit.push_back(d);}
-  int GetEnergyExitFrontSize(){return StatsFrontCollimator.E_exit.size();}
-  float GetEnergyExitFront(G4float a){return StatsFrontCollimator.E_exit.at(a);}
-  void AddXExitFront(G4float d){StatsFrontCollimator.x_exit.push_back(d);}
-  int GetXExitFrontSize(){return StatsFrontCollimator.x_exit.size();}
-  float GetXExitFront(G4float a){return StatsFrontCollimator.x_exit.at(a);}
-  void AddYExitFront(G4float d){StatsFrontCollimator.y_exit.push_back(d);}
-  int GetYExitFrontSize(){return StatsFrontCollimator.y_exit.size();}
-  float GetYExitFront(G4float a){return StatsFrontCollimator.y_exit.at(a);}
-  void AddZExitFront(G4float d){StatsFrontCollimator.z_exit.push_back(d);}
-  int GetZExitFrontSize(){return StatsFrontCollimator.z_exit.size();}
-  float GetZExitFront(G4float a){return StatsFrontCollimator.z_exit.at(a);}
-  void AddPxExitFront(G4float d){StatsFrontCollimator.px_exit.push_back(d);}
-  int GetPxExitFrontSize(){return StatsFrontCollimator.px_exit.size();}
-  float GetPxExitFront(G4float a){return StatsFrontCollimator.px_exit.at(a);}
-  void AddPyExitFront(G4float d){StatsFrontCollimator.py_exit.push_back(d);}
-  int GetPyExitFrontSize(){return StatsFrontCollimator.py_exit.size();}
-  float GetPyExitFront(G4float a){return StatsFrontCollimator.py_exit.at(a);}
-  void AddPzExitFront(G4float d){StatsFrontCollimator.pz_exit.push_back(d);}
-  int GetPzExitFrontSize(){return StatsFrontCollimator.pz_exit.size();}
-  float GetPzExitFront(G4float a){return StatsFrontCollimator.pz_exit.at(a);}
-
-  void AddParticleIDBack(G4float d){StatsBackCollimator.particleID.push_back(d);}
-  int GetParticleIDBackSize(){return StatsBackCollimator.particleID.size();}
-  float GetParticleIDBack(G4float a){return StatsBackCollimator.particleID.at(a);}
-  void AddParentIDBack(G4float d){StatsBackCollimator.parentID.push_back(d);}
-  int GetParentIDBackSize(){return StatsBackCollimator.parentID.size();}
-  float GetParentIDBack(G4float a){return StatsBackCollimator.parentID.at(a);}
-  void AddEnergyExitBack(G4float d){StatsBackCollimator.E_exit.push_back(d);}
-  int GetEnergyExitBackSize(){return StatsBackCollimator.E_exit.size();}
-  float GetEnergyExitBack(G4float a){return StatsBackCollimator.E_exit.at(a);}
-  void AddXExitBack(G4float d){StatsBackCollimator.x_exit.push_back(d);}
-  int GetXExitBackSize(){return StatsBackCollimator.x_exit.size();}
-  float GetXExitBack(G4float a){return StatsBackCollimator.x_exit.at(a);}
-  void AddYExitBack(G4float d){StatsBackCollimator.y_exit.push_back(d);}
-  int GetYExitBackSize(){return StatsBackCollimator.y_exit.size();}
-  float GetYExitBack(G4float a){return StatsBackCollimator.y_exit.at(a);}
-  void AddZExitBack(G4float d){StatsBackCollimator.z_exit.push_back(d);}
-  int GetZExitBackSize(){return StatsBackCollimator.z_exit.size();}
-  float GetZExitBack(G4float a){return StatsBackCollimator.z_exit.at(a);}
-  void AddPxExitBack(G4float d){StatsBackCollimator.px_exit.push_back(d);}
-  int GetPxExitBackSize(){return StatsBackCollimator.px_exit.size();}
-  float GetPxExitBack(G4float a){return StatsBackCollimator.px_exit.at(a);}
-  void AddPyExitBack(G4float d){StatsBackCollimator.py_exit.push_back(d);}
-  int GetPyExitBackSize(){return StatsBackCollimator.py_exit.size();}
-  float GetPyExitBack(G4float a){return StatsBackCollimator.py_exit.at(a);}
-  void AddPzExitBack(G4float d){StatsBackCollimator.pz_exit.push_back(d);}
-  int GetPzExitBackSize(){return StatsBackCollimator.pz_exit.size();}
-  float GetPzExitBack(G4float a){return StatsBackCollimator.pz_exit.at(a);}
-
+  void ActiveFlagVerticalColl(){StatsVerticalColl.flag_particle =true;}
+  void ResetFlagVerticalColl(){StatsVerticalColl.flag_particle =false;}
+  G4bool ReturnFlagVerticalColl(){return StatsVerticalColl.flag_particle;}
+  void AddEnergyVerticalColl(G4float d){StatsVerticalColl.energy.push_back(d);}
+  int GetEnergyVerticalCollSize(){return StatsVerticalColl.energy.size();}
+  float GetEnergyVerticalColl(G4float a){return StatsVerticalColl.energy.at(a);}
+  void AddParentIDVerticalColl(G4float d){StatsVerticalColl.parentID.push_back(d);}
+  int GetParentIDVerticalCollSize(){return StatsVerticalColl.parentID.size();}
+  float GetParentIDVerticalColl(G4float a){return StatsVerticalColl.parentID.at(a);}
+  void AddParticleIDVerticalColl(G4int d){StatsVerticalColl.particleID.push_back(d);}
+  int GetParticleIDVerticalCollSize(){return StatsVerticalColl.particleID.size();}
+  float GetParticleIDVerticalColl(G4int a){return StatsVerticalColl.particleID.at(a);}
+  void AddEdepVerticalColl(G4float d){StatsVerticalColl.Edep +=d;}
+  float GetEdepVerticalColl(){return StatsVerticalColl.Edep;}
 
   void AddXExitBSYAG(G4float d){StatsBSYAG.x_exit.push_back(d);}
   int GetXExitBSYAGSize(){return StatsBSYAG.x_exit.size();}
@@ -254,6 +198,9 @@ public:
   void AddParentIDBSYAG(G4float d){StatsBSYAG.parentID.push_back(d);}
   int GetParentIDBSYAGSize(){return StatsBSYAG.parentID.size();}
   float GetParentIDBSYAG(G4float a){return StatsBSYAG.parentID.at(a);}
+  void AddParticleIDBSYAG(G4int d){StatsBSYAG.particleID.push_back(d);}
+  int GetParticleIDBSYAGSize(){return StatsBSYAG.particleID.size();}
+  float GetParticleIDBSYAG(G4int a){return StatsBSYAG.particleID.at(a);}
 
 
   void AddXExitBSPECYAG(G4float d){StatsBSPECYAG.x_exit.push_back(d);}
@@ -280,6 +227,9 @@ public:
   void AddParentIDBSPECYAG(G4float d){StatsBSPECYAG.parentID.push_back(d);}
   int GetParentIDBSPECYAGSize(){return StatsBSPECYAG.parentID.size();}
   float GetParentIDBSPECYAG(G4float a){return StatsBSPECYAG.parentID.at(a);}
+  void AddParticleIDBSPECYAG(G4int d){StatsBSPECYAG.particleID.push_back(d);}
+  int GetParticleIDBSPECYAGSize(){return StatsBSPECYAG.particleID.size();}
+  float GetParticleIDBSPECYAG(G4int a){return StatsBSPECYAG.particleID.at(a);}
 
 
   // EXEMPLE A SUIVRE POUR PLUS TARD AFIN D OPTIMISER LE CODE !!!!
@@ -296,9 +246,8 @@ private:
   TTree *EventTree;
   TBranch *EventBranch;
   RunTallyInput StatsInput;
-  RunTallyCollimator StatsCollimator;
-  RunTallyFrontCollimator StatsFrontCollimator;
-  RunTallyBackCollimator StatsBackCollimator;
+  RunTallyHorizontalColl StatsHorizontalColl;
+  RunTallyVerticalColl StatsVerticalColl;
   RunTallyBSYAG StatsBSYAG;
   RunTallyBSPECYAG StatsBSPECYAG;
 

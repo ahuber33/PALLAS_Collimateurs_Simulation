@@ -18,14 +18,11 @@ void PALLAS_CollSimEventAction::BeginOfEventAction(const G4Event *evt)
 {
   // Input
   StatsInput = {};
-
-  // Collimator
-  StatsCollimator = {};
-
-  // FRONT & BACK Collimator
-  StatsFrontCollimator = {};
-  StatsBackCollimator = {};
   
+  //Horizontal & Vertical
+  StatsHorizontalColl = {};
+  StatsVerticalColl = {};
+
   //BS & BSPEC YAG
   StatsBSYAG = {};
   StatsBSPECYAG = {};
@@ -40,13 +37,13 @@ void PALLAS_CollSimEventAction::EndOfEventAction(const G4Event *evt)
   if (StatsInput.energy>0)
   {
     runac->UpdateStatisticsInput(StatsInput);
-    //runac->UpdateStatisticsCollimator(StatsCollimator);
-    // runac->UpdateStatisticsFrontCollimator(StatsFrontCollimator);
-    // runac->UpdateStatisticsBackCollimator(StatsBackCollimator);
   }
 
   if (!StatsBSYAG.energy.empty()) runac->UpdateStatisticsBSYAG(StatsBSYAG);
   if (!StatsBSPECYAG.energy.empty()) runac->UpdateStatisticsBSPECYAG(StatsBSPECYAG);
+
+  runac->UpdateStatisticsHorizontalColl(StatsHorizontalColl);
+  runac->UpdateStatisticsVerticalColl(StatsVerticalColl);
 
   //G4cout << "Etot verif = " << StatsCollimator.E_dep_verif << G4endl;
 }

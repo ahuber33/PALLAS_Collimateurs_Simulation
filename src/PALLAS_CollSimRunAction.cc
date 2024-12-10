@@ -22,6 +22,9 @@ void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
 
   G4AutoLock lock(&fileMutex); // Verrouillage automatique du mutex
 
+  StatsHorizontalCollGlobal = {};
+  StatsVerticalCollGlobal = {};
+
   start = time(NULL);     //start the timer clock to calculate run times
 
   int a=activeThreads;
@@ -41,14 +44,15 @@ void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
 
   f = new TFile(fileName.c_str(),"RECREATE");
 
-  Tree_Input = new TTree("Input","Input Information");  //Tree to access Collimator information
-  Tree_Collimator = new TTree("Collimator","Collimator Information");  //Tree to access Collimator information
-  Tree_FrontCollimator = new TTree("FrontCollimator","FrontCollimator Information");  //Tree to access Front Collimator infos
-  Tree_BackCollimator = new TTree("BackCollimator","BackCollimator Information");  //Tree to access Back Collimator infos
+  Tree_Input = new TTree("Input","Input Information");  //Tree to access Input information
+  Tree_HorizontalCollGlobal = new TTree("Horizontal_CollGlobal","Horizontal Collimator Global Information");  //Tree to access GLOBAL Horizontal Collimator information
+  Tree_VerticalCollGlobal = new TTree("Vertical_CollGlobal","Vertical Collimator Global Information");  //Tree to access GLLOBAL Vertical Collimator information
+  Tree_HorizontalColl = new TTree("Horizontal_Coll","Horizontal Collimator Information");  //Tree to access Horizontal Collimator information
+  Tree_VerticalColl = new TTree("Vertical_Coll","Vertical Collimator Information");  //Tree to access Vertical Collimator information
   Tree_BSYAG = new TTree("BSYAG","BS YAG Information");  //Tree to access Back Collimator infos
   Tree_BSPECYAG = new TTree("BSPECYAG","BSPEC YAG Information");  //Tree to access Back Collimator infos
 
-  //*****************************INFORMATION FROM THE INPUT*******************************************
+  //*****************************INFORMATIONS FROM THE INPUT*******************************************
   // RunBranch = Tree_Input->Branch("x", &StatsInput.x, "x/F" );
   // RunBranch = Tree_Input->Branch("xoffset", &StatsInput.xoffset, "xoffset/F" );
   // RunBranch = Tree_Input->Branch("xp", &StatsInput.xp, "xp/F" );
@@ -62,48 +66,63 @@ void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
   // RunBranch = Tree_Input->Branch("energy", &StatsInput.energy, "energy/F" );
   RunBranch = Tree_Input->Branch("Nevent", &StatsInput.Nevent, "Nevent/I" );
 
-  //*****************************INFORMATION FROM THE COLLIMATOR**************************************
-  RunBranch = Tree_Collimator->Branch("E_start", &StatsCollimator.E_start, "E_start/F" );
-  RunBranch = Tree_Collimator->Branch("E_dep", &StatsCollimator.E_dep, "E_dep/F" );
-  RunBranch = Tree_Collimator->Branch("E_dep_e", &StatsCollimator.E_dep_e, "E_dep_e/F" );
-  RunBranch = Tree_Collimator->Branch("E_dep_g", &StatsCollimator.E_dep_g, "E_dep_g/F" );
-  RunBranch = Tree_Collimator->Branch("Energy_Brem_created", "vector<float>" , &StatsCollimator.Energy_Brem_created);
+  //*****************************GLOBAL INFORMATION FROM THE HORIZONTAL COLLIMATOR**************************************
+  RunBranch = Tree_HorizontalCollGlobal->Branch("photonNuclear", &StatsHorizontalCollGlobal.N_photonNuclear, "photonNuclear/I" );
+  RunBranch = Tree_HorizontalCollGlobal->Branch("Radioactivation", &StatsHorizontalCollGlobal.N_Radioactivation, "Radioactivation/I" );
+  //RunBranch = Tree_HorizontalCollGlobal->Branch("Brem", &StatsHorizontalCollGlobal.N_Brem, "Brem/I" );
+  RunBranch = Tree_HorizontalCollGlobal->Branch("hadElastic", &StatsHorizontalCollGlobal.N_hadElastic, "hadElastic/I" );
+  RunBranch = Tree_HorizontalCollGlobal->Branch("neutronInelastic", &StatsHorizontalCollGlobal.N_neutronInelastic, "neutronInelastic/I" );
+  RunBranch = Tree_HorizontalCollGlobal->Branch("nCapture", &StatsHorizontalCollGlobal.N_nCapture, "nCapture/I" );
+  RunBranch = Tree_HorizontalCollGlobal->Branch("nFission", &StatsHorizontalCollGlobal.N_nFission, "nFission/I" );
+  // RunBranch = Tree_HorizontalCollGlobal->Branch("conv", &StatsHorizontalCollGlobal.N_conv, "conv/I" );
+  // RunBranch = Tree_HorizontalCollGlobal->Branch("phot", &StatsHorizontalCollGlobal.N_phot, "phot/I" );
+  // RunBranch = Tree_HorizontalCollGlobal->Branch("compt", &StatsHorizontalCollGlobal.N_compt, "compt/I" );
+  // RunBranch = Tree_HorizontalCollGlobal->Branch("annihil", &StatsHorizontalCollGlobal.N_annihil, "annihil/I" );
+  // RunBranch = Tree_HorizontalCollGlobal->Branch("Other", &StatsHorizontalCollGlobal.N_other, "Other/I" );
 
-  //*****************************INFORMATION FROM THE FRONT SURFACE**************************************
-  RunBranch = Tree_FrontCollimator->Branch("ParticleID", "vector<int>" , &StatsFrontCollimator.particleID);
-  RunBranch = Tree_FrontCollimator->Branch("ParentID", "vector<int>" , &StatsFrontCollimator.parentID);
-  RunBranch = Tree_FrontCollimator->Branch("E_exit", "vector<float>" , &StatsFrontCollimator.E_exit);
-  RunBranch = Tree_FrontCollimator->Branch("x_exit", "vector<float>" , &StatsFrontCollimator.x_exit);
-  RunBranch = Tree_FrontCollimator->Branch("y_exit", "vector<float>" , &StatsFrontCollimator.y_exit);
-  RunBranch = Tree_FrontCollimator->Branch("z_exit", "vector<float>" , &StatsFrontCollimator.z_exit);
-  RunBranch = Tree_FrontCollimator->Branch("px_exit", "vector<float>" , &StatsFrontCollimator.px_exit);
-  RunBranch = Tree_FrontCollimator->Branch("py_exit", "vector<float>" , &StatsFrontCollimator.py_exit);
-  RunBranch = Tree_FrontCollimator->Branch("pz_exit", "vector<float>" , &StatsFrontCollimator.pz_exit);
 
-  //*****************************INFORMATION FROM THE BACK SURFACE**************************************
-  RunBranch = Tree_BackCollimator->Branch("ParticleID", "vector<int>" , &StatsBackCollimator.particleID);
-  RunBranch = Tree_BackCollimator->Branch("ParentID", "vector<int>" , &StatsBackCollimator.parentID);
-  RunBranch = Tree_BackCollimator->Branch("E_exit", "vector<float>" , &StatsBackCollimator.E_exit);
-  RunBranch = Tree_BackCollimator->Branch("x_exit", "vector<float>" , &StatsBackCollimator.x_exit);
-  RunBranch = Tree_BackCollimator->Branch("y_exit", "vector<float>" , &StatsBackCollimator.y_exit);
-  RunBranch = Tree_BackCollimator->Branch("z_exit", "vector<float>" , &StatsBackCollimator.z_exit);
-  RunBranch = Tree_BackCollimator->Branch("px_exit", "vector<float>" , &StatsBackCollimator.px_exit);
-  RunBranch = Tree_BackCollimator->Branch("py_exit", "vector<float>" , &StatsBackCollimator.py_exit);
-  RunBranch = Tree_BackCollimator->Branch("pz_exit", "vector<float>" , &StatsBackCollimator.pz_exit);
+  //*****************************GLOBAL INFORMATION FROM THE VERTICAL COLLIMATOR**************************************
+  RunBranch = Tree_VerticalCollGlobal->Branch("photonNuclear", &StatsVerticalCollGlobal.N_photonNuclear, "photonNuclear/I" );
+  RunBranch = Tree_VerticalCollGlobal->Branch("Radioactivation", &StatsVerticalCollGlobal.N_Radioactivation, "Radioactivation/I" );
+  //RunBranch = Tree_VerticalCollGlobal->Branch("Brem", &StatsVerticalCollGlobal.N_Brem, "Brem/I" );
+  RunBranch = Tree_VerticalCollGlobal->Branch("hadElastic", &StatsVerticalCollGlobal.N_hadElastic, "hadElastic/I" );
+  RunBranch = Tree_VerticalCollGlobal->Branch("neutronInelastic", &StatsVerticalCollGlobal.N_neutronInelastic, "neutronInelastic/I" );
+  RunBranch = Tree_VerticalCollGlobal->Branch("nCapture", &StatsVerticalCollGlobal.N_nCapture, "nCapture/I" );
+  RunBranch = Tree_VerticalCollGlobal->Branch("nFission", &StatsVerticalCollGlobal.N_nFission, "nFission/I" );
+  // RunBranch = Tree_VerticalCollGlobal->Branch("conv", &StatsVerticalCollGlobal.N_conv, "conv/I" );
+  // RunBranch = Tree_VerticalCollGlobal->Branch("phot", &StatsVerticalCollGlobal.N_phot, "phot/I" );
+  // RunBranch = Tree_VerticalCollGlobal->Branch("compt", &StatsVerticalCollGlobal.N_compt, "compt/I" );
+  // RunBranch = Tree_VerticalCollGlobal->Branch("annihil", &StatsVerticalCollGlobal.N_annihil, "annihil/I" );
+  // RunBranch = Tree_VerticalCollGlobal->Branch("Other", &StatsVerticalCollGlobal.N_other, "Other/I" );
+  
 
-  //************************************INFORMATION FROM THE BS YAG*****************************************
+//************************************INFORMATIONS FROM THE HORIZONTAL COLLIMATOR*****************************************
+  //RunBranch = Tree_HorizontalColl->Branch("parentID", "vector<int>" , &StatsHorizontalColl.parentID);
+  RunBranch = Tree_HorizontalColl->Branch("particleID", "vector<int>" , &StatsHorizontalColl.particleID);
+  RunBranch = Tree_HorizontalColl->Branch("energy", "vector<float>" , &StatsHorizontalColl.energy);
+  RunBranch = Tree_HorizontalColl->Branch("Edep", &StatsHorizontalColl.Edep, "Edep/F" );
+
+  //************************************INFORMATIONS FROM THE VERTICAL COLLIMATOR*****************************************
+  //RunBranch = Tree_VerticalColl->Branch("parentID", "vector<int>" , &StatsVerticalColl.parentID);
+  RunBranch = Tree_VerticalColl->Branch("particleID", "vector<int>" , &StatsVerticalColl.particleID);
+  RunBranch = Tree_VerticalColl->Branch("energy", "vector<float>" , &StatsVerticalColl.energy);
+  RunBranch = Tree_VerticalColl->Branch("Edep", &StatsVerticalColl.Edep, "Edep/F" );
+
+  //************************************INFORMATIONS FROM THE BS YAG*****************************************
   RunBranch = Tree_BSYAG->Branch("x_exit", "vector<float>" , &StatsBSYAG.x_exit);
   RunBranch = Tree_BSYAG->Branch("y_exit", "vector<float>" , &StatsBSYAG.y_exit);
   RunBranch = Tree_BSYAG->Branch("z_exit", "vector<float>" , &StatsBSYAG.z_exit);
-  RunBranch = Tree_BSYAG->Branch("parentID", "vector<float>" , &StatsBSYAG.parentID);
+  RunBranch = Tree_BSYAG->Branch("parentID", "vector<int>" , &StatsBSYAG.parentID);
+  RunBranch = Tree_BSYAG->Branch("particleID", "vector<int>" , &StatsBSYAG.particleID);
   RunBranch = Tree_BSYAG->Branch("energy", "vector<float>" , &StatsBSYAG.energy);
   RunBranch = Tree_BSYAG->Branch("deposited_energy", "vector<float>" , &StatsBSYAG.total_deposited_energy);
 
-//************************************INFORMATION FROM THE BSPEC YAG*****************************************
+//************************************INFORMATIONS FROM THE BSPEC YAG*****************************************
   RunBranch = Tree_BSPECYAG->Branch("x_exit", "vector<float>" , &StatsBSPECYAG.x_exit);
   RunBranch = Tree_BSPECYAG->Branch("y_exit", "vector<float>" , &StatsBSPECYAG.y_exit);
   RunBranch = Tree_BSPECYAG->Branch("z_exit", "vector<float>" , &StatsBSPECYAG.z_exit);
-  RunBranch = Tree_BSPECYAG->Branch("parentID", "vector<float>" , &StatsBSPECYAG.parentID);
+  RunBranch = Tree_BSPECYAG->Branch("parentID", "vector<int>" , &StatsBSPECYAG.parentID);
+  RunBranch = Tree_BSPECYAG->Branch("particleID", "vector<int>" , &StatsBSPECYAG.particleID);
   RunBranch = Tree_BSPECYAG->Branch("energy", "vector<float>" , &StatsBSPECYAG.energy);
   RunBranch = Tree_BSPECYAG->Branch("deposited_energy", "vector<float>" , &StatsBSPECYAG.total_deposited_energy);
 
@@ -134,12 +153,16 @@ void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
 //  to write information to the run tree.
 //-----------------------------------------------------
 void PALLAS_CollSimRunAction::EndOfRunAction(const G4Run*aRun){
+UpdateStatisticsHorizontalCollGlobal(StatsHorizontalCollGlobal);
+UpdateStatisticsVerticalCollGlobal(StatsVerticalCollGlobal);
   G4AutoLock lock(&fileMutex); // Verrouillage automatique du mutex
+  
   f->cd();
   Tree_Input->Write();
-  //Tree_Collimator->Write();
-  //Tree_FrontCollimator->Write();
-  //Tree_BackCollimator->Write();
+  Tree_HorizontalCollGlobal->Write();
+  Tree_VerticalCollGlobal->Write();
+  Tree_HorizontalColl->Write();
+  Tree_VerticalColl->Write();
   Tree_BSYAG->Write();
   Tree_BSPECYAG->Write();
   f->Close();
@@ -190,16 +213,22 @@ void PALLAS_CollSimRunAction::UpdateStatisticsInput(RunTallyInput aRunTallyInput
     UpdateStatistics(StatsInput, aRunTallyInput, Tree_Input);
 }
 
-void PALLAS_CollSimRunAction::UpdateStatisticsCollimator(RunTallyCollimator aRunTallyCollimator) {
-    UpdateStatistics(StatsCollimator, aRunTallyCollimator, Tree_Collimator);
+
+void PALLAS_CollSimRunAction::UpdateStatisticsHorizontalCollGlobal(RunTallyHorizontalCollGlobal aRunTallyHorizontalCollGlobal) {
+    UpdateStatistics(StatsHorizontalCollGlobal, aRunTallyHorizontalCollGlobal, Tree_HorizontalCollGlobal);
 }
 
-void PALLAS_CollSimRunAction::UpdateStatisticsFrontCollimator(RunTallyFrontCollimator aRunTallyFrontCollimator) {
-    UpdateStatistics(StatsFrontCollimator, aRunTallyFrontCollimator, Tree_FrontCollimator);
+
+void PALLAS_CollSimRunAction::UpdateStatisticsVerticalCollGlobal(RunTallyVerticalCollGlobal aRunTallyVerticalCollGlobal) {
+    UpdateStatistics(StatsVerticalCollGlobal, aRunTallyVerticalCollGlobal, Tree_VerticalCollGlobal);
 }
 
-void PALLAS_CollSimRunAction::UpdateStatisticsBackCollimator(RunTallyBackCollimator aRunTallyBackCollimator) {
-    UpdateStatistics(StatsBackCollimator, aRunTallyBackCollimator, Tree_BackCollimator);
+void PALLAS_CollSimRunAction::UpdateStatisticsHorizontalColl(RunTallyHorizontalColl aRunTallyHorizontalColl) {
+    UpdateStatistics(StatsHorizontalColl, aRunTallyHorizontalColl, Tree_HorizontalColl);
+}
+
+void PALLAS_CollSimRunAction::UpdateStatisticsVerticalColl(RunTallyVerticalColl aRunTallyVerticalColl) {
+    UpdateStatistics(StatsVerticalColl, aRunTallyVerticalColl, Tree_VerticalColl);
 }
 
 void PALLAS_CollSimRunAction::UpdateStatisticsBSYAG(RunTallyBSYAG aRunTallyBSYAG) {

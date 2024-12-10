@@ -1563,7 +1563,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "[/data/PALLAS_Collimateurs_Simulation/onnxruntime-linux-x64-1.17.1/lib/libonnxruntime.so.1.17.1][/data/onnxruntime-linux-x64-1.17.1/include][v()]"
+			"value" : "[/data/PALLAS_Collimateurs_Simulation/onnxruntime-linux-x64-1.17.1/lib/libonnxruntime.so.1.17.1][/data/PALLAS_Collimateurs_Simulation/onnxruntime-linux-x64-1.17.1/include][v()]"
 		},
 		{
 			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_OpenGL",
@@ -1983,7 +1983,7 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "/data/onnxruntime-linux-x64-1.17.1/include"
+			"value" : "/data/PALLAS_Collimateurs_Simulation/onnxruntime-linux-x64-1.17.1/include"
 		},
 		{
 			"name" : "OnnxRuntime_LIBRARY",

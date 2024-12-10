@@ -13,6 +13,7 @@
 #include "G4RunManager.hh"
 #include "PALLAS_CollSimGeometryConstruction.hh"
 #include "G4VProcess.hh"
+#include <G4AutoLock.hh>
 
 class PALLAS_CollSimSteppingAction : public G4UserSteppingAction
 {
@@ -22,11 +23,12 @@ public:
 
 public:
   bool SetFlagGammaEnergyDeposition();
+  void ResetFlagColl(PALLAS_CollSimEventAction *evtac);
   void GetInputInformations(PALLAS_CollSimEventAction *evtac);
-  void UpdateCollimatorInformations(PALLAS_CollSimEventAction *evtac);
-  void UpdateFrontCollimatorInformations(PALLAS_CollSimEventAction *evtac);
-  void UpdateBackCollimatorInformations(PALLAS_CollSimEventAction *evtac);
-  void UpdateBremInformations(PALLAS_CollSimEventAction *evtac);
+  void CountHorizontalCollGlobalInformations(PALLAS_CollSimRunAction *runac);
+  void CountVerticalCollGlobalInformations(PALLAS_CollSimRunAction *runac);
+  void UpdateHorizontalCollInformations(PALLAS_CollSimEventAction *evtac);
+  void UpdateVerticalCollInformations(PALLAS_CollSimEventAction *evtac);
   void UpdateBSYAGInformations(PALLAS_CollSimEventAction *evtac);
   void UpdateBSPECYAGInformations(PALLAS_CollSimEventAction *evtac);
   void UserSteppingAction(const G4Step *);
@@ -59,5 +61,6 @@ private:
   G4double py;
   G4double pz;
   G4bool flag_Gamma = false;
+  static G4Mutex fileMutex;
 };
 #endif

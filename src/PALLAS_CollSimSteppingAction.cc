@@ -31,76 +31,16 @@ bool PALLAS_CollSimSteppingAction::SetFlagGammaEnergyDeposition()
   return flag_Gamma;
 }
 
-void PALLAS_CollSimSteppingAction::UpdateCollimatorInformations(PALLAS_CollSimEventAction *evtac)
+void PALLAS_CollSimSteppingAction::ResetFlagColl(PALLAS_CollSimEventAction *evtac)
 {
-  evtac->AddEdepCollimator(energyDeposited);
-  if (flag_Gamma == false)
-    evtac->AddEdepElectronCollimator(energyDeposited);
-  else
-    evtac->AddEdepGammaCollimator(energyDeposited);
-
-  // G4cout << "Edep = " << energyDeposited << G4endl;
-  // G4cout << "Edep tot = " << evtac->GetEdepCollimator() << G4endl;
-  // G4cout << "Edep tot e- = " << evtac->GetEdepElectronCollimator() << G4endl;
-  // G4cout << "Edep tot gamma = " << evtac->GetEdepGammaCollimator() << G4endl;
+  evtac->ResetFlagHorizontalColl();
+  evtac->ResetFlagVerticalColl();
 }
 
-void PALLAS_CollSimSteppingAction::UpdateFrontCollimatorInformations(PALLAS_CollSimEventAction *evtac)
-{
-  evtac->AddParticleIDFront(particleID);
-  evtac->AddParentIDFront(parentID);
-  evtac->AddEnergyExitFront(energy);
-  evtac->AddXExitFront(x);
-  evtac->AddYExitFront(y);
-  evtac->AddZExitFront(z);
-  evtac->AddPxExitFront(px);
-  evtac->AddPyExitFront(py);
-  evtac->AddPzExitFront(pz);
-
-  // G4cout << "Part ID = " << particleID << G4endl;
-  // G4cout << "E exit = " << energy << G4endl;
-  // G4cout << "X exit = " << x << G4endl;
-  // G4cout << "Y exit = " << y << G4endl;
-  // G4cout << "Z exit = " << z << G4endl;
-  // G4cout << "Px exit = " << px << G4endl;
-  // G4cout << "Py exit = " << py << G4endl;
-  // G4cout << "Pz exit = " << pz << G4endl;
-}
-
-void PALLAS_CollSimSteppingAction::UpdateBackCollimatorInformations(PALLAS_CollSimEventAction *evtac)
-{
-  evtac->AddParticleIDBack(particleID);
-  evtac->AddParentIDBack(parentID);
-  evtac->AddEnergyExitBack(energy);
-  evtac->AddXExitBack(x);
-  evtac->AddYExitBack(y);
-  evtac->AddZExitBack(z);
-  evtac->AddPxExitBack(px);
-  evtac->AddPyExitBack(py);
-  evtac->AddPzExitBack(pz);
-
-  // G4cout << "Part ID = " << particleID << G4endl;
-  // G4cout << "E exit = " << energy << G4endl;
-  // G4cout << "X exit = " << x << G4endl;
-  // G4cout << "Y exit = " << y << G4endl;
-  // G4cout << "Z exit = " << z << G4endl;
-  // G4cout << "Px exit = " << px << G4endl;
-  // G4cout << "Py exit = " << py << G4endl;
-  // G4cout << "Pz exit = " << pz << G4endl;
-}
-
-void PALLAS_CollSimSteppingAction::UpdateBremInformations(PALLAS_CollSimEventAction *evtac)
-{
-  if (creatorProcessName == "eBrem" && stepNo == 1)
-  {
-    evtac->AddEBremCreated(energy);
-    //G4cout << "Brem[" << evtac->GetEBremCreatedSize() << "]= " << evtac->GetEBremCreatedEnergy(evtac->GetEBremCreatedSize() - 1) << " MeV" << G4endl;
-  }
-}
 
 void PALLAS_CollSimSteppingAction::GetInputInformations(PALLAS_CollSimEventAction *evtac)
 {
-  evtac->SetEstartCollimator(energy);
+  //evtac->SetEstartCollimator(energy);
   evtac->SetXStart(x);
   evtac->SetXOffsetStart(-0.152);
   evtac->SetXpStart(px);
@@ -124,6 +64,83 @@ void PALLAS_CollSimSteppingAction::GetInputInformations(PALLAS_CollSimEventActio
   if (TrackingStatus ==false) theTrack->SetTrackStatus(fStopAndKill);
 }
 
+
+void PALLAS_CollSimSteppingAction::CountHorizontalCollGlobalInformations(PALLAS_CollSimRunAction *runac)
+{
+ if(endproc =="photonNuclear") runac->AddHorizontalCollPhotonNuclearInt();
+    else if (endproc =="Radioactivation") runac->AddHorizontalCollRadioactivationInt();
+    else if (endproc =="eBrem") ;//runac->AddHorizontalCollBremInt();
+    else if (endproc =="hadElastic") runac->AddHorizontalCollhadElasticInt();
+    else if (endproc =="neutronInelastic") runac->AddHorizontalCollneutronInelasticInt();
+    else if (endproc =="nCapture") runac->AddHorizontalCollnCaptureInt();
+    else if (endproc =="nFission") runac->AddHorizontalCollnFissionInt();
+    else if (endproc =="conv") ;//runac->AddHorizontalCollConvInt();
+    else if (endproc =="phot") ;//runac->AddHorizontalCollPhotInt();
+    else if (endproc =="compt") ;//runac->AddHorizontalCollComptInt();
+    else if (endproc =="eIoni") ;
+    else if (endproc =="ionIoni") ;
+    else if (endproc =="annihil") ;
+    else if (endproc =="Rayl") ;
+    else if (endproc =="msc") ;
+    else if (endproc =="Transportation") ;
+    else 
+    {
+      runac->AddHorizontalCollOtherInt();
+      //G4cout << "ICI" << G4endl;
+    } 
+}
+
+
+void PALLAS_CollSimSteppingAction::CountVerticalCollGlobalInformations(PALLAS_CollSimRunAction *runac)
+{
+   if(endproc =="photonNuclear") runac->AddVerticalCollPhotonNuclearInt();
+    else if (endproc =="Radioactivation") runac->AddVerticalCollRadioactivationInt();
+    else if (endproc =="eBrem") ;//runac->AddVerticalCollBremInt();
+    else if (endproc =="hadElastic") runac->AddVerticalCollhadElasticInt();
+    else if (endproc =="neutronInelastic") runac->AddVerticalCollneutronInelasticInt();
+    else if (endproc =="nCapture") runac->AddVerticalCollnCaptureInt();
+    else if (endproc =="nFission") runac->AddVerticalCollnFissionInt();
+    else if (endproc =="conv") ;//runac->AddVerticalCollConvInt();
+    else if (endproc =="phot") ;//runac->AddVerticalCollPhotInt();
+    else if (endproc =="compt") ;//runac->AddVerticalCollComptInt();
+    else if (endproc =="eIoni") ;
+    else if (endproc =="ionIoni") ;
+    else if (endproc =="annihil") ;
+    else if (endproc =="Rayl") ;
+    else if (endproc =="msc") ;
+    else if (endproc =="Transportation") ;
+    else 
+    {
+      runac->AddHorizontalCollOtherInt();
+      //G4cout << "ICI" << G4endl;
+    } 
+
+}
+
+void PALLAS_CollSimSteppingAction::UpdateHorizontalCollInformations(PALLAS_CollSimEventAction *evtac)
+{
+ evtac->ActiveFlagHorizontalColl();
+ evtac->AddParentIDHorizontalColl(parentID);
+ evtac->AddParticleIDHorizontalColl(particleID);
+ evtac->AddEnergyHorizontalColl(energy);
+
+//  G4cout << "ParentID = " << parentID << G4endl;
+//  G4cout << "Particle ID = " << particleID << G4endl;
+//  G4cout << "energy = " << energy << G4endl;
+}
+
+
+void PALLAS_CollSimSteppingAction::UpdateVerticalCollInformations(PALLAS_CollSimEventAction *evtac)
+{
+ evtac->ActiveFlagVerticalColl();
+ evtac->AddParentIDVerticalColl(parentID);
+ evtac->AddParticleIDVerticalColl(particleID);
+ evtac->AddEnergyVerticalColl(energy);
+
+//  G4cout << "ParentID = " << parentID << G4endl;
+//  G4cout << "Particle ID = " << particleID << G4endl;
+}
+
 void PALLAS_CollSimSteppingAction::UpdateBSYAGInformations(PALLAS_CollSimEventAction *evtac)
 {
   if(evtac->ReturnFlagBSYAG() == false)
@@ -132,6 +149,7 @@ void PALLAS_CollSimSteppingAction::UpdateBSYAGInformations(PALLAS_CollSimEventAc
     evtac->AddYExitBSYAG(ypost);
     evtac->AddZExitBSYAG(zpost);
     evtac->AddParentIDBSYAG(parentID);
+    evtac->AddParticleIDBSYAG(particleID);
     evtac->AddEnergyBSYAG(energy);
     evtac->ActiveFlagBSYAG();
 
@@ -168,6 +186,7 @@ void PALLAS_CollSimSteppingAction::UpdateBSPECYAGInformations(PALLAS_CollSimEven
     evtac->AddYExitBSPECYAG(ypost);
     evtac->AddZExitBSPECYAG(zpost);
     evtac->AddParentIDBSPECYAG(parentID);
+    evtac->AddParticleIDBSPECYAG(particleID);
     evtac->AddEnergyBSPECYAG(energy);
     evtac->ActiveFlagBSPECYAG();
 
@@ -239,29 +258,47 @@ void PALLAS_CollSimSteppingAction::UserSteppingAction(const G4Step *aStep)
 
   if (parentID == 0 && stepNo == 1) GetInputInformations(evtac);
 
+  if (stepNo ==1) ResetFlagColl(evtac);
+
+
+
   if (creatorProcess != NULL)
   {
     creatorProcessName = creatorProcess->GetProcessName();
     SetFlagGammaEnergyDeposition();
-    UpdateBremInformations(evtac);
+    //G4cout << "Creator process = " << creatorProcessName << G4endl;
   }
 
-  if (volumeNamePreStep == "Collimator")
-  UpdateCollimatorInformations(evtac);
 
-  if (volumeNamePreStep == "Collimator1" && volumeNamePostStep == "FrontOutput")
-    UpdateFrontCollimatorInformations(evtac);
+  if(volumeNamePreStep == "HorizontalCollimator")
+  {
+    CountHorizontalCollGlobalInformations(runac);
+    evtac->AddEdepHorizontalColl(energyDeposited);
+    //G4cout << "energy dep = " << energyDeposited << G4endl;
+    //G4cout << "energy dep tot = " << evtac->GetEdepHorizontalColl()<< G4endl;
 
-  if (volumeNamePreStep == "Collimator2" && volumeNamePostStep == "FrontOutput")
-    UpdateFrontCollimatorInformations(evtac);    
+    if(volumeNamePostStep != "HorizontalCollimator" && evtac->ReturnFlagHorizontalColl() == false && evtac->ReturnFlagVerticalColl() == false)
+    {
+      //UpdateHorizontalCollInformations(evtac);
+    }
+  }
 
-  // if (volumeNamePreStep == "Holder" && volumeNamePostStep == "FrontOutput")
-  //   UpdateFrontCollimatorInformations(evtac);
 
-  if (volumeNamePreStep == "Collimator" && volumeNamePostStep == "BackOutput")
-    UpdateBackCollimatorInformations(evtac);
 
-  if (aStep->GetPostStepPoint()->GetPhysicalVolume()->GetName() == "World")
+  if(volumeNamePreStep == "VerticalCollimator")
+  {
+    CountVerticalCollGlobalInformations(runac);
+    evtac->AddEdepVerticalColl(energyDeposited);
+
+    if(volumeNamePostStep != "VerticalCollimator" && evtac->ReturnFlagVerticalColl() == false && evtac->ReturnFlagHorizontalColl() == false)
+    {
+      //UpdateVerticalCollInformations(evtac);
+    }
+  }
+
+  
+
+  if (volumeNamePostStep == "World")
     theTrack->SetTrackStatus(fStopAndKill);
 
    if (volumeNamePreStep == "BS1_YAG")
@@ -275,8 +312,6 @@ void PALLAS_CollSimSteppingAction::UserSteppingAction(const G4Step *aStep)
     UpdateBSPECYAGInformations(evtac);
     //theTrack->SetTrackStatus(fStopAndKill);
    }
-    
-
 
 
 

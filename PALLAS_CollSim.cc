@@ -210,11 +210,11 @@ int main(int argc, char **argv)
         UI->ApplyCommand(removeCommand);
       }
     }
-
-    std::string movefile = "/control/shell mv " + std::string(outputFile) + ".root ../Resultats";
-    UI->ApplyCommand(movefile);
-    G4cout << "Output saved in Resultats fodler to file " << outputFile << ".root" << G4endl;
   }
+
+  std::string movefile = "/control/shell mv " + std::string(outputFile) + ".root ../Resultats";
+  UI->ApplyCommand(movefile);
+  G4cout << "Output saved in Resultats fodler to file " << outputFile << ".root" << G4endl;
 
   // Final clean-up
   delete visManager;
