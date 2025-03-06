@@ -185,7 +185,7 @@ For more informations about theses parameters and the model, go check this artic
         - Nevent : According to the macrocharge file, it corresponds to the number of particles generated for a given pahsespace configuration.
 
     - **Tree_HorizontalCollGlobal** with the informations of principal processus occuring in Horizontal collimator:
-        - photonNculear
+        - photonNuclear
         - Radioactivation
         - Brem (commented to avoid having excessively large files)
         - hadElastic
@@ -199,7 +199,7 @@ For more informations about theses parameters and the model, go check this artic
         - Other
 
     - **Tree_VerticalCollGlobal** with the informations of principal processus occuring in Vertical collimator:
-        - photonNculear
+        - photonNuclear
         - Radioactivation
         - Brem (commented to avoid having excessively large files)
         - hadElastic
