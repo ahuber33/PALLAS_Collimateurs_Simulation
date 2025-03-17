@@ -27,7 +27,7 @@
 /vis/scene/add/hits
 /tracking/storeTrajectory 1
 
-#/geometry/test/run
+/geometry/test/run
 #/geometry/test/line_test
 /vis/scene/add/trajectories smooth
 #/vis/scene/add/magneticField

@@ -20,11 +20,14 @@
 //#include "G4DAWNFILE.hh"
 //#endif
 
-#ifdef G4VIS_USE_OPENGLX
-#include "G4OpenGLImmediateX.hh"
-#include "G4OpenGLStoredX.hh"
-#endif
+//#ifdef G4VIS_USE_OPENGLX
+//#include "G4OpenGLImmediateX.hh"
+//#include "G4OpenGLStoredX.hh"
+//#endif
 
+#ifdef G4VIS_USE_TOOLSSG_X11_GLES
+#include "G4ToolSSGX11GLES.hh"
+#endif
 
 //#ifdef G4VIS_USE_VRML
 // #include "G4VRML1.hh"
@@ -53,10 +56,14 @@ void PALLAS_CollSimVisManager::RegisterGraphicsSystems () {
   //#endif
 
 
-  #ifdef G4VIS_USE_OPENGLX
-    RegisterGraphicsSystem (new G4OpenGLImmediateX);
-    RegisterGraphicsSystem (new G4OpenGLStoredX);
-  #endif
+  //#ifdef G4VIS_USE_OPENGLX
+  //RegisterGraphicsSystem (new G4OpenGLImmediateX);
+  //RegisterGraphicsSystem (new G4OpenGLStoredX);
+  //#endif
+
+    #ifdef G4VIS_USE_TOOLSSG_X11_GLES
+    RegisterGraphicsSystem (new G4ToolSSGX11GLES);  // Remplacez OpenGL par TOOLSSG_X11_GLES
+#endif
 
 
 //#ifdef G4VIS_USE_VRML

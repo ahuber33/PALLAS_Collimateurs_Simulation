@@ -7,7 +7,7 @@
 				{
 					"build" : ".",
 					"hasInstallRule" : true,
-					"jsonFile" : "directory-.-a413a034f51b3b14e1d9.json",
+					"jsonFile" : "directory-.-Debug-a413a034f51b3b14e1d9.json",
 					"minimumCMakeVersion" : 
 					{
 						"string" : "3.16"
@@ -20,7 +20,7 @@
 					]
 				}
 			],
-			"name" : "",
+			"name" : "Debug",
 			"projects" : 
 			[
 				{
@@ -40,7 +40,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "PALLAS_CollSim::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-PALLAS_CollSim-3bde8b47cbcc05cb2601.json",
+					"jsonFile" : "target-PALLAS_CollSim-Debug-18362ccf8ed10c05f7b0.json",
 					"name" : "PALLAS_CollSim",
 					"projectIndex" : 0
 				}

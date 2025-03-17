@@ -82,7 +82,6 @@ public:
   void ConstructCollimatorWithOutput();
   void ConstructVerticalCollimator();
   void ConstructHorizontalCollimator();
-  void ConstructBFieldVolume();
   void ConstructCellulePart();
   void ConstructLIFPart();
   void ConstructSection1Part();
@@ -156,7 +155,6 @@ private:
   G4LogicalVolume *LogicalHorizontalCollimator=nullptr;
   G4LogicalVolume *LogicalFrontOutput=nullptr;
   G4LogicalVolume *LogicalBackOutput=nullptr;
-  G4LogicalVolume *LogicalBFieldVolume=nullptr;
   G4LogicalVolume *LogicalFakeDiagsChamber=nullptr;
   G4LogicalVolume *LogicalPALLAS_QuadrupoleQ3=nullptr;
   G4LogicalVolume *LogicalPALLAS_QuadrupoleQ4=nullptr;
@@ -212,7 +210,6 @@ private:
   G4VPhysicalVolume *PhysicalHorizontalCollimator2=nullptr;
   G4VPhysicalVolume *PhysicalFrontOutput=nullptr;
   G4VPhysicalVolume *PhysicalBackOutput=nullptr;
-  G4VPhysicalVolume *PhysicalBFieldVolume=nullptr; 
   G4VPhysicalVolume *PhysicalFakeDiagsChamber=nullptr; 
   G4VPhysicalVolume *PhysicalPALLAS_QuadrupoleQ3=nullptr;
   G4VPhysicalVolume *PhysicalPALLAS_QuadrupoleQ4=nullptr;

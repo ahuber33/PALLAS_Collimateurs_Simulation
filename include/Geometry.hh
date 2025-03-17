@@ -47,7 +47,6 @@ public:
   G4LogicalVolume* GetCollimator(G4String name);
   G4LogicalVolume *GetOutputCollimator();
   G4LogicalVolume *GetRoundCollimator();
-  G4LogicalVolume *GetBFieldVolume();
   G4LogicalVolume *GetOutputSpectrometer();
 
   G4LogicalVolume *GetPALLAS_Assemblage2Cellules();

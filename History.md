@@ -161,3 +161,6 @@
 - Ajout de l'information ParticleID dans les Trees YAG et créationd es diverses fonctions d'accès
 - Ajout de la physique neutronique pour pouvoir suivre la création et les interactions des neutrons dans la simulation notamment via les processus photonNuclear et Radioactivation ainsi que tous les processus en lien avec l'interaction neutronique
 - Cela a entrainé une refonte du fichier Physics en utilisant dorénavant les fonctions "RegisterPhysics"
+
+## Commit #14 le 17/03/2025 [PALLAS_CollSim.0.5.1]
+- Suite au passage sur WSL (Windows), la visu ne marchait pas correctement à cause d'un overlap entre collimateurs et BFieldVolume. Afin de corriger cela et vu que le volume BField n'était plus nécessaire, celui-ci a été enlevé et n'est plus utilisé.

@@ -304,20 +304,6 @@ void PALLAS_CollSimGeometryConstruction::CreateWorldAndHolder()
                                        LogicalWorld, false, 0);
 }
 
-
-void PALLAS_CollSimGeometryConstruction::ConstructBFieldVolume()
-{
-        LogicalBFieldVolume = Geom->GetBFieldVolume();
-
-        // // LogicalCollimator->SetVisAttributes(black);
-        SetLogicalVolumeColor(LogicalBFieldVolume, "gray");
-
-        PhysicalBFieldVolume = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(-0.152 * mm, 3449.5 * mm, 10.855 * mm)),
-                                                 LogicalBFieldVolume, "BFieldVolume",
-                                                 LogicalHolder, false, 0);
-}
-
-
 void PALLAS_CollSimGeometryConstruction::ConstructVerticalCollimator()
 {
 
@@ -644,22 +630,22 @@ void PALLAS_CollSimGeometryConstruction::ConstructSection4Part()
         SetLogicalVolumeColor(LogicalPALLAS_S4Croix, "yellow");
         SetLogicalVolumeColor(LogicalFakeDiagsChamber, "yellow");
 
-        PhysicalPALLAS_ChambreDipole = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0.152 * mm, -3449.5 * mm, -10.855 * mm)),
+        //PhysicalPALLAS_ChambreDipole = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0.152 * mm, -3449.5 * mm, -10.855 * mm)),
+                                                        //  LogicalPALLAS_ChambreDipole, "ChambreDipole",
+                                                        //  LogicalBFieldVolume, false, 0);
+
+
+        PhysicalPALLAS_ChambreDipole = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0. * mm, 0 * mm, 0 * mm)),
                                                          LogicalPALLAS_ChambreDipole, "ChambreDipole",
-                                                         LogicalBFieldVolume, false, 0);
+                                                         LogicalHolder, false, 0);
 
-
-        // PhysicalPALLAS_ChambreDipole = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0. * mm, 0 * mm, 0 * mm)),
-        //                                                  LogicalPALLAS_ChambreDipole, "ChambreDipole",
-        //                                                  LogicalHolder, false, 0);
-
-        PhysicalPALLAS_Dipole = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0.152 * mm, -3449.5 * mm, -10.855 * mm)),
-                                                  LogicalPALLAS_Dipole, "Dipole",
-                                                  LogicalBFieldVolume, false, 0);
-
-        // PhysicalPALLAS_Dipole = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0. * mm, 0 * mm, 0 * mm)),
+        // PhysicalPALLAS_Dipole = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0.152 * mm, -3449.5 * mm, -10.855 * mm)),
         //                                           LogicalPALLAS_Dipole, "Dipole",
-        //                                           LogicalHolder, false, 0);                                                  
+        //                                           LogicalBFieldVolume, false, 0);
+
+        PhysicalPALLAS_Dipole = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0. * mm, 0 * mm, 0 * mm)),
+                                                  LogicalPALLAS_Dipole, "Dipole",
+                                                  LogicalHolder, false, 0);                                                  
 
         PhysicalPALLAS_BS1YAG = new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
                                                   LogicalPALLAS_BS1YAG, "BS1_YAG",
@@ -750,7 +736,7 @@ void PALLAS_CollSimGeometryConstruction::ConstructSDandField()
   fFieldMgr->SetDetectorField(fMagneticField);
   fFieldMgr->CreateChordFinder(fMagneticField);
   G4bool forceToAllDaughters = true;
-  LogicalBFieldVolume->SetFieldManager(fFieldMgr, forceToAllDaughters);
+  LogicalHolder->SetFieldManager(fFieldMgr, forceToAllDaughters);
 
 }
 
@@ -774,7 +760,6 @@ G4VPhysicalVolume *PALLAS_CollSimGeometryConstruction::Construct()
     // Build scint et wrapping volumes*
     //*********************** *********
     CreateWorldAndHolder();
-    ConstructBFieldVolume();
     ConstructVerticalCollimator();
     ConstructHorizontalCollimator();
     ConstructCellulePart();
