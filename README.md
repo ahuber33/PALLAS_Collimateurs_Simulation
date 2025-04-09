@@ -96,7 +96,6 @@ Concerning the macro, personnaly I used the vrml.mac but you can create another 
     - SetHorizontalCollimatorThickness to define the thickness of the horizontal collimator from the alias defined before
     - SetCollimatorSpectrometerDistance to define the distance between the end of the collimator and the begin of spectrometer from the alias defined before
     - SetCollimatorVHDistance define the distance between the end of the vertical collimator and the begin of the horizontal collimator from the alias defined before
-    - SetYParticleGenerationOffset define the Offset parameter for the aprticle generation according to the different values of the 2 collimators. => DEFINED WITH GUN MESSENGER
     - SetOpenVerticalCollimator define the aperture of the vertical collimator
     - SetOpenHorizontalCollimator define the aperture of the horizontal collimator
     - SetCollimatorLength define the other dimensions of the collimator
