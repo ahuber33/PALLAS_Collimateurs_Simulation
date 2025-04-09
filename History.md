@@ -165,7 +165,7 @@
 ## Commit #14 le 17/03/2025 [PALLAS_CollSim.0.5.1]
 - Suite au passage sur WSL (Windows), la visu ne marchait pas correctement à cause d'un overlap entre collimateurs et BFieldVolume. Afin de corriger cela et vu que le volume BField n'était plus nécessaire, celui-ci a été enlevé et n'est plus utilisé.
 
-## Commit #14 le 09/04/2025 [PALLAS_CollSim.0.5.2]
+## Commit #15 le 09/04/2025 [PALLAS_CollSim.0.5.2]
 - Correction de l'appel au champ magnétique. Résolution fuite mémoire et simplification du code
 - Ajout des géométries réelles des 2 collimateurs -> étude énergie déposée dans les mors 
 - Ajout Tree correspondant 
