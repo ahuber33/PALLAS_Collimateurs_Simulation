@@ -64,7 +64,6 @@ struct RunTallyInput {
   float delta = 0.0;
   float energy = 0.0;
   int Nevent = 0.0;
-
 };
 
 
@@ -74,7 +73,6 @@ struct RunTallyHorizontalColl {
   std::vector<float> energy;
   float Edep;
   bool flag_particle;
-  
 };
 
 
@@ -84,7 +82,6 @@ struct RunTallyVerticalColl {
   std::vector<float> energy;
   bool flag_particle;
   float Edep;
-  
 };
 
 
@@ -98,8 +95,6 @@ struct RunTallyBSYAG {
   float deposited_energy = 0.0;
   std::vector<float> total_deposited_energy;
   G4bool flag_BSYAG = false;
-
-
 };
 
 
@@ -114,8 +109,15 @@ struct RunTallyBSPECYAG {
   float deposited_energy = 0.0;
   std::vector<float> total_deposited_energy;
   G4bool flag_BSPECYAG = false;
+};
 
 
+struct RunTallySouffletH {
+  float Edep = 0.0;
+};
+
+struct RunTallySouffletV {
+  float Edep = 0.0;
 };
 
 
@@ -231,6 +233,14 @@ public:
   int GetParticleIDBSPECYAGSize(){return StatsBSPECYAG.particleID.size();}
   float GetParticleIDBSPECYAG(G4int a){return StatsBSPECYAG.particleID.at(a);}
 
+  void AddDepositedEnergySouffletH(G4float d){StatsSouffletH.Edep+=d;}
+  void ResetDepositedEnergySouffletH(){StatsSouffletH.Edep=0;}
+  float GetDepositedEnergySouffletH(){return StatsSouffletH.Edep;}
+
+  void AddDepositedEnergySouffletV(G4float d){StatsSouffletV.Edep+=d;}
+  void ResetDepositedEnergySouffletV(){StatsSouffletV.Edep=0;}
+  float GetDepositedEnergySouffletV(){return StatsSouffletV.Edep;}
+
 
   // EXEMPLE A SUIVRE POUR PLUS TARD AFIN D OPTIMISER LE CODE !!!!
   // void AddFrontCollimatorData(int particleID, float E_exit, float x, float y, float z) {
@@ -250,6 +260,8 @@ private:
   RunTallyVerticalColl StatsVerticalColl;
   RunTallyBSYAG StatsBSYAG;
   RunTallyBSPECYAG StatsBSPECYAG;
+  RunTallySouffletH StatsSouffletH;
+  RunTallySouffletV StatsSouffletV;
 
   
   G4String suffixe;

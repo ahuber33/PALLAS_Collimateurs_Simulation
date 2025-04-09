@@ -6,6 +6,7 @@
 #define PALLAS_CollSimGeometryConstruction_h 1
 
 #include "Geometry.hh"
+#include "G4UserLimits.hh"
 #include "G4GenericMessenger.hh"
 #include "G4VUserDetectorConstruction.hh"
 #include "G4LogicalVolume.hh"
@@ -88,6 +89,7 @@ public:
   void ConstructSection2Part();
   void ConstructSection3Part();
   void ConstructSection4Part();
+  void ConstructCollimators();
   void ConstructSection4DumpPart();
   void ConstructSDandField() override;
   G4VPhysicalVolume *Construct() override;
@@ -194,6 +196,18 @@ private:
   G4LogicalVolume *LogicalPALLAS_S4Soufflet=nullptr;
   G4LogicalVolume *LogicalPALLAS_S4Croix=nullptr;
   G4LogicalVolume *LogicalPALLAS_Assemblage2Cellules=nullptr;
+  G4LogicalVolume *LogicalPALLAS_Collimator_H1=nullptr;
+  G4LogicalVolume *LogicalPALLAS_Collimator_H2=nullptr;
+  G4LogicalVolume *LogicalPALLAS_Collimator_Arbre_H=nullptr;
+  G4LogicalVolume *LogicalPALLAS_Collimator_Bride_H=nullptr;
+  G4LogicalVolume *LogicalPALLAS_Collimator_Palier_H=nullptr;
+  G4LogicalVolume *LogicalPALLAS_Collimator_Soufflet_H=nullptr;
+  G4LogicalVolume *LogicalPALLAS_Collimator_V1=nullptr;
+  G4LogicalVolume *LogicalPALLAS_Collimator_V2=nullptr;
+  G4LogicalVolume *LogicalPALLAS_Collimator_Arbre_V=nullptr;
+  G4LogicalVolume *LogicalPALLAS_Collimator_Bride_V=nullptr;
+  G4LogicalVolume *LogicalPALLAS_Collimator_Palier_V=nullptr;
+  G4LogicalVolume *LogicalPALLAS_Collimator_Soufflet_V=nullptr;
 
 
   // Physical volumes
@@ -249,6 +263,18 @@ private:
   G4VPhysicalVolume *PhysicalPALLAS_S4Soufflet=nullptr;
   G4VPhysicalVolume *PhysicalPALLAS_S4Croix=nullptr;
   G4VPhysicalVolume *PhysicalPALLAS_Assemblage2Cellules=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_Collimator_H1=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_Collimator_H2=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_Collimator_Arbre_H=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_Collimator_Bride_H=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_Collimator_Palier_H=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_Collimator_Soufflet_H=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_Collimator_V1=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_Collimator_V2=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_Collimator_Arbre_V=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_Collimator_Bride_V=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_Collimator_Palier_V=nullptr;
+  G4VPhysicalVolume *PhysicalPALLAS_Collimator_Soufflet_V=nullptr;
 
   // Dimensions PLACEMENTS
   G4double Y_FrontOutput;

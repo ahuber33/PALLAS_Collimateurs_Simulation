@@ -11,7 +11,7 @@ using namespace CLHEP;
 PALLAS_CollSimPhysics::PALLAS_CollSimPhysics()// : G4VModularPhysicsList()
 {
   // // Here used the default cut value you have typed in
-  // defaultCutValue = 1 * mm; // 0.001
+  //defaultCutValue = 0.1 * mm; // 0.001
 
   // SetVerboseLevel(1);
 

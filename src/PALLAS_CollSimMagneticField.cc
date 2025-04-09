@@ -3,182 +3,116 @@
 //// Copyright: 2024 (C) Projet PALLAS
 
 #include "PALLAS_CollSimMagneticField.hh"
+#include "TMath.h"
+#include "TF1.h"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-PALLAS_CollSimMagneticField::PALLAS_CollSimMagneticField()
-{
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-PALLAS_CollSimMagneticField::~PALLAS_CollSimMagneticField()
-{
-}
+PALLAS_CollSimMagneticField::PALLAS_CollSimMagneticField() {}
+PALLAS_CollSimMagneticField::~PALLAS_CollSimMagneticField() {}
 
 G4double fitFunction(G4double *x, G4double *par)
 {
-  double x0 = par[0];
-  double amp_e = par[1];
-  double x0_e = par[2];
-  double sigma_e = par[3];
-  double amp_g = par[4];
-  double x0_g = par[5];
-  double sigma_g = par[6];
+    if (!x || !par) return 0; // Vérification sécurité
 
-  double stepF = 0;
-  double gausF = 0;
+    G4double x0 = par[0];
+    G4double amp_e = par[1];
+    G4double x0_e = par[2];
+    G4double sigma_e = par[3];
+    G4double amp_g = par[4];
+    G4double x0_g = par[5];
+    G4double sigma_g = par[6];
 
-  if (x[0] < x0)
-  {
-    stepF = amp_e * (TMath::Erf((x[0] - x0_e) / sigma_e));
-    gausF = 0;
-  }
+    G4double stepF = 0;
+    G4double gausF = 0;
 
-  else
-  {
-    stepF = 0;
-    gausF = amp_g * TMath::Exp(-0.5 * TMath::Power((x[0] - x0_g) / sigma_g, 2));
-  }
+    if (x[0] < x0)
+        stepF = amp_e * TMath::Erf((x[0] - x0_e) / sigma_e);
+    else
+        gausF = amp_g * TMath::Exp(-0.5 * TMath::Power((x[0] - x0_g) / sigma_g, 2));
 
-  double combined = stepF + gausF;
-
-  return combined;
+    return stepF + gausF;
 }
 
-G4double symmetrizedFunctionY(double *x, double *par)
+G4double symmetrizedFunctionY(G4double *x, G4double *par)
 {
-  double x0 = 0; // Point de symétrie
-  double f_x = 0;
-  double f_symmetric = 0;
+    if (!x || !par) return 0; // Vérification sécurité
 
-  if (x[0] < x0)
-  {
-    f_x = 0;
-    f_symmetric = fitFunction(new double[1]{2 * x0 - x[0]}, par);
-  }
+    G4double x0 = 0;
+    G4double x_temp = 2 * x0 - x[0];
 
-  else
-  {
-    f_x = fitFunction(x, par);
-    f_symmetric = 0;
-  }
-
-  return (f_x + f_symmetric);
+    return (x[0] < x0) ? fitFunction(&x_temp, par) : fitFunction(x, par);
 }
 
-G4double symmetrizedFunctionS(double *x, double *par)
+G4double symmetrizedFunctionS(G4double *x, G4double *par)
 {
-  double x0 = 3.4495; // Point de symétrie
-  double f_x = 0;
-  double f_symmetric = 0;
+    if (!x || !par) return 0; // Vérification sécurité
 
-  if (x[0] < x0)
-  {
-    f_x = 0;
-    f_symmetric = fitFunction(new double[1]{2 * x0 - x[0]}, par);
-  }
+    G4double x0 = 3.4495;
+    G4double x_temp = 2 * x0 - x[0];
 
-  else
-  {
-    f_x = fitFunction(x, par);
-    f_symmetric = 0;
-  }
-
-  return (f_x + f_symmetric);
+    return (x[0] < x0) ? fitFunction(&x_temp, par) : fitFunction(x, par);
 }
 
-void PALLAS_CollSimMagneticField::GetFieldValue(const G4double point[4], double *bField) const
+void PALLAS_CollSimMagneticField::GetFieldValue(const G4double point[4], G4double *bField) const
 {
+    G4double x = point[0];
+    G4double y = point[1];
+    G4double z = point[2];
 
-  double x = point[0];
-  double y = point[1];
-  double z = point[2];
-
-  if (StatusMapBField == true)
-  {
-    TF1 *fitFuncY = new TF1("fitFuncY", symmetrizedFunctionY, -0.15, 0.15, 7);
-    fitFuncY->FixParameter(0, -1.05579 + 1.15);
-    fitFuncY->FixParameter(1, -0.985);
-    fitFuncY->FixParameter(2, -1.03649 + 1.15);
-    fitFuncY->FixParameter(3, 0.0307999);
-    fitFuncY->FixParameter(4, 721.501);
-    fitFuncY->FixParameter(5, -1.58778 + 1.15);
-    fitFuncY->FixParameter(6, 0.141887);
-
-    TF1 *fitFuncS = new TF1("fitFuncS", symmetrizedFunctionS, 3.0995, 3.7995, 7);
-    fitFuncS->FixParameter(0, 0.169992 + 3.4495);
-    fitFuncS->FixParameter(1, -0.806796);
-    fitFuncS->FixParameter(2, 0.193481 + 3.4495);
-    fitFuncS->FixParameter(3, 0.0405178);
-    fitFuncS->FixParameter(4, 1.9817);
-    fitFuncS->FixParameter(5, 0.0119007 + 3.4495);
-    fitFuncS->FixParameter(6, 0.0946281);
-
-    bField[0] = -fitFuncY->Eval(z / 1000) * fitFuncS->Eval(y / 1000) * CLHEP::tesla;
+    bField[0] = 0.;
     bField[1] = 0.;
     bField[2] = 0.;
-  }
 
-  else
-  {
-    if (y < 3599 && y > 3270)
+    if (!StatusMapBField)
     {
-      bField[0] = -ConstantDipoleBField;
-      bField[1] = 0.;
-      bField[2] = 0.;
+        static TF1 ConstantS("ConstantS", "x > 3270 && x < 3599 ? 1 : 0", 3100, 3800);
+        static TF1 ConstantY("ConstantY", "x > -150 && x < 150 ? 1 : 0", -1000, 1000);
+
+        bField[0] = -ConstantDipoleBField * ConstantS.Eval(y) * ConstantY.Eval(z);
     }
     else
     {
-      bField[0] = 0.;
-      bField[1] = 0.;
-      bField[2] = 0.;
+        static TF1 fitFuncY("fitFuncY", symmetrizedFunctionY, -0.15, 0.15, 7);
+        static TF1 fitFuncS("fitFuncS", symmetrizedFunctionS, 3.0995, 3.7995, 7);
+
+        // Initialisation des paramètres une seule fois
+        static bool paramsInitialized = false;
+        if (!paramsInitialized)
+        {
+            fitFuncY.SetParameters(-1.05579 + 1.15, -0.985, -1.03649 + 1.15, 0.0307999, 721.501, -1.58778 + 1.15, 0.141887);
+            fitFuncS.SetParameters(0.169992 + 3.4495, -0.806796, 0.193481 + 3.4495, 0.0405178, 1.9817, 0.0119007 + 3.4495, 0.0946281);
+            paramsInitialized = true;
+        }
+
+        bField[0] = -fitFuncY.Eval(z / 1000) * fitFuncS.Eval(y / 1000) * CLHEP::tesla;
     }
-  }
-
-  // G4cout << "\n\n\nBField value = " << ConstantBField << G4endl;
-  // G4cout << "y = " << y << G4endl;
-  // G4cout << "z = " << z << G4endl;
-  // G4cout << "B= " << bField[0] << G4endl;
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void PALLAS_CollSimMagneticField::SetDipoleField(G4double fieldValue)
 {
-  ConstantDipoleBField = fieldValue;
-  // G4cout << "SETFIELD FONCTION : " << ConstantDipoleBField << G4endl;
+    ConstantDipoleBField = fieldValue;
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void PALLAS_CollSimMagneticField::SetMapBFieldStatus(G4bool status)
 {
-  StatusMapBField = status;
-  // G4cout << "SETSTATUS MAP BFIELD : " << StatusMapBField << G4endl;
+    StatusMapBField = status;
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void PALLAS_CollSimMagneticField::SetGradient(size_t index, G4double gradient)
 {
-  if (index < NumQuadrupoles)
-  {
-    gradients[index] = gradient;
-    G4cout << "SET Q" << index + 1 << " Gradient : " << gradient << G4endl;
-  }
+    if (index < NumQuadrupoles)
+    {
+        gradients[index] = gradient;
+        G4cout << "SET Q" << index + 1 << " Gradient : " << gradient << G4endl;
+    }
 }
 
 G4double PALLAS_CollSimMagneticField::GetGradient(size_t index) const
 {
-  if (index < NumQuadrupoles)
-  {
-    return gradients[index];
-  }
-  else
-  {
-    G4cerr << "Error: Invalid quadrupole index " << index << G4endl;
-    return 0.0;
-  }
+    if (index < NumQuadrupoles)
+        return gradients[index];
+    else
+    {
+        G4cerr << "Error: Invalid quadrupole index " << index << G4endl;
+        return 0.0;
+    }
 }
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -36,11 +36,10 @@
 
 #/run/initialize
 
-/control/alias VerticalCollimatorThickness 110
-/control/alias HorizontalCollimatorThickness 30
+/control/alias VerticalCollimatorThickness 60
+/control/alias HorizontalCollimatorThickness 60
 /control/alias CollimatorSpectrometerDistance 50
 /control/alias CollimatorVHDistance 0
-/control/alias YParticleGenerationOffset 190
 
 ######################################################
 ########## PART FOR MESSENGER INFORMATIONS ###########
@@ -58,9 +57,8 @@
 /geometry/SetHorizontalCollimatorThickness {HorizontalCollimatorThickness} mm
 /geometry/SetCollimatorSpectrometerDistance {CollimatorSpectrometerDistance} mm
 /geometry/SetCollimatorVHDistance {CollimatorVHDistance} mm
-/gun/SetYParticleGenerationOffset {YParticleGenerationOffset} mm
-/geometry/SetOpenVerticalCollimator 2 mm
-/geometry/SetOpenHorizontalCollimator 2 mm
+/geometry/SetOpenVerticalCollimator 4 mm
+/geometry/SetOpenHorizontalCollimator 1 mm
 /geometry/SetCollimatorLength 100 mm
 
 
@@ -109,7 +107,7 @@
 /gps/particle geantino
 
 /gps/pos/type Point
-/gps/pos/centre -0.162 0.0 0.18 mm
+/gps/pos/centre -10.152 0.0 0.0 mm
 /gps/direction 0.0 1.0 0.0
 
 /gps/energy 250. MeV
@@ -121,4 +119,4 @@
 #/grdm/nucleusLimits 60 60 27 27
 
 
-/run/beamOn 2
+/run/beamOn 1

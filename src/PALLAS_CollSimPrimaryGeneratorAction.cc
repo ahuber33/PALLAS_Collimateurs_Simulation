@@ -43,12 +43,6 @@ PALLAS_CollSimPrimaryGeneratorAction::PALLAS_CollSimPrimaryGeneratorAction(size_
       .SetDefaultValue("247 MeV")
       .SetRange("EnergyReference >=0.0");
 
-  pMessenger->DeclarePropertyWithUnit("SetYParticleGenerationOffset", "mm", YParticleGenerationOffset)
-      .SetGuidance("Set the YParticleGeneration parameter.")
-      .SetParameterName("YParticleGenerationOffset", false)
-      .SetDefaultValue("100.0 mm")
-      .SetRange("YParticleGenerationOffset >=0.0");
-
   lMessenger = new G4GenericMessenger(this, "/laser/", "Control commands for my application");
 
   lMessenger->DeclareProperty("SetOffsetLaserFocus", fXof)
@@ -169,8 +163,9 @@ void PALLAS_CollSimPrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
   }
 
   xOffset = -0.152;                             // mm
-  sOffset = 3114.5 - YParticleGenerationOffset; // mm
-  zOffset = 0.08;                               // mm
+  sOffset = 2884.5;
+  //sOffset = 3114.5 - YParticleGenerationOffset; // mm
+  zOffset = 0.0;                               // mm
 
   SetParticleName();
 
@@ -398,7 +393,7 @@ void PALLAS_CollSimPrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
       // set particle parameters
       particleGun->SetParticleDefinition(particleDefinition);
       particleGun->SetParticleEnergy(Ekin);
-      particleGun->SetParticlePosition(G4ThreeVector(x, 3114.5 - 190, y));
+      particleGun->SetParticlePosition(G4ThreeVector(xOffset, sOffset, zOffset));
 
       G4double MomentumDirectionY = 1. / (1. + std::pow(std::tan(xp), 2) + std::pow(std::tan(yp), 2));
       G4cout << "Momentum Y = " << MomentumDirectionY << G4endl;
@@ -418,7 +413,7 @@ void PALLAS_CollSimPrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
       // set particle parameters -> Example
       particleGun->SetParticleDefinition(particleDefinition);
       particleGun->SetParticleEnergy(247 * MeV);
-      particleGun->SetParticlePosition(G4ThreeVector(xOffset, 3114.5 - 190, zOffset));
+      particleGun->SetParticlePosition(G4ThreeVector(xOffset, sOffset, zOffset));
       particleGun->SetParticleMomentumDirection(G4ThreeVector(0, 1, 0));
 
       particleGun->GeneratePrimaryVertex(anEvent);

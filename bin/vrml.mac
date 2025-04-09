@@ -1,11 +1,10 @@
 #/control/alias NEventsToGenerate 106435 #PALLAS_qm1411_preCollimateur.txt
 
 
-/control/alias VerticalCollimatorThickness 110
+/control/alias VerticalCollimatorThickness 60
 /control/alias HorizontalCollimatorThickness 60
 /control/alias CollimatorSpectrometerDistance 50
 /control/alias CollimatorVHDistance 0
-/control/alias YParticleGenerationOffset 220 #Sum of precedent values
 
 ######################################################
 ########## PART FOR MESSENGER INFORMATIONS ###########
@@ -16,15 +15,14 @@
 /geometry/SetCollimatorExternalRadius 100 mm
 /geometry/SetCollimatorDistanceBetweenPlates 0 mm
 
-/geometry/SetVerticalCollimatorMaterial G4_W
+/geometry/SetVerticalCollimatorMaterial G4_Pb
 /geometry/SetHorizontalCollimatorMaterial G4_Pb
 
 /geometry/SetVerticalCollimatorThickness {VerticalCollimatorThickness} mm
 /geometry/SetHorizontalCollimatorThickness {HorizontalCollimatorThickness} mm
 /geometry/SetCollimatorSpectrometerDistance {CollimatorSpectrometerDistance} mm
 /geometry/SetCollimatorVHDistance {CollimatorVHDistance} mm
-/gun/SetYParticleGenerationOffset {YParticleGenerationOffset} mm
-/geometry/SetOpenVerticalCollimator 0.4 mm
+/geometry/SetOpenVerticalCollimator 0.2 mm
 /geometry/SetOpenHorizontalCollimator 0.2 mm
 /geometry/SetCollimatorLength 100 mm
 
@@ -41,7 +39,7 @@
 
 
 /field/SetStatusMapBField false
-/field/SetConstantDipoleBField 0. tesla #0.4 tesla
+/field/SetConstantDipoleBField 0.75 tesla #0.4 tesla
 /field/SetQ1Gradient 0.0 #tesla/m
 /field/SetQ2Gradient 0.0
 /field/SetQ3Gradient 0.0
