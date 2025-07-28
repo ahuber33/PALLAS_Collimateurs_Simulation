@@ -112,15 +112,6 @@ struct RunTallyBSPECYAG {
 };
 
 
-struct RunTallySouffletH {
-  float Edep = 0.0;
-};
-
-struct RunTallySouffletV {
-  float Edep = 0.0;
-};
-
-
 class PALLAS_CollSimEventAction : public G4UserEventAction
 {
 public:
@@ -233,14 +224,6 @@ public:
   int GetParticleIDBSPECYAGSize(){return StatsBSPECYAG.particleID.size();}
   float GetParticleIDBSPECYAG(G4int a){return StatsBSPECYAG.particleID.at(a);}
 
-  void AddDepositedEnergySouffletH(G4float d){StatsSouffletH.Edep+=d;}
-  void ResetDepositedEnergySouffletH(){StatsSouffletH.Edep=0;}
-  float GetDepositedEnergySouffletH(){return StatsSouffletH.Edep;}
-
-  void AddDepositedEnergySouffletV(G4float d){StatsSouffletV.Edep+=d;}
-  void ResetDepositedEnergySouffletV(){StatsSouffletV.Edep=0;}
-  float GetDepositedEnergySouffletV(){return StatsSouffletV.Edep;}
-
 
   // EXEMPLE A SUIVRE POUR PLUS TARD AFIN D OPTIMISER LE CODE !!!!
   // void AddFrontCollimatorData(int particleID, float E_exit, float x, float y, float z) {
@@ -260,8 +243,6 @@ private:
   RunTallyVerticalColl StatsVerticalColl;
   RunTallyBSYAG StatsBSYAG;
   RunTallyBSPECYAG StatsBSPECYAG;
-  RunTallySouffletH StatsSouffletH;
-  RunTallySouffletV StatsSouffletV;
 
   
   G4String suffixe;

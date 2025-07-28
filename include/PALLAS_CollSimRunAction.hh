@@ -77,8 +77,6 @@ public:
   void UpdateStatisticsVerticalColl(RunTallyVerticalColl);
   void UpdateStatisticsBSYAG(RunTallyBSYAG);
   void UpdateStatisticsBSPECYAG(RunTallyBSPECYAG);
-  void UpdateStatisticsSouffletH(RunTallySouffletH);
-  void UpdateStatisticsSouffletV(RunTallySouffletV);
 
   //Functions for Horizontal Collimator Tree
   void AddHorizontalCollPhotonNuclearInt(){StatsHorizontalCollGlobal.N_photonNuclear++;}
@@ -121,8 +119,6 @@ private:
   RunTallyVerticalColl StatsVerticalColl;
   RunTallyBSYAG StatsBSYAG;
   RunTallyBSPECYAG StatsBSPECYAG;
-  RunTallySouffletH StatsSouffletH;
-  RunTallySouffletV StatsSouffletV;
   G4bool flag_MT;
   TFile *f=nullptr;
   TTree *Tree_Input=nullptr;
@@ -132,8 +128,6 @@ private:
   TTree *Tree_VerticalColl=nullptr;
   TTree *Tree_BSYAG=nullptr;
   TTree *Tree_BSPECYAG=nullptr;
-  TTree *Tree_SouffletH=nullptr;
-  TTree *Tree_SouffletV=nullptr;
   TBranch *RunBranch=nullptr;
   time_t start;
   static std::atomic<int> activeThreads;

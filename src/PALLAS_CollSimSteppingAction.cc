@@ -314,12 +314,6 @@ void PALLAS_CollSimSteppingAction::UserSteppingAction(const G4Step *aStep)
         //theTrack->SetTrackStatus(fStopAndKill);
     }
 
-    if (volumeNamePreStep == "Soufflet_H") evtac->AddDepositedEnergySouffletH(energyDeposited);
-
-    if (volumeNamePreStep == "Soufflet_V") evtac->AddDepositedEnergySouffletV(energyDeposited);
-        
-
-
 
 
     //G4cout << " y =" << y << G4endl;

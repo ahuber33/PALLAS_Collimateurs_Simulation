@@ -26,9 +26,6 @@ void PALLAS_CollSimEventAction::BeginOfEventAction(const G4Event *evt)
   //BS & BSPEC YAG
   StatsBSYAG = {};
   StatsBSPECYAG = {};
-
-  StatsSouffletH = {};
-  StatsSouffletV = {};
   
 }
 
@@ -40,8 +37,6 @@ void PALLAS_CollSimEventAction::EndOfEventAction(const G4Event *evt)
   if (StatsInput.energy>0) runac->UpdateStatisticsInput(StatsInput);
   if (!StatsBSYAG.energy.empty()) runac->UpdateStatisticsBSYAG(StatsBSYAG);
   if (!StatsBSPECYAG.energy.empty()) runac->UpdateStatisticsBSPECYAG(StatsBSPECYAG);
-  if (StatsSouffletH.Edep>0) runac->UpdateStatisticsSouffletH(StatsSouffletH);
-  if (StatsSouffletV.Edep>0) runac->UpdateStatisticsSouffletV(StatsSouffletV);
   runac->UpdateStatisticsHorizontalColl(StatsHorizontalColl);
   runac->UpdateStatisticsVerticalColl(StatsVerticalColl);
 

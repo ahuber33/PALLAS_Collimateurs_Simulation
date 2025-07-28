@@ -51,8 +51,6 @@ void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
   Tree_VerticalColl = new TTree("Vertical_Coll","Vertical Collimator Information");  //Tree to access Vertical Collimator information
   Tree_BSYAG = new TTree("BSYAG","BS YAG Information");  //Tree to access Back Collimator infos
   Tree_BSPECYAG = new TTree("BSPECYAG","BSPEC YAG Information");  //Tree to access Back Collimator infos
-  Tree_SouffletH = new TTree("SouffletH","SouffletH Information");  //Tree to access Soufflet H infos
-  Tree_SouffletV = new TTree("SouffletV","SouffletV Information");  //Tree to access Soufflet V infos
 
   //*****************************INFORMATIONS FROM THE INPUT*******************************************
   // RunBranch = Tree_Input->Branch("x", &StatsInput.x, "x/F" );
@@ -129,13 +127,6 @@ void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
   RunBranch = Tree_BSPECYAG->Branch("deposited_energy", "vector<float>" , &StatsBSPECYAG.total_deposited_energy);
 
 
-  //************************************INFORMATIONS FROM THE SOUFFLET H *****************************************
-  RunBranch = Tree_SouffletH->Branch("Edep", &StatsSouffletH.Edep, "Edep/F");
-
-  //************************************INFORMATIONS FROM THE SOUFFLET V *****************************************
-  RunBranch = Tree_SouffletV->Branch("Edep", &StatsSouffletV.Edep, "Edep/F");
-
-
 
   //set the random seed to the CPU clock
   //G4Random::setTheEngine(new CLHEP::HepJamesRandom);
@@ -173,8 +164,6 @@ UpdateStatisticsVerticalCollGlobal(StatsVerticalCollGlobal);
   Tree_VerticalColl->Write();
   Tree_BSYAG->Write();
   Tree_BSPECYAG->Write();
-  Tree_SouffletH->Write();
-  Tree_SouffletV->Write();
   f->Close();
   delete f;
   f=nullptr;
@@ -247,12 +236,4 @@ void PALLAS_CollSimRunAction::UpdateStatisticsBSYAG(RunTallyBSYAG aRunTallyBSYAG
 
 void PALLAS_CollSimRunAction::UpdateStatisticsBSPECYAG(RunTallyBSPECYAG aRunTallyBSPECYAG) {
     UpdateStatistics(StatsBSPECYAG, aRunTallyBSPECYAG, Tree_BSPECYAG);
-}
-
-void PALLAS_CollSimRunAction::UpdateStatisticsSouffletH(RunTallySouffletH aRunTallySouffletH) {
-  UpdateStatistics(StatsSouffletH, aRunTallySouffletH, Tree_SouffletH);
-}
-
-void PALLAS_CollSimRunAction::UpdateStatisticsSouffletV(RunTallySouffletV aRunTallySouffletV) {
-  UpdateStatistics(StatsSouffletV, aRunTallySouffletV, Tree_SouffletV);
 }

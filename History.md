@@ -171,3 +171,6 @@
 - Ajout Tree correspondant 
 - Simplification appel des volumes GDML. 1 seule fonction de base pouvant se décliner sur les différents fichiers
     - Fonction GetGDMLVolume(const char* path, const char* VName, G4Material* material)
+
+## Commit #16 le 28/07/2025 [PALLAS_CollSim.0.5.3]    
+- Retrait des Tree information pour étude Mors en vue simplificaiton code pour release Examples
