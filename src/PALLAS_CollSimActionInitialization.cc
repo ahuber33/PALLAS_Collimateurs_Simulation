@@ -12,7 +12,7 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-PALLAS_CollSimActionInitialization::PALLAS_CollSimActionInitialization(const char *suff, size_t N, size_t Ncores, std::vector<std::queue<ParticleData>> threadEventQueues, const std::vector<ParticleData>& data, G4bool pFileReader, G4bool pMT)
+PALLAS_CollSimActionInitialization::PALLAS_CollSimActionInitialization(const char *suff, size_t N, size_t Ncores, std::vector<std::queue<ParticleData>> threadEventQueues, const std::vector<ParticleData>& data, G4bool pFileReader, G4bool pMT, PALLAS_CollSimGeometryConstruction* geometry)
     : G4VUserActionInitialization(), 
       suffixe(suff),
       threadEventQueues(threadEventQueues),
@@ -20,7 +20,8 @@ PALLAS_CollSimActionInitialization::PALLAS_CollSimActionInitialization(const cha
       numThreads(Ncores),
       fParticleData(data),
       flag_FileReader(pFileReader),
-      flag_MT(pMT)
+      flag_MT(pMT),
+      fGeometry(geometry)
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -40,14 +41,16 @@ void PALLAS_CollSimActionInitialization::BuildForMaster() const
 
 void PALLAS_CollSimActionInitialization::Build() const
 {
-    // Initialisation du générateur primaire des événements
-    SetUserAction(new PALLAS_CollSimPrimaryGeneratorAction(NEventsGenerated, numThreads, threadEventQueues, fParticleData, flag_FileReader, flag_MT));
-
     // Création et affectation des actions pour la simulation
+    auto *generator = new PALLAS_CollSimPrimaryGeneratorAction(NEventsGenerated, numThreads, threadEventQueues, fParticleData, flag_FileReader, flag_MT);
     auto *runAction = new PALLAS_CollSimRunAction(suffixe, flag_MT);
     auto *eventAction = new PALLAS_CollSimEventAction(suffixe);
+
+    runAction->SetPrimaryGenerator(generator);
+    runAction->SetGeometry(fGeometry);
     
     // Assigner les actions utilisateur
+    SetUserAction(generator);
     SetUserAction(runAction);
     SetUserAction(eventAction);
     SetUserAction(new PALLAS_CollSimSteppingAction());

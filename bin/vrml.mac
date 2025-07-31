@@ -15,9 +15,6 @@
 /geometry/SetCollimatorExternalRadius 100 mm
 /geometry/SetCollimatorDistanceBetweenPlates 0 mm
 
-/geometry/SetVerticalCollimatorMaterial G4_Pb
-/geometry/SetHorizontalCollimatorMaterial G4_Pb
-
 /geometry/SetVerticalCollimatorThickness {VerticalCollimatorThickness} mm
 /geometry/SetHorizontalCollimatorThickness {HorizontalCollimatorThickness} mm
 /geometry/SetCollimatorSpectrometerDistance {CollimatorSpectrometerDistance} mm
@@ -25,6 +22,15 @@
 /geometry/SetOpenVerticalCollimator 0.2 mm
 /geometry/SetOpenHorizontalCollimator 0.2 mm
 /geometry/SetCollimatorLength 100 mm
+/geometry/SetQ1Length 0.1 m
+/geometry/SetQ2Length 0.1 m
+/geometry/SetQ3Length 0.2 m
+/geometry/SetQ4Length 0.1 m
+/geometry/SetSourceQ1Distance 0.173331 m
+/geometry/SetQ1Q2Distance 0.165062 m
+/geometry/SetQ2Q3Distance 0.259041 m
+/geometry/SetQ3Q4Distance 0.86536 m
+/geometry/SetSourceCollimatorDistance 3007.17 mm #3007.17 mm
 
 
 
@@ -33,13 +39,14 @@
 /display/SetStatusDisplaySection1Geometry false
 /display/SetStatusDisplaySection2Geometry false
 /display/SetStatusDisplaySection3Geometry false
+/display/SetStatusDisplaycCollimators true
 /display/SetStatusDisplaySection4Geometry true
 /display/SetStatusDisplaySection4DumpGeometry false
 /run/reinitializeGeometry
 
 
 /field/SetStatusMapBField false
-/field/SetConstantDipoleBField 0.75 tesla #0.4 tesla
+/field/SetConstantDipoleBField 0. tesla #0.4 tesla
 /field/SetQ1Gradient 0.0 #tesla/m
 /field/SetQ2Gradient 0.0
 /field/SetQ3Gradient 0.0
@@ -64,11 +71,11 @@
 /gun/SetParticleName e-
 /gun/SetEnergyReference 247 MeV
 
-/gun/SetStatusONNX false
-/laser/SetOffsetLaserFocus 0.0441427 
-/laser/SetNormVecPotential 0.03696395
-/laser/SetFracDopTargetChamber 0.14718525
-/laser/SetPressure 0.92301997
+/gun/SetStatusONNX true
+/laser/SetOffsetLaserFocus 558 # um
+/laser/SetNormVecPotential 1.43
+/laser/SetFracDopTargetChamber 0.0188 # %(/100)
+/laser/SetPressure 58.6 #mbar
 
 
 ######################################################

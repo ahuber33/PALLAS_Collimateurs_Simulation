@@ -93,6 +93,7 @@ PALLAS_CollSimPrimaryGeneratorAction::~PALLAS_CollSimPrimaryGeneratorAction()
   delete lMessenger;
 }
 
+
 void PALLAS_CollSimPrimaryGeneratorAction::SetParticleName()
 {
   particleDefinition = G4ParticleTable::GetParticleTable()->FindParticle(ParticleName);
@@ -162,9 +163,11 @@ void PALLAS_CollSimPrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
     isStartTimeInitialized = true;
   }
 
-  xOffset = -0.152;                             // mm
-  sOffset = 2884.5;
+  //xOffset = -0.152;                             // mm
+  //sOffset = 2884.5;
   //sOffset = 3114.5 - YParticleGenerationOffset; // mm
+  xOffset = 0.0;                             // mm
+  sOffset = 0.0;
   zOffset = 0.0;                               // mm
 
   SetParticleName();
@@ -262,20 +265,20 @@ void PALLAS_CollSimPrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
     {
       // Neural network: inference
       // Prepare input tensor values based on the provided numpy array
-      G4double fXof_min = -399.8247;
-      G4double fXof_max = 1798.325;
+      G4double fXof_min = -399.824698;
+      G4double fXof_max = 1798.325132;
       G4double fXof_rescaled = fXof / (fXof_max - fXof_min) - fXof_min / (fXof_max - fXof_min);
 
       G4double fA0_min = 1.100516;
       G4double fA0_max = 1.849792;
       G4double fA0_rescaled = fA0 / (fA0_max - fA0_min) - fA0_min / (fA0_max - fA0_min);
 
-      G4double fCN2_min = 0.002064164;
-      G4double fCN2_max = 0.1199827;
+      G4double fCN2_min = 0.002064;
+      G4double fCN2_max = 0.119983;
       G4double fCN2_rescaled = fCN2 / (fCN2_max - fCN2_min) - fCN2_min / (fCN2_max - fCN2_min);
 
-      G4double fP1_min = 10.09451;
-      G4double fP1_max = 99.95741;
+      G4double fP1_min = 10.094508;
+      G4double fP1_max = 99.957409;
       G4double fP1_rescaled = fP1 / (fP1_max - fP1_min) - fP1_min / (fP1_max - fP1_min);
 
       G4cout << "Xof rescaled = " << fXof_rescaled << G4endl;
@@ -330,26 +333,26 @@ void PALLAS_CollSimPrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
       // the G4float value is given to double, seems working
 
       // kinetic energy
-      G4double Ekin_min = 58.49625 * MeV;
-      G4double Ekin_max = 725.2073 * MeV;
-      G4double Ekin = out_vals[0] * (Ekin_max - Ekin_min) + Ekin_min;
+      G4double Ekin_min = 4.388486e1 * MeV;
+      G4double Ekin_max = 3.682576e2 * MeV;
+      Ekin = out_vals[0] * (Ekin_max - Ekin_min) + Ekin_min;
       G4cout << "Ekin = " << Ekin << " MeV" << G4endl;
 
       // spread of kinetic energy
-      G4double dEkin_min = 0.000826999;
-      G4double dEkin_max = 0.7512749;
-      G4double dEkin = out_vals[1] * (dEkin_max - dEkin_min) + dEkin_min;
+      G4double dEkin_min = 8.269990e-4;
+      G4double dEkin_max = 5.622887e-1;
+      dEkin = out_vals[1] * (dEkin_max - dEkin_min) + dEkin_min;
       G4cout << "dEkin = " << 100 * dEkin << " %" << G4endl;
 
-      G4double Q_min = 6.50e-17;
-      G4double Q_max = 9.69e-10;
-      G4double Q = out_vals[2] * (Q_max - Q_min) + Q_min;
+      G4double Q_min = 6.498496e-17;
+      G4double Q_max = 8.376833e-10;
+      Q = out_vals[2] * (Q_max - Q_min) + Q_min;
       G4cout << "Q = " << Q << " C" << G4endl;
 
       // beam emittance (by now it's the same for x and y)
-      G4double epsb_min = 2.50e-9;
-      G4double epsb_max = 8.08e-5;
-      G4double epsb = out_vals[3] * (epsb_max - epsb_min) + epsb_min;
+      G4double epsb_min = 2.504754e-9;
+      G4double epsb_max = 7.615750e-5;
+      epsb = out_vals[3] * (epsb_max - epsb_min) + epsb_min;
       G4cout << "beam emittance = " << epsb << " m" << G4endl;
 
       // gaussian with Ekin mean and dEking standard deviation

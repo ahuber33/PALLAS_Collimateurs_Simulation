@@ -48,6 +48,20 @@ G4LogicalVolume *Geometry::GetCollimator(G4String name)
   return LogicalVolume;
 }
 
+
+G4LogicalVolume *Geometry::GetQuadrupoleVolume(G4String name, G4double dx, G4double dy, G4double dz)
+{
+
+  Material = G4NistManager::Instance()->FindOrBuildMaterial("G4_Galactic");
+
+  Box = new G4Box("Box",                                 // its name
+                         dx/2 *mm, dy/2*mm, dz/2*mm); // its size
+
+  LogicalVolume = new G4LogicalVolume(Box, Material, name, 0, 0, 0);
+
+  return LogicalVolume;
+}
+
 // ################################################################################################################
 // ################################################################################################################
 // SECTION 4

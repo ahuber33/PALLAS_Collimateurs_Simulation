@@ -167,7 +167,7 @@ int main(int argc, char **argv)
   runManager->SetUserInitialization(new PALLAS_CollSimPhysics);
 
   // Initialize user actions
-  runManager->SetUserInitialization(new PALLAS_CollSimActionInitialization(outputFile, TotalNParticles, Ncores, threadEventQueues, particleData, flag_FileReader, flag_MT));
+  runManager->SetUserInitialization(new PALLAS_CollSimActionInitialization(outputFile, TotalNParticles, Ncores, threadEventQueues, particleData, flag_FileReader, flag_MT, GeomCons));
 
   // Visualization
   G4VisManager *visManager = new G4VisExecutive;

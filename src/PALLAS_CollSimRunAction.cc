@@ -18,6 +18,17 @@ PALLAS_CollSimRunAction::~PALLAS_CollSimRunAction()
 //  BeginOfRunAction:  used to calculate the start time and
 //  to set up information in the run tree.
 //-----------------------------------------------------
+
+void PALLAS_CollSimRunAction::SetPrimaryGenerator(PALLAS_CollSimPrimaryGeneratorAction* gen) {
+  fPrimaryGenerator = gen;
+}
+
+void PALLAS_CollSimRunAction::SetGeometry(PALLAS_CollSimGeometryConstruction* geom) {
+  fGeometry = geom;
+}
+
+
+
 void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
 
   G4AutoLock lock(&fileMutex); // Verrouillage automatique du mutex
@@ -42,8 +53,10 @@ void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
 
   G4cout << "Filename = " << fileName << G4endl;
 
+
   f = new TFile(fileName.c_str(),"RECREATE");
 
+  Tree_GlobalInput = new TTree("GlobalInput","Global Input Information");  //Tree to access Input information
   Tree_Input = new TTree("Input","Input Information");  //Tree to access Input information
   Tree_HorizontalCollGlobal = new TTree("Horizontal_CollGlobal","Horizontal Collimator Global Information");  //Tree to access GLOBAL Horizontal Collimator information
   Tree_VerticalCollGlobal = new TTree("Vertical_CollGlobal","Vertical Collimator Global Information");  //Tree to access GLLOBAL Vertical Collimator information
@@ -52,18 +65,55 @@ void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
   Tree_BSYAG = new TTree("BSYAG","BS YAG Information");  //Tree to access Back Collimator infos
   Tree_BSPECYAG = new TTree("BSPECYAG","BSPEC YAG Information");  //Tree to access Back Collimator infos
 
+
+  //*****************************INFORMATIONS FROM THE GLOBAL INPUT*******************************************
+  RunBranch = Tree_GlobalInput->Branch("Display_Cellule [y/n]", &StatsGlobalInput.Display_Cellule, "Display_Cellule/I" );
+  RunBranch = Tree_GlobalInput->Branch("Display_LIF [y/n]", &StatsGlobalInput.Display_LIF, "Display_LIF/I" );
+  RunBranch = Tree_GlobalInput->Branch("Display_Section1 [y/n]", &StatsGlobalInput.Display_Section1, "Display_Section1/I" );
+  RunBranch = Tree_GlobalInput->Branch("Display_Section2 [y/n]", &StatsGlobalInput.Display_Section2, "Display_Section2/I" );
+  RunBranch = Tree_GlobalInput->Branch("Display_Section3 [y/n]", &StatsGlobalInput.Display_Section3, "Display_Section3/I" );
+  RunBranch = Tree_GlobalInput->Branch("Display_Section4 [y/n]", &StatsGlobalInput.Display_Section4, "Display_Section4/I" );
+  RunBranch = Tree_GlobalInput->Branch("Display_Section4Dump [y/n]", &StatsGlobalInput.Display_Section4Dump, "Display_Section4Dump/I" );
+  RunBranch = Tree_GlobalInput->Branch("Display_Collimators [y/n]", &StatsGlobalInput.Display_Collimators, "Display_Collimators/I" );
+  RunBranch = Tree_GlobalInput->Branch("Q1_Length [mm]", &StatsGlobalInput.Q1_Length, "Q1_Length/F" );
+  RunBranch = Tree_GlobalInput->Branch("Q2_Length [mm]", &StatsGlobalInput.Q2_Length, "Q2_Length/F" );
+  RunBranch = Tree_GlobalInput->Branch("Q3_Length [mm]", &StatsGlobalInput.Q3_Length, "Q3_Length/F" );
+  RunBranch = Tree_GlobalInput->Branch("Q4_Length [mm]", &StatsGlobalInput.Q4_Length, "Q4_Length/F" );
+  RunBranch = Tree_GlobalInput->Branch("SourceQ1Distance [mm]", &StatsGlobalInput.SourceQ1Distance, "SourceQ1Distance/F" );
+  RunBranch = Tree_GlobalInput->Branch("Q1Q2Distance [mm]", &StatsGlobalInput.Q1Q2Distance, "Q1Q2Distance/F" );
+  RunBranch = Tree_GlobalInput->Branch("Q2Q3Distance [mm]", &StatsGlobalInput.Q2Q3Distance, "Q2Q3Distance/F" );
+  RunBranch = Tree_GlobalInput->Branch("Q3Q4Distance [mm]", &StatsGlobalInput.Q3Q4Distance, "Q3Q4Distance/F" );
+  RunBranch = Tree_GlobalInput->Branch("Q1_Grad [T/m]", &StatsGlobalInput.Q1_Grad, "Q1_Grad/F" );
+  RunBranch = Tree_GlobalInput->Branch("Q2_Grad [T/m]", &StatsGlobalInput.Q2_Grad, "Q2_Grad/F" );
+  RunBranch = Tree_GlobalInput->Branch("Q3_Grad [T/m]", &StatsGlobalInput.Q3_Grad, "Q3_Grad/F" );
+  RunBranch = Tree_GlobalInput->Branch("Q4_Grad [T/m]", &StatsGlobalInput.Q4_Grad, "Q4_Grad/F" );
+  RunBranch = Tree_GlobalInput->Branch("B_Dipole_Map [y/n]", &StatsGlobalInput.B_Dipole_Map, "B_Dipole_Map/I" );
+  RunBranch = Tree_GlobalInput->Branch("B_Dipole [T]", &StatsGlobalInput.B_Dipole, "B_Dipole/F" );
+  RunBranch = Tree_GlobalInput->Branch("Xoff [um]", &StatsGlobalInput.Xoff, "Xoff/F" );
+  RunBranch = Tree_GlobalInput->Branch("p [mbar]", &StatsGlobalInput.p, "p/F" );
+  RunBranch = Tree_GlobalInput->Branch("cN2 [%]", &StatsGlobalInput.cN2, "cN2/F" );
+  RunBranch = Tree_GlobalInput->Branch("A0", &StatsGlobalInput.A0, "A0/F" );
+  RunBranch = Tree_GlobalInput->Branch("Ekin [MeV]", &StatsGlobalInput.Ekin, "Ekin/F" );
+  RunBranch = Tree_GlobalInput->Branch("dEkin [%]", &StatsGlobalInput.dEkin, "dEkin/F" );
+  RunBranch = Tree_GlobalInput->Branch("Q [pC]", &StatsGlobalInput.Q, "Q/F" );
+  RunBranch = Tree_GlobalInput->Branch("epsb [um]", &StatsGlobalInput.epsb, "epsb/F" );
+  
+  
+  //RunBranch = Tree_GlobalInput->Branch("xoffset", &StatsInput.xoffset, "xoffset/F" );
+  //RunBranch = Tree_GlobalInput->Branch("xp", &StatsInput.xp, "xp/F" );
+
   //*****************************INFORMATIONS FROM THE INPUT*******************************************
-  // RunBranch = Tree_Input->Branch("x", &StatsInput.x, "x/F" );
-  // RunBranch = Tree_Input->Branch("xoffset", &StatsInput.xoffset, "xoffset/F" );
-  // RunBranch = Tree_Input->Branch("xp", &StatsInput.xp, "xp/F" );
-  // RunBranch = Tree_Input->Branch("y", &StatsInput.y, "y/F" );
-  // RunBranch = Tree_Input->Branch("yoffset", &StatsInput.yoffset, "yoffset/F" );
-  // RunBranch = Tree_Input->Branch("yp", &StatsInput.yp, "yp/F" );
-  // RunBranch = Tree_Input->Branch("s", &StatsInput.s, "s/F" );
-  // RunBranch = Tree_Input->Branch("soffset", &StatsInput.soffset, "soffset/F" );
-  // RunBranch = Tree_Input->Branch("p", &StatsInput.p, "p/F" );
-  // RunBranch = Tree_Input->Branch("delta", &StatsInput.delta, "delta/F" );
-  // RunBranch = Tree_Input->Branch("energy", &StatsInput.energy, "energy/F" );
+  RunBranch = Tree_Input->Branch("x", &StatsInput.x, "x/F" );
+  RunBranch = Tree_Input->Branch("xoffset", &StatsInput.xoffset, "xoffset/F" );
+  RunBranch = Tree_Input->Branch("xp", &StatsInput.xp, "xp/F" );
+  RunBranch = Tree_Input->Branch("y", &StatsInput.y, "y/F" );
+  RunBranch = Tree_Input->Branch("yoffset", &StatsInput.yoffset, "yoffset/F" );
+  RunBranch = Tree_Input->Branch("yp", &StatsInput.yp, "yp/F" );
+  RunBranch = Tree_Input->Branch("s", &StatsInput.s, "s/F" );
+  RunBranch = Tree_Input->Branch("soffset", &StatsInput.soffset, "soffset/F" );
+  RunBranch = Tree_Input->Branch("p", &StatsInput.p, "p/F" );
+  RunBranch = Tree_Input->Branch("delta", &StatsInput.delta, "delta/F" );
+  RunBranch = Tree_Input->Branch("energy", &StatsInput.energy, "energy/F" );
   RunBranch = Tree_Input->Branch("Nevent", &StatsInput.Nevent, "Nevent/I" );
 
   //*****************************GLOBAL INFORMATION FROM THE HORIZONTAL COLLIMATOR**************************************
@@ -151,12 +201,52 @@ void PALLAS_CollSimRunAction::BeginOfRunAction(const G4Run* aRun){
 //  EndOfRunAction:  used to calculate the end time and
 //  to write information to the run tree.
 //-----------------------------------------------------
-void PALLAS_CollSimRunAction::EndOfRunAction(const G4Run*aRun){
-UpdateStatisticsHorizontalCollGlobal(StatsHorizontalCollGlobal);
-UpdateStatisticsVerticalCollGlobal(StatsVerticalCollGlobal);
+void PALLAS_CollSimRunAction::EndOfRunAction(const G4Run *aRun) {
+  if (fPrimaryGenerator != nullptr) {
+    StatsGlobalInput.Xoff = fPrimaryGenerator->GetXoff();
+    StatsGlobalInput.p = fPrimaryGenerator->GetP();
+    StatsGlobalInput.cN2 = fPrimaryGenerator->GetCN2();
+    StatsGlobalInput.A0 = fPrimaryGenerator->GetA0();
+    StatsGlobalInput.Ekin = fPrimaryGenerator->GetEkin();
+    StatsGlobalInput.dEkin = fPrimaryGenerator->GetdEkin();
+    StatsGlobalInput.Q = fPrimaryGenerator->GetQ();
+    StatsGlobalInput.epsb = fPrimaryGenerator->GetEPSB();
+  }
+
+  if (fGeometry != nullptr) {
+    StatsGlobalInput.Display_Cellule = fGeometry->GetStatusDisplayCelluleGeometry();
+    StatsGlobalInput.Display_LIF = fGeometry->GetStatusDisplayLIFGeometry();
+    StatsGlobalInput.Display_Section1 = fGeometry->GetStatusDisplaySection1Geometry();
+    StatsGlobalInput.Display_Section2 = fGeometry->GetStatusDisplaySection2Geometry();
+    StatsGlobalInput.Display_Section3 = fGeometry->GetStatusDisplaySection3Geometry();
+    StatsGlobalInput.Display_Section4 = fGeometry->GetStatusDisplaySection4Geometry();
+    StatsGlobalInput.Display_Section4Dump = fGeometry->GetStatusDisplaySection4DumpGeometry();
+    StatsGlobalInput.Display_Collimators = fGeometry->GetStatusDisplayCollimators();
+    StatsGlobalInput.Q1_Grad = fGeometry->GetQ1Grad();
+    StatsGlobalInput.Q2_Grad = fGeometry->GetQ2Grad();
+    StatsGlobalInput.Q3_Grad = fGeometry->GetQ3Grad();
+    StatsGlobalInput.Q4_Grad = fGeometry->GetQ4Grad();
+    StatsGlobalInput.Q1_Length = fGeometry->GetQ1Length();
+    StatsGlobalInput.Q2_Length = fGeometry->GetQ2Length();
+    StatsGlobalInput.Q3_Length = fGeometry->GetQ3Length();
+    StatsGlobalInput.Q4_Length = fGeometry->GetQ4Length();
+    StatsGlobalInput.SourceQ1Distance = fGeometry->GetSourceQ1Distance();
+    StatsGlobalInput.Q1Q2Distance = fGeometry->GetQ1Q2Distance();
+    StatsGlobalInput.Q2Q3Distance = fGeometry->GetQ2Q3Distance();
+    StatsGlobalInput.Q3Q4Distance = fGeometry->GetQ3Q4Distance();
+    StatsGlobalInput.B_Dipole_Map = fGeometry->GetBDipoleMap();
+    StatsGlobalInput.B_Dipole = fGeometry->GetBDipole();
+  
+  }
+
+  UpdateStatisticsHorizontalCollGlobal(StatsHorizontalCollGlobal);
+  UpdateStatisticsVerticalCollGlobal(StatsVerticalCollGlobal);
+  UpdateStatisticsGlobalInput(StatsGlobalInput);
+
   G4AutoLock lock(&fileMutex); // Verrouillage automatique du mutex
   
   f->cd();
+  Tree_GlobalInput->Write();
   Tree_Input->Write();
   Tree_HorizontalCollGlobal->Write();
   Tree_VerticalCollGlobal->Write();
@@ -208,6 +298,11 @@ void PALLAS_CollSimRunAction::UpdateStatistics(T& stats, const T& newStats, TTre
 }
 
 // Implémentations spécifiques utilisant le template
+void PALLAS_CollSimRunAction::UpdateStatisticsGlobalInput(RunTallyGlobalInput aRunTallyGlobalInput) {
+    UpdateStatistics(StatsGlobalInput, aRunTallyGlobalInput, Tree_GlobalInput);
+}
+
+
 void PALLAS_CollSimRunAction::UpdateStatisticsInput(RunTallyInput aRunTallyInput) {
     UpdateStatistics(StatsInput, aRunTallyInput, Tree_Input);
 }

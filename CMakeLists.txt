@@ -24,6 +24,13 @@ else()
 find_package(Geant4 REQUIRED)
 endif()
 
+
+
+# Chemins à adapter si jamais tu déplaces les libs
+set(OnnxRuntime_DIR "/mnt/d/Simulations/PALLAS_Collimateurs_Simulation/onnxruntime-linux-x64-1.17.1")
+set(OnnxRuntime_INCLUDE_DIR "${OnnxRuntime_DIR}/include")
+set(OnnxRuntime_LIBRARY "${OnnxRuntime_DIR}/lib/libonnxruntime.so")
+
 find_package(OnnxRuntime REQUIRED)
 
 
@@ -95,7 +102,15 @@ add_executable(PALLAS_CollSim PALLAS_CollSim.cc ${PROJECT_HEADER} ${PROJECT_SRC}
 target_link_libraries(PALLAS_CollSim ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} )
 
 target_include_directories(PALLAS_CollSim PUBLIC ${OnnxRuntime_INCLUDE_DIR})
-target_link_libraries(PALLAS_CollSim ${OnnxRuntime_LIBRARY})
+add_library(onnxruntime_lib SHARED IMPORTED)
+
+# Spécifie le chemin complet vers la librairie (définie par la variable passée à CMake)
+set_target_properties(onnxruntime_lib PROPERTIES
+    IMPORTED_LOCATION "${OnnxRuntime_LIBRARY}"
+)
+
+target_link_libraries(PALLAS_CollSim onnxruntime_lib)
+
 
 #link_directories( ${ROOT_LIBRARY_DIR} )
 

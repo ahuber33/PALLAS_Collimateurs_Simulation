@@ -24,12 +24,18 @@ public:
     void SetDipoleField(G4double val);
     void SetGradient(size_t index, G4double gradient);
     G4double GetGradient(size_t index) const;
+    void SetQLength(size_t index, G4double length);
+    G4double GetQLength(size_t index) const;
+    void SetQDrift(size_t index, G4double drift);
+    G4double GetQDrift(size_t index) const;
     void SetMapBFieldStatus(G4bool val);
 
 private:
     void DefineCommands();
     G4double ConstantDipoleBField = 0.0 * CLHEP::tesla;
-    std::array<G4double, NumQuadrupoles> gradients = {0.0, 0.0, 0.0, 0.0}; // tesla/meter
+    std::array<G4double, NumQuadrupoles> gradients = {}; // tesla/meter
+    std::array<G4double, NumQuadrupoles> qlength = {}; // mm
+    std::array<G4double, NumQuadrupoles> qdrift = {}; // mm
     G4bool StatusMapBField = false;
 };
 

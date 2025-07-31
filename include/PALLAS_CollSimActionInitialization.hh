@@ -8,6 +8,7 @@
 #include "G4VUserActionInitialization.hh"
 #include "globals.hh"
 #include "ParticleData.hh"
+#include "PALLAS_CollSimGeometryConstruction.hh"
 
 class PALLAS_CollSimGeometryConstruction;
 class PALLAS_CollSimPrimaryGeneratorAction;
@@ -15,7 +16,7 @@ class PALLAS_CollSimPrimaryGeneratorAction;
 class PALLAS_CollSimActionInitialization : public G4VUserActionInitialization
 {
 public:
-  PALLAS_CollSimActionInitialization(const char*, size_t, size_t, std::vector<std::queue<ParticleData>>, const std::vector<ParticleData>&, bool, bool);
+  PALLAS_CollSimActionInitialization(const char*, size_t, size_t, std::vector<std::queue<ParticleData>>, const std::vector<ParticleData>&, bool, bool, PALLAS_CollSimGeometryConstruction*);
   virtual ~PALLAS_CollSimActionInitialization();
   size_t charToSizeT(G4String str);
 
@@ -29,6 +30,9 @@ public:
     G4bool flag_MT=false;
     std::vector<ParticleData> fParticleData;
     std::vector<std::queue<ParticleData>> threadEventQueues;
+
+private:
+  PALLAS_CollSimGeometryConstruction* fGeometry;
 };
 
 #endif

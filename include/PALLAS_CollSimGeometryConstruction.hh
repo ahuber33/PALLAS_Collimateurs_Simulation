@@ -2,6 +2,8 @@
 //// Auteur: Arnaud HUBER for ENL group <huber@lp2ib.in2p3.fr>
 //// Copyright: 2024 (C) Projet PALLAS
 
+#include <Geant4/G4Material.hh>
+#include <Geant4/G4VUserDetectorConstruction.hh>
 #ifndef PALLAS_CollSimGeometryConstruction_h
 #define PALLAS_CollSimGeometryConstruction_h 1
 
@@ -80,9 +82,7 @@ public:
 public:
   void SetLogicalVolumeColor(G4LogicalVolume* LogicalVolume, G4String color);
   void CreateWorldAndHolder();
-  void ConstructCollimatorWithOutput();
-  void ConstructVerticalCollimator();
-  void ConstructHorizontalCollimator();
+  void ConstructQuadrupoleVolume();
   void ConstructCellulePart();
   void ConstructLIFPart();
   void ConstructSection1Part();
@@ -93,7 +93,82 @@ public:
   void ConstructSection4DumpPart();
   void ConstructSDandField() override;
   G4VPhysicalVolume *Construct() override;
-  
+  const float GetQ1Grad(){return Q1Gradient;}
+  const float GetQ2Grad(){return Q2Gradient;}
+  const float GetQ3Grad(){return Q3Gradient;}
+  const float GetQ4Grad(){return Q4Gradient;}
+  const float GetBDipole(){return ConstantDipoleBField*1e3;}
+  const float GetQ1Length(){return Q1Length;}
+  const float GetQ2Length(){return Q2Length;}
+  const float GetQ3Length(){return Q3Length;}
+  const float GetQ4Length(){return Q4Length;}
+  const float GetSourceQ1Distance(){return SourceQ1Distance;}
+  const float GetQ1Q2Distance(){return Q1Q2Distance;}
+  const float GetQ2Q3Distance(){return Q2Q3Distance;}
+  const float GetQ3Q4Distance(){return Q3Q4Distance;}
+  const int GetBDipoleMap()
+  {
+    if(StatusMapBField == true) return 1;
+    if(StatusMapBField == false) return 0;
+
+    return -1;
+  }
+  const int GetStatusDisplayCelluleGeometry()
+  {
+    if(StatusDisplayCelluleGeometry == true) return 1;
+    if(StatusDisplayCelluleGeometry == false) return 0;
+
+    return -1;
+  }
+  const int GetStatusDisplayLIFGeometry()
+  {
+    if(StatusDisplayLIFGeometry == true) return 1;
+    if(StatusDisplayLIFGeometry == false) return 0;
+
+    return -1;
+  }
+  const int GetStatusDisplaySection1Geometry()
+  {
+    if(StatusDisplaySection1Geometry== true) return 1;
+    if(StatusDisplaySection1Geometry == false) return 0;
+
+    return -1;
+  }
+  const int GetStatusDisplaySection2Geometry()
+  {
+    if(StatusDisplaySection2Geometry== true) return 1;
+    if(StatusDisplaySection2Geometry == false) return 0;
+
+    return -1;
+  }
+  const int GetStatusDisplaySection3Geometry()
+  {
+    if(StatusDisplaySection3Geometry== true) return 1;
+    if(StatusDisplaySection3Geometry == false) return 0;
+
+    return -1;
+  }
+  const int GetStatusDisplaySection4Geometry()
+  {
+    if(StatusDisplaySection4Geometry== true) return 1;
+    if(StatusDisplaySection4Geometry == false) return 0;
+
+    return -1;
+  }
+  const int GetStatusDisplayCollimators()
+  {
+    if(StatusDisplayCollimators== true) return 1;
+    if(StatusDisplayCollimators == false) return 0;
+
+    return -1;
+  }
+  const int GetStatusDisplaySection4DumpGeometry()
+  {
+    if(StatusDisplaySection4DumpGeometry== true) return 1;
+    if(StatusDisplaySection4DumpGeometry == false) return 0;
+
+    return -1;
+  }
 
 private:
   Geometry *Geom;
@@ -110,12 +185,10 @@ private:
   G4bool StatusDisplaySection2Geometry=false;
   G4bool StatusDisplaySection3Geometry=false;
   G4bool StatusDisplaySection4Geometry=false;
+  G4bool StatusDisplayCollimators=false;
   G4bool StatusDisplaySection4DumpGeometry=false;
   G4bool StatusRoundCollimator=false;
   G4bool StatusMapBField=false;
-  G4String CollimatorMaterial = "G4_Al";
-  G4String VerticalCollimatorMaterial = "G4_Al";
-  G4String HorizontalCollimatorMaterial = "G4_Al";
 
   // Dimension values
   G4double CollimatorThickness=1.0*mm;
@@ -126,15 +199,24 @@ private:
   G4double CollimatorExternalRadius=20*mm;
   G4double CollimatorSpectrometerDistance=0*mm;
   G4double ConstantDipoleBField =0.4*tesla;
+  G4double Q1Length = 0.1*m;
+  G4double Q2Length = 0.1*m;
+  G4double Q3Length = 0.2*m;
+  G4double Q4Length = 0.1*m;
   G4double Q1Gradient =0.0;
   G4double Q2Gradient =0.0;
   G4double Q3Gradient =0.0;
   G4double Q4Gradient =0.0;
+  G4double SourceQ1Distance =0.152*m;
+  G4double Q1Q2Distance = 0.168*m;
+  G4double Q2Q3Distance = 0.23*m;
+  G4double Q3Q4Distance = 0.751*m;
   G4double CollimatorLength=200*mm;
   G4double CollimatorDistanceBetweenPlates = 10*mm;
   G4double OpenVerticalCollimator = 10*mm;
   G4double OpenHorizontalCollimator = 10*mm;
   G4double CollimatorVHDistance = 0*mm;
+  G4double SourceCollimatorDistance = 3000*mm;
 
   // Colors for visualizations
   G4VisAttributes *invis;

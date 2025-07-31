@@ -45,7 +45,8 @@ public:
 
 public:
   G4LogicalVolume *GetGDMLVolume(const char*, const char*, G4Material*);
-  G4LogicalVolume* GetCollimator(G4String name);
+  G4LogicalVolume* GetCollimator(G4String);
+  G4LogicalVolume* GetQuadrupoleVolume(G4String, G4double, G4double, G4double);
   //SECTION 4
   G4LogicalVolume *GetFakeDiagsChamber();
   

@@ -42,6 +42,15 @@ public:
 
 public:
   void GeneratePrimaries(G4Event *anEvent);
+  const float GetXoff(){return fXof;}
+  const float GetP(){return fP1;}
+  const float GetCN2(){return fCN2*100;}
+  const float GetA0(){return fA0;}
+  const float GetEkin(){return Ekin;}
+  const float GetdEkin(){return dEkin*100;}
+  const float GetQ(){return Q*1e12;}
+  const float GetEPSB(){return epsb*1e6;}
+  
 
 private:
   G4GenericMessenger *pMessenger;
@@ -97,6 +106,14 @@ private:
   G4double fCN2 = 0.;
   /// Pressure in the second chamber
   G4double fP1 = 1.;
+  /// Mean Kinetic Energy 
+  G4double Ekin = 1.;
+  /// Variation Mean Kinetic Energy
+  G4double dEkin = 1.;
+  /// Charge Q
+  G4double Q = 1.;
+  /// Beam Emittance
+  G4double epsb = 1.;
 
   /// Neural network variables
   ///  Pointer to the ONNX inference session

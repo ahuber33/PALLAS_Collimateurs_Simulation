@@ -315,6 +315,10 @@ void PALLAS_CollSimSteppingAction::UserSteppingAction(const G4Step *aStep)
     }
 
 
+    // G4cout << "x = " << x << G4endl;
+    // G4cout << "y = " << y << G4endl;
+    // G4cout << "z = " << z << G4endl;
+
 
     //G4cout << " y =" << y << G4endl;
 

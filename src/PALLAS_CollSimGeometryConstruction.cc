@@ -3,17 +3,18 @@
 //// Copyright: 2024 (C) Projet PALLAS
 
 #include "PALLAS_CollSimGeometryConstruction.hh"
+#include <Geant4/G4Types.hh>
 
 using namespace CLHEP;
 G4Mutex fieldManagerMutex = G4MUTEX_INITIALIZER;
-G4ThreadLocal PALLAS_CollSimMagneticField
-*PALLAS_CollSimGeometryConstruction::fMagneticField = nullptr;
+G4ThreadLocal PALLAS_CollSimMagneticField *PALLAS_CollSimGeometryConstruction::fMagneticField = nullptr;
 G4ThreadLocal G4FieldManager *PALLAS_CollSimGeometryConstruction::fFieldMgr =
     nullptr;
 
 // Constructor
 PALLAS_CollSimGeometryConstruction::PALLAS_CollSimGeometryConstruction()
-    : G4VUserDetectorConstruction(), Geom() {
+    : G4VUserDetectorConstruction(), Geom()
+{
     Geom = new Geometry();
     fMessenger = new G4GenericMessenger(this, "/display/",
                                         "Control commands for my application");
@@ -24,203 +25,270 @@ PALLAS_CollSimGeometryConstruction::PALLAS_CollSimGeometryConstruction()
 
     // Commande DISPLAY
     fMessenger
-    ->DeclareProperty("SetStatusDisplayLIFGeometry", StatusDisplayLIFGeometry)
-    .SetGuidance("Set the boolean parameter.")
-    .SetParameterName("StatusDisplayLIFGeometry", false)
-    .SetDefaultValue("false");
+        ->DeclareProperty("SetStatusDisplayLIFGeometry", StatusDisplayLIFGeometry)
+        .SetGuidance("Set the boolean parameter.")
+        .SetParameterName("StatusDisplayLIFGeometry", false)
+        .SetDefaultValue("false");
 
     fMessenger
-    ->DeclareProperty("SetStatusDisplayCelluleGeometry",
-                      StatusDisplayCelluleGeometry)
-    .SetGuidance("Set the boolean parameter.")
-    .SetParameterName("StatusDisplayCelluleGeometry", false)
-    .SetDefaultValue("false");
+        ->DeclareProperty("SetStatusDisplayCelluleGeometry",
+                          StatusDisplayCelluleGeometry)
+        .SetGuidance("Set the boolean parameter.")
+        .SetParameterName("StatusDisplayCelluleGeometry", false)
+        .SetDefaultValue("false");
 
     fMessenger
-    ->DeclareProperty("SetStatusDisplaySection1Geometry",
-                      StatusDisplaySection1Geometry)
-    .SetGuidance("Set the boolean parameter.")
-    .SetParameterName("StatusDisplaySection1Geometry", false)
-    .SetDefaultValue("false");
+        ->DeclareProperty("SetStatusDisplaySection1Geometry",
+                          StatusDisplaySection1Geometry)
+        .SetGuidance("Set the boolean parameter.")
+        .SetParameterName("StatusDisplaySection1Geometry", false)
+        .SetDefaultValue("false");
 
     fMessenger
-    ->DeclareProperty("SetStatusDisplaySection2Geometry",
-                      StatusDisplaySection2Geometry)
-    .SetGuidance("Set the boolean parameter.")
-    .SetParameterName("StatusDisplaySection2Geometry", false)
-    .SetDefaultValue("false");
+        ->DeclareProperty("SetStatusDisplaySection2Geometry",
+                          StatusDisplaySection2Geometry)
+        .SetGuidance("Set the boolean parameter.")
+        .SetParameterName("StatusDisplaySection2Geometry", false)
+        .SetDefaultValue("false");
 
     fMessenger
-    ->DeclareProperty("SetStatusDisplaySection3Geometry",
-                      StatusDisplaySection3Geometry)
-    .SetGuidance("Set the boolean parameter.")
-    .SetParameterName("StatusDisplaySection3Geometry", false)
-    .SetDefaultValue("false");
+        ->DeclareProperty("SetStatusDisplaySection3Geometry",
+                          StatusDisplaySection3Geometry)
+        .SetGuidance("Set the boolean parameter.")
+        .SetParameterName("StatusDisplaySection3Geometry", false)
+        .SetDefaultValue("false");
 
     fMessenger
-    ->DeclareProperty("SetStatusDisplaySection4Geometry",
-                      StatusDisplaySection4Geometry)
-    .SetGuidance("Set the boolean parameter.")
-    .SetParameterName("StatusDisplaySection4Geometry", false)
-    .SetDefaultValue("false");
+        ->DeclareProperty("SetStatusDisplaySection4Geometry",
+                          StatusDisplaySection4Geometry)
+        .SetGuidance("Set the boolean parameter.")
+        .SetParameterName("StatusDisplaySection4Geometry", false)
+        .SetDefaultValue("false");
 
     fMessenger
-    ->DeclareProperty("SetStatusDisplaySection4DumpGeometry",
-                      StatusDisplaySection4DumpGeometry)
-    .SetGuidance("Set the boolean parameter.")
-    .SetParameterName("StatusDisplaySection4DumpGeometry", false)
-    .SetDefaultValue("false");
+        ->DeclareProperty("SetStatusDisplayCollimators",
+                          StatusDisplayCollimators)
+        .SetGuidance("Set the boolean parameter.")
+        .SetParameterName("StatusDisplayCollimators", false)
+        .SetDefaultValue("true");
+
+    fMessenger
+        ->DeclareProperty("SetStatusDisplaySection4DumpGeometry",
+                          StatusDisplaySection4DumpGeometry)
+        .SetGuidance("Set the boolean parameter.")
+        .SetParameterName("StatusDisplaySection4DumpGeometry", false)
+        .SetDefaultValue("false");
 
     // Commande GEOMETRY
     gMessenger->DeclareProperty("SetStatusRoundCollimator", StatusRoundCollimator)
-    .SetGuidance("Set the boolean parameter.")
-    .SetParameterName("StatusRoundCollimator", false)
-    .SetDefaultValue("true");
+        .SetGuidance("Set the boolean parameter.")
+        .SetParameterName("StatusRoundCollimator", false)
+        .SetDefaultValue("true");
 
     gMessenger
-    ->DeclareProperty("SetVerticalCollimatorMaterial",
-                      VerticalCollimatorMaterial)
-    .SetGuidance("Set the boolean parameter.")
-    .SetParameterName("VerticalCollimatorMaterial", false)
-    .SetDefaultValue("G4_W");
+        ->DeclarePropertyWithUnit("SetCollimatorThickness", "mm",
+                                  CollimatorThickness)
+        .SetGuidance("Set the collimator thickness parameter.")
+        .SetParameterName("CollimatorThickness", false)
+        .SetDefaultValue("5.0 mm")
+        .SetRange("CollimatorThickness >=0.0");
 
     gMessenger
-    ->DeclareProperty("SetHorizontalCollimatorMaterial",
-                      HorizontalCollimatorMaterial)
-    .SetGuidance("Set the boolean parameter.")
-    .SetParameterName("HorizontalCollimatorMaterial", false)
-    .SetDefaultValue("G4_Pb");
+        ->DeclarePropertyWithUnit("SetVerticalCollimatorThickness", "mm",
+                                  VerticalCollimatorThickness)
+        .SetGuidance("Set the vertical collimator thickness parameter.")
+        .SetParameterName("VerticalCollimatorThickness", false)
+        .SetDefaultValue("5.0 mm")
+        .SetRange("VerticalCollimatorThickness >=0.0");
 
     gMessenger
-    ->DeclarePropertyWithUnit("SetCollimatorThickness", "mm",
-                              CollimatorThickness)
-    .SetGuidance("Set the collimator thickness parameter.")
-    .SetParameterName("CollimatorThickness", false)
-    .SetDefaultValue("5.0 mm")
-    .SetRange("CollimatorThickness >=0.0");
+        ->DeclarePropertyWithUnit("SetHorizontalCollimatorThickness", "mm",
+                                  HorizontalCollimatorThickness)
+        .SetGuidance("Set the horizonntal collimator thickness parameter.")
+        .SetParameterName("HorizontalCollimatorThickness", false)
+        .SetDefaultValue("5.0 mm")
+        .SetRange("HorizontalCollimatorThickness >=0.0");
 
     gMessenger
-    ->DeclarePropertyWithUnit("SetVerticalCollimatorThickness", "mm",
-                              VerticalCollimatorThickness)
-    .SetGuidance("Set the vertical collimator thickness parameter.")
-    .SetParameterName("VerticalCollimatorThickness", false)
-    .SetDefaultValue("5.0 mm")
-    .SetRange("VerticalCollimatorThickness >=0.0");
+        ->DeclarePropertyWithUnit("SetCollimatorVHDistance", "mm",
+                                  CollimatorVHDistance)
+        .SetGuidance("Set the collimator distance between Vert & Hor plates.")
+        .SetParameterName("CollimatorVHDistance", false)
+        .SetDefaultValue("200.0 mm")
+        .SetRange("CollimatorVHDistance >=0.0");
 
     gMessenger
-    ->DeclarePropertyWithUnit("SetHorizontalCollimatorThickness", "mm",
-                              HorizontalCollimatorThickness)
-    .SetGuidance("Set the horizonntal collimator thickness parameter.")
-    .SetParameterName("HorizontalCollimatorThickness", false)
-    .SetDefaultValue("5.0 mm")
-    .SetRange("HorizontalCollimatorThickness >=0.0");
+        ->DeclareProperty("SetCollimatorInternalRadius", CollimatorInternalRadius)
+        .SetGuidance("Set the collimator internal radius parameter.")
+        .SetParameterName("CollimatorInternalRadius", false)
+        .SetDefaultValue("1.0");
 
     gMessenger
-    ->DeclarePropertyWithUnit("SetCollimatorVHDistance", "mm",
-                              CollimatorVHDistance)
-    .SetGuidance("Set the collimator distance between Vert & Hor plates.")
-    .SetParameterName("CollimatorVHDistance", false)
-    .SetDefaultValue("200.0 mm")
-    .SetRange("CollimatorVHDistance >=0.0");
+        ->DeclarePropertyWithUnit("SetCollimatorLength", "mm", CollimatorLength)
+        .SetGuidance("Set the collimator length parameter.")
+        .SetParameterName("CollimatorLength", false)
+        .SetDefaultValue("200.0 mm")
+        .SetRange("CollimatorLength >=0.0");
 
     gMessenger
-    ->DeclareProperty("SetCollimatorInternalRadius", CollimatorInternalRadius)
-    .SetGuidance("Set the collimator internal radius parameter.")
-    .SetParameterName("CollimatorInternalRadius", false)
-    .SetDefaultValue("1.0");
+        ->DeclarePropertyWithUnit("SetCollimatorDistanceBetweenPlates", "mm",
+                                  CollimatorDistanceBetweenPlates)
+        .SetGuidance("Set the collimator distance between plates parameter.")
+        .SetParameterName("CollimatorDistanceBetweenPlates", false)
+        .SetDefaultValue("200.0 mm")
+        .SetRange("CollimatorDistanceBetweenPlates >=0.0");
 
     gMessenger
-    ->DeclarePropertyWithUnit("SetCollimatorLength", "mm", CollimatorLength)
-    .SetGuidance("Set the collimator length parameter.")
-    .SetParameterName("CollimatorLength", false)
-    .SetDefaultValue("200.0 mm")
-    .SetRange("CollimatorLength >=0.0");
+        ->DeclarePropertyWithUnit("SetOpenVerticalCollimator", "mm",
+                                  OpenVerticalCollimator)
+        .SetGuidance("Set the open vertical collimator.")
+        .SetParameterName("OpenVerticalCollimator", false)
+        .SetDefaultValue("200.0 mm")
+        .SetRange("OpenVerticalCollimator >=0.0");
 
     gMessenger
-    ->DeclarePropertyWithUnit("SetCollimatorDistanceBetweenPlates", "mm",
-                              CollimatorDistanceBetweenPlates)
-    .SetGuidance("Set the collimator distance between plates parameter.")
-    .SetParameterName("CollimatorDistanceBetweenPlates", false)
-    .SetDefaultValue("200.0 mm")
-    .SetRange("CollimatorDistanceBetweenPlates >=0.0");
+        ->DeclarePropertyWithUnit("SetOpenHorizontalCollimator", "mm",
+                                  OpenHorizontalCollimator)
+        .SetGuidance("Set the open Horizontal collimator.")
+        .SetParameterName("OpenHorizontalCollimator", false)
+        .SetDefaultValue("10.0 mm")
+        .SetRange("OpenHorizontalCollimator >=0.0");
 
     gMessenger
-    ->DeclarePropertyWithUnit("SetOpenVerticalCollimator", "mm",
-                              OpenVerticalCollimator)
-    .SetGuidance("Set the open vertical collimator.")
-    .SetParameterName("OpenVerticalCollimator", false)
-    .SetDefaultValue("200.0 mm")
-    .SetRange("OpenVerticalCollimator >=0.0");
+        ->DeclarePropertyWithUnit("SetCollimatorExternalRadius", "mm",
+                                  CollimatorExternalRadius)
+        .SetGuidance("Set the collimator external radius parameter.")
+        .SetParameterName("CollimatorExternalRadius", false)
+        .SetDefaultValue("50.0 mm")
+        .SetRange("CollimatorExternalRadius >=0.0");
 
     gMessenger
-    ->DeclarePropertyWithUnit("SetOpenHorizontalCollimator", "mm",
-                              OpenHorizontalCollimator)
-    .SetGuidance("Set the open Horizontal collimator.")
-    .SetParameterName("OpenHorizontalCollimator", false)
-    .SetDefaultValue("10.0 mm")
-    .SetRange("OpenHorizontalCollimator >=0.0");
+        ->DeclarePropertyWithUnit("SetCollimatorSpectrometerDistance", "mm",
+                                  CollimatorSpectrometerDistance)
+        .SetGuidance("Set the collimator spectrometer distance parameter.")
+        .SetParameterName("CollimatorSpectrometerDistance", false)
+        .SetDefaultValue("100.0 mm")
+        .SetRange("CollimatorSpectrometerDistance >=0.0");
 
     gMessenger
-    ->DeclarePropertyWithUnit("SetCollimatorExternalRadius", "mm",
-                              CollimatorExternalRadius)
-    .SetGuidance("Set the collimator external radius parameter.")
-    .SetParameterName("CollimatorExternalRadius", false)
-    .SetDefaultValue("50.0 mm")
-    .SetRange("CollimatorExternalRadius >=0.0");
+        ->DeclarePropertyWithUnit("SetQ1Length", "m",
+                                  Q1Length)
+        .SetGuidance("Set the Q1 length parameter.")
+        .SetParameterName("Q1Length", false)
+        .SetDefaultValue("0.1 m")
+        .SetRange("Q1Length >=0.0");
 
     gMessenger
-    ->DeclarePropertyWithUnit("SetCollimatorSpectrometerDistance", "mm",
-                              CollimatorSpectrometerDistance)
-    .SetGuidance("Set the collimator spectrometer distance parameter.")
-    .SetParameterName("CollimatorSpectrometerDistance", false)
-    .SetDefaultValue("100.0 mm")
-    .SetRange("CollimatorSpectrometerDistance >=0.0");
+        ->DeclarePropertyWithUnit("SetQ2Length", "m",
+                                  Q2Length)
+        .SetGuidance("Set the Q2 length parameter.")
+        .SetParameterName("Q2Length", false)
+        .SetDefaultValue("0.1 m")
+        .SetRange("Q2Length >=0.0");
+
+    gMessenger
+        ->DeclarePropertyWithUnit("SetQ3Length", "m",
+                                  Q3Length)
+        .SetGuidance("Set the Q3 length parameter.")
+        .SetParameterName("Q3Length", false)
+        .SetDefaultValue("0.2 m")
+        .SetRange("Q3Length >=0.0");
+
+    gMessenger
+        ->DeclarePropertyWithUnit("SetQ4Length", "m",
+                                  Q4Length)
+        .SetGuidance("Set the Q4 length parameter.")
+        .SetParameterName("Q4Length", false)
+        .SetDefaultValue("0.1 m")
+        .SetRange("Q4Length >=0.0");
+
+    gMessenger
+        ->DeclarePropertyWithUnit("SetSourceQ1Distance", "m",
+                                  SourceQ1Distance)
+        .SetGuidance("Set the Source/Q1 distance parameter.")
+        .SetParameterName("SourceQ1Distance", false)
+        .SetDefaultValue("0.152 m")
+        .SetRange("SourceQ1Distance >=0.0");
+
+    gMessenger
+        ->DeclarePropertyWithUnit("SetQ1Q2Distance", "m",
+                                  Q1Q2Distance)
+        .SetGuidance("Set the Q1/Q2 distance parameter.")
+        .SetParameterName("Q1Q2Distance", false)
+        .SetDefaultValue("0.168 m")
+        .SetRange("Q1Q2Distance >=0.0");
+
+    gMessenger
+        ->DeclarePropertyWithUnit("SetQ2Q3Distance", "m",
+                                  Q2Q3Distance)
+        .SetGuidance("Set the Q2/Q3 distance parameter.")
+        .SetParameterName("Q2Q3Distance", false)
+        .SetDefaultValue("0.23 m")
+        .SetRange("Q2Q3Distance >=0.0");
+
+    gMessenger
+        ->DeclarePropertyWithUnit("SetQ3Q4Distance", "m",
+                                  Q3Q4Distance)
+        .SetGuidance("Set the Q3/Q4 distance parameter.")
+        .SetParameterName("Q3Q4Distance", false)
+        .SetDefaultValue("0.751 m")
+        .SetRange("Q3Q4Distance >=0.0");
+
+    gMessenger
+        ->DeclarePropertyWithUnit("SetSourceCollimatorDistance", "mm",
+                                  SourceCollimatorDistance)
+        .SetGuidance("Set the source/collimator distance parameter.")
+        .SetParameterName("SourceCollimatorDistance", false)
+        .SetDefaultValue("3000.0 mm")
+        .SetRange("SourceCollimatorDistance >=0.0");
 
     bMessenger
-    ->DeclarePropertyWithUnit("SetConstantDipoleBField", "tesla",
-                              ConstantDipoleBField)
-    .SetGuidance("Set the constant Dipole BField value.")
-    .SetParameterName("ConstantDipoleBField", false)
-    .SetDefaultValue("0.0 tesla")
-    .SetRange("ConstantDipoleBField >=0.0");
+        ->DeclarePropertyWithUnit("SetConstantDipoleBField", "tesla",
+                                  ConstantDipoleBField)
+        .SetGuidance("Set the constant Dipole BField value.")
+        .SetParameterName("ConstantDipoleBField", false)
+        .SetDefaultValue("0.0 tesla")
+        .SetRange("ConstantDipoleBField >=0.0");
 
     bMessenger->DeclareProperty("SetQ1Gradient", Q1Gradient)
-    .SetGuidance("Set the Q1 Gradient BField value.")
-    .SetParameterName("Q1Gradient", false)
-    .SetDefaultValue("0.0");
+        .SetGuidance("Set the Q1 Gradient BField value.")
+        .SetParameterName("Q1Gradient", false)
+        .SetDefaultValue("0.0");
 
     bMessenger->DeclareProperty("SetQ2Gradient", Q2Gradient)
-    .SetGuidance("Set the Q2 Gradient BField value.")
-    .SetParameterName("Q2Gradient", false)
-    .SetDefaultValue("0.0");
+        .SetGuidance("Set the Q2 Gradient BField value.")
+        .SetParameterName("Q2Gradient", false)
+        .SetDefaultValue("0.0");
 
     bMessenger->DeclareProperty("SetQ3Gradient", Q3Gradient)
-    .SetGuidance("Set the Q3 Gradient BField value.")
-    .SetParameterName("Q3Gradient", false)
-    .SetDefaultValue("0.0");
+        .SetGuidance("Set the Q3 Gradient BField value.")
+        .SetParameterName("Q3Gradient", false)
+        .SetDefaultValue("0.0");
 
     bMessenger->DeclareProperty("SetQ4Gradient", Q4Gradient)
-    .SetGuidance("Set the Q4 Gradient BField value.")
-    .SetParameterName("Q4Gradient", false)
-    .SetDefaultValue("0.0");
+        .SetGuidance("Set the Q4 Gradient BField value.")
+        .SetParameterName("Q4Gradient", false)
+        .SetDefaultValue("0.0");
 
     bMessenger->DeclareProperty("SetStatusMapBField", StatusMapBField)
-    .SetGuidance("Set the boolean parameter.")
-    .SetParameterName("StatuMapBField", false)
-    .SetDefaultValue("false");
+        .SetGuidance("Set the boolean parameter.")
+        .SetParameterName("StatuMapBField", false)
+        .SetDefaultValue("false");
 
     G4cout << "MESSENGER GEOMETRY BASE" << G4endl;
 }
 
 // Destructor
-PALLAS_CollSimGeometryConstruction::~PALLAS_CollSimGeometryConstruction() {
+PALLAS_CollSimGeometryConstruction::~PALLAS_CollSimGeometryConstruction()
+{
     delete Geom;
     delete fMessenger;
     delete gMessenger;
 }
 
 void PALLAS_CollSimGeometryConstruction::SetLogicalVolumeColor(
-    G4LogicalVolume *LogicalVolume, G4String Color) {
+    G4LogicalVolume *LogicalVolume, G4String Color)
+{
     // ***********************
     // Visualization Colors
     // ***********************
@@ -255,7 +323,7 @@ void PALLAS_CollSimGeometryConstruction::SetLogicalVolumeColor(
     orange->SetForceSolid(true);
     orange->SetVisibility(true);
 
-    yellow = new G4VisAttributes(G4Colour(1, 1, 0, 0.7));
+    yellow = new G4VisAttributes(G4Colour(1, 1, 0, 0.5));
     //  yellow->SetForceWireframe(true);
     yellow->SetForceSolid(true);
     yellow->SetVisibility(true);
@@ -280,32 +348,54 @@ void PALLAS_CollSimGeometryConstruction::SetLogicalVolumeColor(
     // magenta->SetForceSolid(true);
     magenta->SetVisibility(true);
 
-    if (Color == "invis") {
+    if (Color == "invis")
+    {
         LogicalVolume->SetVisAttributes(invis);
-    } else if (Color == "black") {
+    }
+    else if (Color == "black")
+    {
         LogicalVolume->SetVisAttributes(black);
-    } else if (Color == "white") {
+    }
+    else if (Color == "white")
+    {
         LogicalVolume->SetVisAttributes(white);
-    } else if (Color == "gray") {
+    }
+    else if (Color == "gray")
+    {
         LogicalVolume->SetVisAttributes(gray);
-    } else if (Color == "red") {
+    }
+    else if (Color == "red")
+    {
         LogicalVolume->SetVisAttributes(red);
-    } else if (Color == "orange") {
+    }
+    else if (Color == "orange")
+    {
         LogicalVolume->SetVisAttributes(orange);
-    } else if (Color == "yellow") {
+    }
+    else if (Color == "yellow")
+    {
         LogicalVolume->SetVisAttributes(yellow);
-    } else if (Color == "green") {
+    }
+    else if (Color == "green")
+    {
         LogicalVolume->SetVisAttributes(green);
-    } else if (Color == "cyan") {
+    }
+    else if (Color == "cyan")
+    {
         LogicalVolume->SetVisAttributes(cyan);
-    } else if (Color == "blue") {
+    }
+    else if (Color == "blue")
+    {
         LogicalVolume->SetVisAttributes(blue);
-    } else if (Color == "magenta") {
+    }
+    else if (Color == "magenta")
+    {
         LogicalVolume->SetVisAttributes(magenta);
     }
 }
 
-void PALLAS_CollSimGeometryConstruction::CreateWorldAndHolder() {
+void PALLAS_CollSimGeometryConstruction::CreateWorldAndHolder()
+{
     Vacuum = G4NistManager::Instance()->FindOrBuildMaterial("G4_Galactic");
 
     // Create World Volume
@@ -320,7 +410,6 @@ void PALLAS_CollSimGeometryConstruction::CreateWorldAndHolder() {
         new G4LogicalVolume(SolidHolder, Vacuum, "LogicalHolder", 0, 0, 0);
     SetLogicalVolumeColor(LogicalHolder, "invis");
 
-
     // Place the world volume: center of world at origin (0,0,0)
     PhysicalWorld =
         new G4PVPlacement(G4Transform3D(DontRotate, G4ThreeVector(0, 0, 0)),
@@ -329,90 +418,49 @@ void PALLAS_CollSimGeometryConstruction::CreateWorldAndHolder() {
     PhysicalHolder = new G4PVPlacement(
         G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
         LogicalHolder, "Holder", LogicalWorld, false, 0);
-
 }
 
-void PALLAS_CollSimGeometryConstruction::ConstructVerticalCollimator() {
+void PALLAS_CollSimGeometryConstruction::ConstructQuadrupoleVolume()
+{
+    auto LogicalQ1Volume = Geom->GetQuadrupoleVolume("Q1", 300, Q1Length, 1000);
+    auto LogicalQ2Volume = Geom->GetQuadrupoleVolume("Q2", 300, Q2Length, 1000);
+    auto LogicalQ3Volume = Geom->GetQuadrupoleVolume("Q3", 300, Q3Length, 1000);
+    auto LogicalQ4Volume = Geom->GetQuadrupoleVolume("Q4", 300, Q4Length, 1000);
 
-    LogicalVerticalCollimator = Geom->GetCollimator("V");
-    Material = G4NistManager::Instance()->FindOrBuildMaterial(
-                   VerticalCollimatorMaterial);
-    LogicalVerticalCollimator->SetMaterial(Material);
-    G4GeometryManager::GetInstance()->OpenGeometry();
+    SetLogicalVolumeColor(LogicalQ1Volume, "gray");
+    SetLogicalVolumeColor(LogicalQ2Volume, "gray");
+    SetLogicalVolumeColor(LogicalQ3Volume, "gray");
+    SetLogicalVolumeColor(LogicalQ4Volume, "gray");
 
-    auto pipe1 = static_cast<G4Box *>(
-                     G4LogicalVolumeStore::GetInstance()->GetVolume("V")->GetSolid());
-    pipe1->SetXHalfLength(CollimatorLength / 2);
-    pipe1->SetYHalfLength(CollimatorLength / 2);
-    pipe1->SetZHalfLength(VerticalCollimatorThickness / 2);
+    G4double Position_Q1 = SourceQ1Distance + Q1Length / 2;
+    G4double Position_Q2 = Position_Q1 + Q1Length / 2 + Q1Q2Distance + Q2Length / 2;
+    G4double Position_Q3 = Position_Q2 + Q2Length / 2 + Q2Q3Distance + Q3Length / 2;
+    G4double Position_Q4 = Position_Q3 + Q3Length / 2 + Q3Q4Distance + Q4Length / 2;
 
-    SetLogicalVolumeColor(LogicalVerticalCollimator, "blue");
+    auto PhysicalQ1Volume = new G4PVPlacement(
+        G4Transform3D(DontRotate, G4ThreeVector(0 * mm, Position_Q1, 0 * mm)),
+        LogicalQ1Volume, "Q1Volume", LogicalHolder, false, 0);
 
-    G4RotationMatrix *rotationMatrix = new G4RotationMatrix();
-    rotationMatrix->rotateX(90.0 * deg);
+    auto PhysicalQ2Volume = new G4PVPlacement(
+        G4Transform3D(DontRotate, G4ThreeVector(0 * mm, Position_Q2, 0 * mm)),
+        LogicalQ2Volume, "Q2Volume", LogicalHolder, false, 0);
 
-    G4ThreeVector translation1(
-        (-0.152 - OpenVerticalCollimator - CollimatorLength / 2) * mm,
-        3114.5 - CollimatorSpectrometerDistance - VerticalCollimatorThickness / 2 -120,
-        0.08 * mm);
-    G4ThreeVector translation2(
-        (-0.152 + OpenVerticalCollimator + CollimatorLength / 2) * mm,
-        3114.5 - CollimatorSpectrometerDistance - VerticalCollimatorThickness / 2 -120,
-        0.08 * mm);
+    auto PhysicalQ3Volume = new G4PVPlacement(
+        G4Transform3D(DontRotate, G4ThreeVector(0 * mm, Position_Q3, 0 * mm)),
+        LogicalQ3Volume, "Q3Volume", LogicalHolder, false, 0);
 
-    PhysicalVerticalCollimator1 =
-        new G4PVPlacement(rotationMatrix, translation1, LogicalVerticalCollimator,
-                          "VerticalCollimator", LogicalHolder, false, 0);
-
-    PhysicalVerticalCollimator2 =
-        new G4PVPlacement(rotationMatrix, translation2, LogicalVerticalCollimator,
-                          "VerticalCollimator", LogicalHolder, false, 0);
+    auto PhysicalQ4Volume = new G4PVPlacement(
+        G4Transform3D(DontRotate, G4ThreeVector(0 * mm, Position_Q4, 0 * mm)),
+        LogicalQ4Volume, "Q4Volume", LogicalHolder, false, 0);
 }
 
-void PALLAS_CollSimGeometryConstruction::ConstructHorizontalCollimator() {
-
-    LogicalHorizontalCollimator = Geom->GetCollimator("H");
-    Material = G4NistManager::Instance()->FindOrBuildMaterial(
-                   HorizontalCollimatorMaterial);
-    LogicalHorizontalCollimator->SetMaterial(Material);
-    G4GeometryManager::GetInstance()->OpenGeometry();
-
-    auto pipe1 = static_cast<G4Box *>(
-                     G4LogicalVolumeStore::GetInstance()->GetVolume("H")->GetSolid());
-    pipe1->SetXHalfLength(CollimatorLength / 2);
-    pipe1->SetYHalfLength(CollimatorLength / 2);
-    pipe1->SetZHalfLength(HorizontalCollimatorThickness / 2);
-
-    SetLogicalVolumeColor(LogicalHorizontalCollimator, "black");
-
-    G4RotationMatrix *rotationMatrix = new G4RotationMatrix();
-    rotationMatrix->rotateX(90.0 * deg);
-
-    G4ThreeVector translation1(
-        -0.152 * mm,
-        3114.5 - CollimatorSpectrometerDistance - VerticalCollimatorThickness -
-        CollimatorVHDistance - HorizontalCollimatorThickness / 2,
-        (0.08 - OpenHorizontalCollimator - CollimatorLength / 2) * mm);
-    G4ThreeVector translation2(
-        -0.152 * mm,
-        3114.5 - CollimatorSpectrometerDistance - VerticalCollimatorThickness -
-        CollimatorVHDistance - HorizontalCollimatorThickness / 2,
-        (0.08 + OpenHorizontalCollimator + CollimatorLength / 2) * mm);
-
-    PhysicalHorizontalCollimator1 = new G4PVPlacement(
-        rotationMatrix, translation1, LogicalHorizontalCollimator,
-        "HorizontalCollimator", LogicalHolder, false, 0);
-
-    PhysicalHorizontalCollimator2 = new G4PVPlacement(
-        rotationMatrix, translation2, LogicalHorizontalCollimator,
-        "HorizontalCollimator", LogicalHolder, false, 0);
-}
-
-void PALLAS_CollSimGeometryConstruction::ConstructCellulePart() {
+void PALLAS_CollSimGeometryConstruction::ConstructCellulePart()
+{
     auto Inox =
         G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-    if (StatusDisplayCelluleGeometry) {
+    if (StatusDisplayCelluleGeometry)
+    {
         LogicalPALLAS_Assemblage2Cellules =
             Geom->GetGDMLVolume("../gdml_models/Assemblage_2_Cellules.gdml",
                                 "Assemblage_2_Cellules", Inox);
@@ -423,32 +471,36 @@ void PALLAS_CollSimGeometryConstruction::ConstructCellulePart() {
             G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
             LogicalPALLAS_Assemblage2Cellules, "Assemblage2Cellules", LogicalHolder,
             false, 0);
-    } else {
+    }
+    else
+    {
         // DO NOTHING
     }
 }
 
-void PALLAS_CollSimGeometryConstruction::ConstructLIFPart() {
+void PALLAS_CollSimGeometryConstruction::ConstructLIFPart()
+{
     auto Inox =
         G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-    if (StatusDisplayLIFGeometry) {
+    if (StatusDisplayLIFGeometry)
+    {
         LogicalPALLAS_Croix =
             Geom->GetGDMLVolume("../gdml_models/LIF/Croix.gdml", "Croix", Inox);
         LogicalPALLAS_LIFHublot1 = Geom->GetGDMLVolume(
-                                       "../gdml_models/LIF/LIF_Hublot1.gdml", "LIF_Hublot1", Inox);
+            "../gdml_models/LIF/LIF_Hublot1.gdml", "LIF_Hublot1", Inox);
         LogicalPALLAS_LIFHublot2 = Geom->GetGDMLVolume(
-                                       "../gdml_models/LIF/LIF_Hublot2.gdml", "LIF_Hublot2", Inox);
+            "../gdml_models/LIF/LIF_Hublot2.gdml", "LIF_Hublot2", Inox);
         LogicalPALLAS_LIFHublot3 = Geom->GetGDMLVolume(
-                                       "../gdml_models/LIF/LIF_Hublot3.gdml", "LIF_Hublot3", Inox);
+            "../gdml_models/LIF/LIF_Hublot3.gdml", "LIF_Hublot3", Inox);
         LogicalPALLAS_LIFHublot4 = Geom->GetGDMLVolume(
-                                       "../gdml_models/LIF/LIF_Hublot4.gdml", "LIF_Hublot4", Inox);
+            "../gdml_models/LIF/LIF_Hublot4.gdml", "LIF_Hublot4", Inox);
         LogicalPALLAS_LIFHublot5 = Geom->GetGDMLVolume(
-                                       "../gdml_models/LIF/LIF_Hublot5.gdml", "LIF_Hublot5", Inox);
+            "../gdml_models/LIF/LIF_Hublot5.gdml", "LIF_Hublot5", Inox);
         LogicalPALLAS_LIF_IBX_DD = Geom->GetGDMLVolume(
-                                       "../gdml_models/LIF/LIF_IBX_DD.gdml", "LIF_IBX_DD", Inox);
+            "../gdml_models/LIF/LIF_IBX_DD.gdml", "LIF_IBX_DD", Inox);
         LogicalPALLAS_LIF_SQLT = Geom->GetGDMLVolume(
-                                     "../gdml_models/LIF/LIF_SQLT.gdml", "LIF_SQLT", Inox);
+            "../gdml_models/LIF/LIF_SQLT.gdml", "LIF_SQLT", Inox);
         LogicalPALLAS_MarbreBreadboard1 =
             Geom->GetGDMLVolume("../gdml_models/LIF/Marbre_Breadboard1.gdml",
                                 "Marbre_Breadboard1", Inox);
@@ -515,26 +567,30 @@ void PALLAS_CollSimGeometryConstruction::ConstructLIFPart() {
             G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
             LogicalPALLAS_MarbreBreadboard2, "MarbreBreadboard2", LogicalHolder,
             false, 0);
-    } else {
+    }
+    else
+    {
         // DO NOTHING
     }
 }
 
-void PALLAS_CollSimGeometryConstruction::ConstructSection1Part() {
+void PALLAS_CollSimGeometryConstruction::ConstructSection1Part()
+{
     auto Inox =
         G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-    if (StatusDisplaySection1Geometry) {
+    if (StatusDisplaySection1Geometry)
+    {
         LogicalPALLAS_QuadrupoleQ1 = Geom->GetGDMLVolume(
-                                         "../gdml_models/S1/Quadrupole_Q1.gdml", "Quadrupole_Q1", Inox);
+            "../gdml_models/S1/Quadrupole_Q1.gdml", "Quadrupole_Q1", Inox);
         LogicalPALLAS_QuadrupoleQ2 = Geom->GetGDMLVolume(
-                                         "../gdml_models/S1/Quadrupole_Q2.gdml", "Quadrupole_Q2", Inox);
+            "../gdml_models/S1/Quadrupole_Q2.gdml", "Quadrupole_Q2", Inox);
         LogicalPALLAS_ATH500_DN100 = Geom->GetGDMLVolume(
-                                         "../gdml_models/S1/ATH500_DN100.gdml", "ATH500_DN100", Inox);
-        LogicalPALLAS_ChambreISO = Geom->GetGDMLVolume(
-                                       "../gdml_models/S1/Base_Marbre.gdml", "Base_Marbre", Inox);
+            "../gdml_models/S1/ATH500_DN100.gdml", "ATH500_DN100", Inox);
         LogicalPALLAS_BaseMarbre = Geom->GetGDMLVolume(
-                                       "../gdml_models/S1/Chambre_ISO.gdml", "Chambre_ISO", Inox);
+            "../gdml_models/S1/Base_Marbre.gdml", "Base_Marbre", Inox);
+        LogicalPALLAS_ChambreISO = Geom->GetGDMLVolume(
+            "../gdml_models/S1/Chambre_ISO.gdml", "Chambre_ISO", Inox);
 
         SetLogicalVolumeColor(LogicalPALLAS_QuadrupoleQ1, "red");
         SetLogicalVolumeColor(LogicalPALLAS_QuadrupoleQ2, "red");
@@ -542,52 +598,60 @@ void PALLAS_CollSimGeometryConstruction::ConstructSection1Part() {
         SetLogicalVolumeColor(LogicalPALLAS_ChambreISO, "red");
         SetLogicalVolumeColor(LogicalPALLAS_BaseMarbre, "red");
 
+        G4double Position_Q1 = SourceQ1Distance - 140;                           // 140 = Initial Position of Quadrupole 1 in CAD files (GDML)
+        G4double Position_Q2 = SourceQ1Distance + Q1Length + Q1Q2Distance - 420; // 420 = Initial Position of Quadrupole 2 in CAD files (GDML)
+
         PhysicalPALLAS_QuadrupoleQ1 = new G4PVPlacement(
-            G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
+            G4Transform3D(DontRotate, G4ThreeVector(0 * mm, Position_Q1, 0 * mm)),
             LogicalPALLAS_QuadrupoleQ1, "QuadrupoleQ1", LogicalHolder, false, 0);
 
         PhysicalPALLAS_QuadrupoleQ2 = new G4PVPlacement(
-            G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
+            G4Transform3D(DontRotate, G4ThreeVector(0 * mm, Position_Q2, 0 * mm)),
             LogicalPALLAS_QuadrupoleQ2, "QuadrupoleQ2", LogicalHolder, false, 0);
 
-        PhysicalPALLAS_ATH500_DN100 = new G4PVPlacement(
-            G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
-            LogicalPALLAS_ATH500_DN100, "ATH500_DN100", LogicalHolder, false, 0);
+        // PhysicalPALLAS_ATH500_DN100 = new G4PVPlacement(
+        //     G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
+        //     LogicalPALLAS_ATH500_DN100, "ATH500_DN100", LogicalHolder, false, 0);
 
-        PhysicalPALLAS_BaseMarbre = new G4PVPlacement(
-            G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
-            LogicalPALLAS_BaseMarbre, "BaseMarbre", LogicalHolder, false, 0);
+        // PhysicalPALLAS_BaseMarbre = new G4PVPlacement(
+        //     G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
+        //     LogicalPALLAS_BaseMarbre, "BaseMarbre", LogicalHolder, false, 0);
 
-        PhysicalPALLAS_ChambreISO = new G4PVPlacement(
-            G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
-            LogicalPALLAS_ChambreISO, "ChambreISO", LogicalHolder, false, 0);
-    } else {
+        //  !!!! Problem with ISO Chamber GDML file !!!!!
+        // PhysicalPALLAS_ChambreISO = new G4PVPlacement(
+        //     G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
+        //     LogicalPALLAS_ChambreISO, "ChambreISO", LogicalHolder, false, 0);
+    }
+    else
+    {
         // DO NOTHING
     }
 }
 
-void PALLAS_CollSimGeometryConstruction::ConstructSection2Part() {
+void PALLAS_CollSimGeometryConstruction::ConstructSection2Part()
+{
     auto Inox =
         G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-    if (StatusDisplaySection2Geometry) {
+    if (StatusDisplaySection2Geometry)
+    {
         LogicalPALLAS_QuadrupoleQ3 = Geom->GetGDMLVolume(
-                                         "../gdml_models/S2/QuadrupoleQ3.gdml", "Quadrupole_Q3", Inox);
+            "../gdml_models/S2/QuadrupoleQ3.gdml", "Quadrupole_Q3", Inox);
         LogicalPALLAS_QuadrupoleQ4 = Geom->GetGDMLVolume(
-                                         "../gdml_models/S2/QuadrupoleQ4.gdml", "Quadrupole_Q4", Inox);
+            "../gdml_models/S2/QuadrupoleQ4.gdml", "Quadrupole_Q4", Inox);
         LogicalPALLAS_ASMRemovalChamber =
             Geom->GetGDMLVolume("../gdml_models/S2/ASM_Removal_Chamber.gdml",
                                 "ASMRemovalChamber", Inox);
         LogicalPALLAS_BreadboardRemovalChamber = Geom->GetGDMLVolume(
-                    "../gdml_models/S2/Assemblage_Breadboard_Thorlabs_Removal_Chamber.gdml",
-                    "Breadboard_Removal_Chamber", Inox);
+            "../gdml_models/S2/Assemblage_Breadboard_Thorlabs_Removal_Chamber.gdml",
+            "Breadboard_Removal_Chamber", Inox);
         LogicalPALLAS_ChassisRemovalChamber = Geom->GetGDMLVolume(
-                "../gdml_models/S2/Chassis_PALLAS_Removal_Chamber.gdml",
-                "Chassis_PALLAS_Removal_Chamber", Inox);
+            "../gdml_models/S2/Chassis_PALLAS_Removal_Chamber.gdml",
+            "Chassis_PALLAS_Removal_Chamber", Inox);
         LogicalPALLAS_TubeISO1 = Geom->GetGDMLVolume(
-                                     "../gdml_models/S2/Tube_ISO_1.gdml", "Tube_ISO_1", Inox);
+            "../gdml_models/S2/Tube_ISO_1.gdml", "Tube_ISO_1", Inox);
         LogicalPALLAS_TubeISO2 = Geom->GetGDMLVolume(
-                                     "../gdml_models/S2/Tube_ISO_2.gdml", "Tube_ISO_2", Inox);
+            "../gdml_models/S2/Tube_ISO_2.gdml", "Tube_ISO_2", Inox);
 
         SetLogicalVolumeColor(LogicalPALLAS_QuadrupoleQ3, "cyan");
         SetLogicalVolumeColor(LogicalPALLAS_QuadrupoleQ4, "cyan");
@@ -597,49 +661,56 @@ void PALLAS_CollSimGeometryConstruction::ConstructSection2Part() {
         SetLogicalVolumeColor(LogicalPALLAS_TubeISO1, "cyan");
         SetLogicalVolumeColor(LogicalPALLAS_TubeISO2, "cyan");
 
+        G4double Position_Q3 = SourceQ1Distance + Q1Length + Q1Q2Distance + Q2Length + Q2Q3Distance - 720;                            // 720 = Initial Position of Quadrupole 3 in CAD files (GDML)
+        G4double Position_Q4 = SourceQ1Distance + Q1Length + Q1Q2Distance + Q2Length + Q2Q3Distance + Q3Length + Q3Q4Distance - 1570; // 1570 = Initial Position of Quadrupole 4 in CAD files (GDML)
+
         PhysicalPALLAS_QuadrupoleQ3 = new G4PVPlacement(
-            G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
+            G4Transform3D(DontRotate, G4ThreeVector(0 * mm, Position_Q3, 0 * mm)),
             LogicalPALLAS_QuadrupoleQ3, "QuadrupoleQ3", LogicalHolder, false, 0);
 
         PhysicalPALLAS_QuadrupoleQ4 = new G4PVPlacement(
-            G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
+            G4Transform3D(DontRotate, G4ThreeVector(0 * mm, Position_Q4, 0 * mm)),
             LogicalPALLAS_QuadrupoleQ4, "QuadrupoleQ4", LogicalHolder, false, 0);
 
-        PhysicalPALLAS_ASMRemovalChamber = new G4PVPlacement(
-            G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
-            LogicalPALLAS_ASMRemovalChamber, "ASMRemovalChamber", LogicalHolder,
-            false, 0);
+        // PhysicalPALLAS_ASMRemovalChamber = new G4PVPlacement(
+        //     G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
+        //     LogicalPALLAS_ASMRemovalChamber, "ASMRemovalChamber", LogicalHolder,
+        //     false, 0);
 
-        PhysicalPALLAS_BreadboardRemovalChamber = new G4PVPlacement(
-            G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
-            LogicalPALLAS_BreadboardRemovalChamber, "BreadboardRemovalChamber",
-            LogicalHolder, false, 0);
+        // PhysicalPALLAS_BreadboardRemovalChamber = new G4PVPlacement(
+        //     G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
+        //     LogicalPALLAS_BreadboardRemovalChamber, "BreadboardRemovalChamber",
+        //     LogicalHolder, false, 0);
 
-        PhysicalPALLAS_ChassisRemovalChamber = new G4PVPlacement(
-            G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
-            LogicalPALLAS_ChassisRemovalChamber, "ChassisRemovalChamber",
-            LogicalHolder, false, 0);
+        // PhysicalPALLAS_ChassisRemovalChamber = new G4PVPlacement(
+        //     G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
+        //     LogicalPALLAS_ChassisRemovalChamber, "ChassisRemovalChamber",
+        //     LogicalHolder, false, 0);
 
-        PhysicalPALLAS_TubeISO1 = new G4PVPlacement(
-            G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
-            LogicalPALLAS_TubeISO1, "TubeISO1", LogicalHolder, false, 0);
+        // PhysicalPALLAS_TubeISO1 = new G4PVPlacement(
+        //     G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
+        //     LogicalPALLAS_TubeISO1, "TubeISO1", LogicalHolder, false, 0);
 
-        PhysicalPALLAS_TubeISO2 = new G4PVPlacement(
-            G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
-            LogicalPALLAS_TubeISO2, "TubeISO2", LogicalHolder, false, 0);
-    } else {
+        // PhysicalPALLAS_TubeISO2 = new G4PVPlacement(
+        //     G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
+        //     LogicalPALLAS_TubeISO2, "TubeISO2", LogicalHolder, false, 0);
+    }
+    else
+    {
         // DO NOTHING
     }
 }
 
-void PALLAS_CollSimGeometryConstruction::ConstructSection3Part() {
+void PALLAS_CollSimGeometryConstruction::ConstructSection3Part()
+{
     auto Inox = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
-    if (StatusDisplaySection3Geometry) {
+    if (StatusDisplaySection3Geometry)
+    {
         LogicalPALLAS_ASMPoutre = Geom->GetGDMLVolume(
-                                      "../gdml_models/S3/ASM_Poutre.gdml", "ASM_Poutre", Inox);
+            "../gdml_models/S3/ASM_Poutre.gdml", "ASM_Poutre", Inox);
         LogicalPALLAS_StationYAG = Geom->GetGDMLVolume(
-                                       "../gdml_models/S3/Station_YAG.gdml", "Station_YAG", Inox);
+            "../gdml_models/S3/Station_YAG.gdml", "Station_YAG", Inox);
 
         SetLogicalVolumeColor(LogicalPALLAS_ASMPoutre, "orange");
         SetLogicalVolumeColor(LogicalPALLAS_StationYAG, "orange");
@@ -651,12 +722,15 @@ void PALLAS_CollSimGeometryConstruction::ConstructSection3Part() {
         PhysicalPALLAS_StationYAG = new G4PVPlacement(
             G4Transform3D(DontRotate, G4ThreeVector(0 * mm, -300 * mm, 0 * mm)),
             LogicalPALLAS_StationYAG, "StationYAG", LogicalHolder, false, 0);
-    } else {
+    }
+    else
+    {
         // DO NOTHING
     }
 }
 
-void PALLAS_CollSimGeometryConstruction::ConstructSection4Part() {
+void PALLAS_CollSimGeometryConstruction::ConstructSection4Part()
+{
     auto Al = G4NistManager::Instance()->FindOrBuildMaterial("G4_Al");
     auto Fe = G4NistManager::Instance()->FindOrBuildMaterial("G4_Fe");
     auto elementY = G4NistManager::Instance()->FindOrBuildElement("Y");
@@ -671,17 +745,18 @@ void PALLAS_CollSimGeometryConstruction::ConstructSection4Part() {
     YAG->AddElement(elementAl, 5);
     YAG->AddElement(elementO, 12);
 
-    if (StatusDisplaySection4Geometry) {
+    if (StatusDisplaySection4Geometry)
+    {
         LogicalPALLAS_ChambreDipole = Geom->GetGDMLVolume(
-                                          "../gdml_models/S4/Chambre_Dipole.gdml", "Chambre_Dipole", Al);
+            "../gdml_models/S4/Chambre_Dipole.gdml", "Chambre_Dipole", Al);
         LogicalPALLAS_Dipole =
             Geom->GetGDMLVolume("../gdml_models/S4/Dipole.gdml", "Dipole", Fe);
         LogicalPALLAS_BS1YAG =
             Geom->GetGDMLVolume("../gdml_models/S4/BS1_YAG.gdml", "BS1_YAG", YAG);
         LogicalPALLAS_BSPEC1YAG = Geom->GetGDMLVolume(
-                                      "../gdml_models/S4/BSPEC1_YAG.gdml", "BSPEC1_YAG", YAG);
+            "../gdml_models/S4/BSPEC1_YAG.gdml", "BSPEC1_YAG", YAG);
         LogicalPALLAS_DiagsChamber = Geom->GetGDMLVolume(
-                                         "../gdml_models/S4/Diags_Chamber.gdml", "Diags_Chamber", Al);
+            "../gdml_models/S4/Diags_Chamber.gdml", "Diags_Chamber", Al);
         LogicalPALLAS_S4Tube =
             Geom->GetGDMLVolume("../gdml_models/S4/Tube.gdml", "Tube", Al);
         LogicalPALLAS_S4Tube1 =
@@ -755,118 +830,155 @@ void PALLAS_CollSimGeometryConstruction::ConstructSection4Part() {
         PhysicalPALLAS_S4Croix = new G4PVPlacement(
             G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
             LogicalPALLAS_S4Croix, "S4Croix", LogicalHolder, false, 0);
-    } else {
+    }
+    else
+    {
         // DO NOTHING
     }
 }
 
-void PALLAS_CollSimGeometryConstruction::ConstructCollimators() {
+void PALLAS_CollSimGeometryConstruction::ConstructCollimators()
+{
     auto Inox = G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
     G4RotationMatrix *rotationMatrix = new G4RotationMatrix();
-    //rotationMatrix->rotateX(90.0 * deg);
+    // rotationMatrix->rotateX(90.0 * deg);
     rotationMatrix->rotateZ(90.0 * deg);
 
-    LogicalPALLAS_Collimator_H1 = Geom->GetGDMLVolume("../gdml_models/Collimators/Collimator_Mors_H_1.gdml", "Collimator_H1", Inox);
-    LogicalPALLAS_Collimator_H2 = Geom->GetGDMLVolume("../gdml_models/Collimators/Collimator_Mors_H_2.gdml", "Collimator_H2", Inox);
-    LogicalPALLAS_Collimator_Arbre_H = Geom->GetGDMLVolume("../gdml_models/Collimators/Collimator_Arbre_H.gdml", "Collimator_Arbre_H", Inox);
-    LogicalPALLAS_Collimator_Bride_H = Geom->GetGDMLVolume("../gdml_models/Collimators/Collimator_Bride_H.gdml", "Collimator_Bride_H", Inox);
-    LogicalPALLAS_Collimator_Palier_H = Geom->GetGDMLVolume("../gdml_models/Collimators/Collimator_Palier_H.gdml", "Collimator_Palier_H", Inox);
-    //LogicalPALLAS_Collimator_Soufflet_H = Geom->GetGDMLVolume("../gdml_models/Collimators/Collimator_Soufflet_H.gdml", "Collimator_Soufflet_H", Inox);
-    SetLogicalVolumeColor(LogicalPALLAS_Collimator_H1, "yellow");
-    SetLogicalVolumeColor(LogicalPALLAS_Collimator_H2, "yellow");
-    SetLogicalVolumeColor(LogicalPALLAS_Collimator_Arbre_H, "yellow");
-    SetLogicalVolumeColor(LogicalPALLAS_Collimator_Bride_H, "yellow");
-    SetLogicalVolumeColor(LogicalPALLAS_Collimator_Palier_H, "yellow");
-    //SetLogicalVolumeColor(LogicalPALLAS_Collimator_Soufflet_H, "yellow");
+    if (StatusDisplayCollimators)
+    {
+        LogicalPALLAS_Collimator_H1 = Geom->GetGDMLVolume(
+            "../gdml_models/Collimators/Collimator_Mors_H_1.gdml",
+            "Collimator_H1", Inox);
+        LogicalPALLAS_Collimator_H2 = Geom->GetGDMLVolume(
+            "../gdml_models/Collimators/Collimator_Mors_H_2.gdml",
+            "Collimator_H2", Inox);
+        LogicalPALLAS_Collimator_Arbre_H = Geom->GetGDMLVolume(
+            "../gdml_models/Collimators/Collimator_Arbre_H.gdml",
+            "Collimator_Arbre_H", Inox);
+        LogicalPALLAS_Collimator_Bride_H = Geom->GetGDMLVolume(
+            "../gdml_models/Collimators/Collimator_Bride_H.gdml",
+            "Collimator_Bride_H", Inox);
+        LogicalPALLAS_Collimator_Palier_H = Geom->GetGDMLVolume(
+            "../gdml_models/Collimators/Collimator_Palier_H.gdml",
+            "Collimator_Palier_H", Inox);
+        // LogicalPALLAS_Collimator_Soufflet_H =
+        // Geom->GetGDMLVolume("../gdml_models/Collimators/Collimator_Soufflet_H.gdml",
+        // "Collimator_Soufflet_H", Inox);
+        SetLogicalVolumeColor(LogicalPALLAS_Collimator_H1, "yellow");
+        SetLogicalVolumeColor(LogicalPALLAS_Collimator_H2, "yellow");
+        SetLogicalVolumeColor(LogicalPALLAS_Collimator_Arbre_H, "yellow");
+        SetLogicalVolumeColor(LogicalPALLAS_Collimator_Bride_H, "yellow");
+        SetLogicalVolumeColor(LogicalPALLAS_Collimator_Palier_H, "yellow");
+        // SetLogicalVolumeColor(LogicalPALLAS_Collimator_Soufflet_H, "yellow");
 
-    LogicalPALLAS_Collimator_V1 = Geom->GetGDMLVolume("../gdml_models/Collimators/Collimator_Mors_V_1.gdml", "Collimator_V1", Inox);
-    LogicalPALLAS_Collimator_V2 = Geom->GetGDMLVolume("../gdml_models/Collimators/Collimator_Mors_V_2.gdml", "Collimator_V2", Inox);
-    LogicalPALLAS_Collimator_Arbre_V = Geom->GetGDMLVolume("../gdml_models/Collimators/Collimator_Arbre_V.gdml", "Collimator_Arbre_V", Inox);
-    LogicalPALLAS_Collimator_Bride_V = Geom->GetGDMLVolume("../gdml_models/Collimators/Collimator_Bride_V.gdml", "Collimator_Bride_V", Inox);
-    LogicalPALLAS_Collimator_Palier_V = Geom->GetGDMLVolume("../gdml_models/Collimators/Collimator_Palier_V.gdml", "Collimator_Palier_V", Inox);
-    //LogicalPALLAS_Collimator_Soufflet_V = Geom->GetGDMLVolume("../gdml_models/Collimators/Collimator_Soufflet_V.gdml", "Collimator_Soufflet_V", Inox);
-    SetLogicalVolumeColor(LogicalPALLAS_Collimator_V1, "blue");
-    SetLogicalVolumeColor(LogicalPALLAS_Collimator_V2, "blue");
-    SetLogicalVolumeColor(LogicalPALLAS_Collimator_Arbre_V, "blue");
-    SetLogicalVolumeColor(LogicalPALLAS_Collimator_Bride_V, "blue");
-    SetLogicalVolumeColor(LogicalPALLAS_Collimator_Palier_V, "blue");
-    //SetLogicalVolumeColor(LogicalPALLAS_Collimator_Soufflet_V, "blue");
+        LogicalPALLAS_Collimator_V1 = Geom->GetGDMLVolume(
+            "../gdml_models/Collimators/Collimator_Mors_V_1.gdml",
+            "Collimator_V1", Inox);
+        LogicalPALLAS_Collimator_V2 = Geom->GetGDMLVolume(
+            "../gdml_models/Collimators/Collimator_Mors_V_2.gdml",
+            "Collimator_V2", Inox);
+        LogicalPALLAS_Collimator_Arbre_V = Geom->GetGDMLVolume(
+            "../gdml_models/Collimators/Collimator_Arbre_V.gdml",
+            "Collimator_Arbre_V", Inox);
+        LogicalPALLAS_Collimator_Bride_V = Geom->GetGDMLVolume(
+            "../gdml_models/Collimators/Collimator_Bride_V.gdml",
+            "Collimator_Bride_V", Inox);
+        LogicalPALLAS_Collimator_Palier_V = Geom->GetGDMLVolume(
+            "../gdml_models/Collimators/Collimator_Palier_V.gdml",
+            "Collimator_Palier_V", Inox);
+        // LogicalPALLAS_Collimator_Soufflet_V =
+        // Geom->GetGDMLVolume("../gdml_models/Collimators/Collimator_Soufflet_V.gdml",
+        // "Collimator_Soufflet_V", Inox);
+        SetLogicalVolumeColor(LogicalPALLAS_Collimator_V1, "blue");
+        SetLogicalVolumeColor(LogicalPALLAS_Collimator_V2, "blue");
+        SetLogicalVolumeColor(LogicalPALLAS_Collimator_Arbre_V, "blue");
+        SetLogicalVolumeColor(LogicalPALLAS_Collimator_Bride_V, "blue");
+        SetLogicalVolumeColor(LogicalPALLAS_Collimator_Palier_V, "blue");
+        // SetLogicalVolumeColor(LogicalPALLAS_Collimator_Soufflet_V, "blue");
 
-    PhysicalPALLAS_Collimator_H1 = new G4PVPlacement(
-        rotationMatrix, G4ThreeVector(0 * mm, 2884.5+122.67 * mm, 0 * mm),
-        LogicalPALLAS_Collimator_H1, "HorizontalCollimator", LogicalHolder,
-        false, 0);
+        // Translation of 122.670433mm due to CAD Files -> alignment with font of first collimator to correspond to the distance source/collimatr !!!
+        PhysicalPALLAS_Collimator_H1 = new G4PVPlacement(
+            rotationMatrix, G4ThreeVector(0 * mm, SourceCollimatorDistance + 122.670433, 0 * mm),
+            LogicalPALLAS_Collimator_H1, "HorizontalCollimator", LogicalHolder,
+            false, 0);
 
-    PhysicalPALLAS_Collimator_H2 = new G4PVPlacement(
-        rotationMatrix, G4ThreeVector(0 * mm, 2884.5+122.67 * mm, 0 * mm),
-        LogicalPALLAS_Collimator_H2, "HorizontalCollimator", LogicalHolder,
-        false, 0);
+        PhysicalPALLAS_Collimator_H2 = new G4PVPlacement(
+            rotationMatrix, G4ThreeVector(0 * mm, SourceCollimatorDistance + 122.670433, 0 * mm),
+            LogicalPALLAS_Collimator_H2, "HorizontalCollimator", LogicalHolder,
+            false, 0);
 
-    PhysicalPALLAS_Collimator_Arbre_H = new G4PVPlacement(
-        rotationMatrix, G4ThreeVector(0 * mm, 2884.5+122.67 * mm, 0 * mm),
-        LogicalPALLAS_Collimator_Arbre_H, "Arbre_H", LogicalHolder,
-        false, 0);
+        PhysicalPALLAS_Collimator_Arbre_H = new G4PVPlacement(
+            rotationMatrix, G4ThreeVector(0 * mm, SourceCollimatorDistance + 122.670433, 0 * mm),
+            LogicalPALLAS_Collimator_Arbre_H, "Arbre_H", LogicalHolder, false, 0);
 
-    PhysicalPALLAS_Collimator_Bride_H = new G4PVPlacement(
-        rotationMatrix, G4ThreeVector(0 * mm, 2884.5+122.67 * mm, 0 * mm),
-        LogicalPALLAS_Collimator_Bride_H, "Bride_H", LogicalHolder,
-        false, 0);
+        PhysicalPALLAS_Collimator_Bride_H = new G4PVPlacement(
+            rotationMatrix, G4ThreeVector(0 * mm, SourceCollimatorDistance + 122.670433, 0 * mm),
+            LogicalPALLAS_Collimator_Bride_H, "Bride_H", LogicalHolder, false, 0);
 
-    PhysicalPALLAS_Collimator_Palier_H = new G4PVPlacement(
-        rotationMatrix, G4ThreeVector(0 * mm, 2884.5+122.67 * mm, 0 * mm),
-        LogicalPALLAS_Collimator_Palier_H, "Palier_H", LogicalHolder,
-        false, 0);
+        PhysicalPALLAS_Collimator_Palier_H = new G4PVPlacement(
+            rotationMatrix, G4ThreeVector(0 * mm, SourceCollimatorDistance + 122.670433, 0 * mm),
+            LogicalPALLAS_Collimator_Palier_H, "Palier_H", LogicalHolder, false,
+            0);
 
-    // PhysicalPALLAS_Collimator_Soufflet_H = new G4PVPlacement(
-    //     rotationMatrix, G4ThreeVector(0 * mm, 2884.5+122.67 * mm, 0 * mm),
-    //     LogicalPALLAS_Collimator_Soufflet_H, "Soufflet_H", LogicalHolder,
-    //     false, 0);
+        // PhysicalPALLAS_Collimator_Soufflet_H = new G4PVPlacement(
+        //     rotationMatrix, G4ThreeVector(0 * mm, SourceCollimatorDistance + 122.670433, 0 * mm),
+        //     LogicalPALLAS_Collimator_Soufflet_H, "Soufflet_H", LogicalHolder,
+        //     false, 0);
 
+        // Translation of 0.4mm due to CAD Files -> alignment with propagation axes !!!
+        PhysicalPALLAS_Collimator_V1 = new G4PVPlacement(
+            rotationMatrix,
+            G4ThreeVector(-0.4 * mm, SourceCollimatorDistance + 122.670433, 0 * mm),
+            LogicalPALLAS_Collimator_V1, "VerticalCollimator", LogicalHolder,
+            false, 0);
 
-    PhysicalPALLAS_Collimator_V1 = new G4PVPlacement(
-        rotationMatrix, G4ThreeVector(-0.552 * mm, 2884.5+122.67 * mm, 0 * mm),
-        LogicalPALLAS_Collimator_V1, "VerticalCollimator", LogicalHolder,
-        false, 0);
+        PhysicalPALLAS_Collimator_V2 = new G4PVPlacement(
+            rotationMatrix,
+            G4ThreeVector(-0.4 * mm, SourceCollimatorDistance + 122.670433, 0 * mm),
+            LogicalPALLAS_Collimator_V2, "VerticalCollimator", LogicalHolder,
+            false, 0);
 
-    PhysicalPALLAS_Collimator_V2 = new G4PVPlacement(
-        rotationMatrix, G4ThreeVector(-0.552 * mm, 2884.5+122.67 * mm, 0 * mm),
-        LogicalPALLAS_Collimator_V2, "VerticalCollimator", LogicalHolder,
-        false, 0);
+        PhysicalPALLAS_Collimator_Arbre_V = new G4PVPlacement(
+            rotationMatrix,
+            G4ThreeVector(-0.4 * mm, SourceCollimatorDistance + 122.670433, 0 * mm),
+            LogicalPALLAS_Collimator_Arbre_V, "Arbre_V", LogicalHolder, false, 0);
 
-    PhysicalPALLAS_Collimator_Arbre_V = new G4PVPlacement(
-        rotationMatrix, G4ThreeVector(-0.552 * mm, 2884.5+122.67 * mm, 0 * mm),
-        LogicalPALLAS_Collimator_Arbre_V, "Arbre_V", LogicalHolder,
-        false, 0);
+        PhysicalPALLAS_Collimator_Bride_V = new G4PVPlacement(
+            rotationMatrix,
+            G4ThreeVector(-0.4 * mm, SourceCollimatorDistance + 122.670433, 0 * mm),
+            LogicalPALLAS_Collimator_Bride_V, "Bride_V", LogicalHolder, false, 0);
 
-    PhysicalPALLAS_Collimator_Bride_V = new G4PVPlacement(
-        rotationMatrix, G4ThreeVector(-0.552 * mm, 2884.5+122.67 * mm, 0 * mm),
-        LogicalPALLAS_Collimator_Bride_V, "Bride_V", LogicalHolder,
-        false, 0);
+        PhysicalPALLAS_Collimator_Palier_V = new G4PVPlacement(
+            rotationMatrix,
+            G4ThreeVector(-0.4 * mm, SourceCollimatorDistance + 122.670433, 0 * mm),
+            LogicalPALLAS_Collimator_Palier_V, "Palier_V", LogicalHolder, false,
+            0);
 
-    PhysicalPALLAS_Collimator_Palier_V = new G4PVPlacement(
-        rotationMatrix, G4ThreeVector(-0.552 * mm, 2884.5+122.67 * mm, 0 * mm),
-        LogicalPALLAS_Collimator_Palier_V, "Palier_V", LogicalHolder,
-        false, 0);
-
-    // PhysicalPALLAS_Collimator_Soufflet_V = new G4PVPlacement(
-    //     rotationMatrix, G4ThreeVector(-0.552 * mm, 2884.5+122.67 * mm, 0 * mm),
-    //     LogicalPALLAS_Collimator_Soufflet_V, "Soufflet_V", LogicalHolder,
-    //     false, 0);
-
+        // PhysicalPALLAS_Collimator_Soufflet_V = new G4PVPlacement(
+        //     rotationMatrix, G4ThreeVector(-0.552 * mm, SourceCollimatorDistance + 122.670433, 0 *
+        //     mm), LogicalPALLAS_Collimator_Soufflet_V, "Soufflet_V",
+        //     LogicalHolder, false, 0);
+    }
+    else
+    {
+        // DO NOTHING
+    }
 }
 
-void PALLAS_CollSimGeometryConstruction::ConstructSection4DumpPart() {
+void PALLAS_CollSimGeometryConstruction::ConstructSection4DumpPart()
+{
     auto Pb = G4NistManager::Instance()->FindOrBuildMaterial("G4_Pb");
     auto Al = G4NistManager::Instance()->FindOrBuildMaterial("G4_Al");
 
-    if (StatusDisplaySection4DumpGeometry) {
+    if (StatusDisplaySection4DumpGeometry)
+    {
         LogicalPALLAS_BlindageBD = Geom->GetGDMLVolume(
-                                       "../gdml_models/S4/Blindage_BD.gdml", "Blindage_BD", Pb);
+            "../gdml_models/S4/Blindage_BD.gdml", "Blindage_BD", Pb);
         LogicalPALLAS_BlindageCBD = Geom->GetGDMLVolume(
-                                        "../gdml_models/S4/Blindage_CBD.gdml", "Blindage_CBD", Pb);
+            "../gdml_models/S4/Blindage_CBD.gdml", "Blindage_CBD", Pb);
         LogicalPALLAS_ChassisDipoleYAG = Geom->GetGDMLVolume(
-                                             "../gdml_models/S4/Chassis_Dipole_YAG.gdml", "Chassis_Dipole_YAG", Al);
+            "../gdml_models/S4/Chassis_Dipole_YAG.gdml", "Chassis_Dipole_YAG", Al);
 
         SetLogicalVolumeColor(LogicalPALLAS_BlindageBD, "blue");
         SetLogicalVolumeColor(LogicalPALLAS_BlindageCBD, "blue");
@@ -880,32 +992,48 @@ void PALLAS_CollSimGeometryConstruction::ConstructSection4DumpPart() {
             G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
             LogicalPALLAS_BlindageCBD, "BlindageCBD", LogicalHolder, false, 0);
 
-        PhysicalPALLAS_ChassisDipoleYAG = new G4PVPlacement(
-            G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
-            LogicalPALLAS_ChassisDipoleYAG, "ChassisDipoleYAG", LogicalHolder,
-            false, 0);
-    } else {
+        // PhysicalPALLAS_ChassisDipoleYAG = new G4PVPlacement(
+        //     G4Transform3D(DontRotate, G4ThreeVector(0 * mm, 0 * mm, 0 * mm)),
+        //     LogicalPALLAS_ChassisDipoleYAG, "ChassisDipoleYAG", LogicalHolder,
+        //     false, 0);
+    }
+    else
+    {
         // DO NOTHING
     }
 }
 
-void PALLAS_CollSimGeometryConstruction::ConstructSDandField() {
+void PALLAS_CollSimGeometryConstruction::ConstructSDandField()
+{
     // magnetic field ----------------------------------------------------------
     fMagneticField = new PALLAS_CollSimMagneticField();
     fMagneticField->SetDipoleField(ConstantDipoleBField);
     G4cout << "B = " << ConstantDipoleBField << G4endl;
     fMagneticField->SetMapBFieldStatus(StatusMapBField);
+    fMagneticField->SetGradient(0, Q1Gradient * 1e-3); // tesla =0.001*megavolt*ns/mm2
+    fMagneticField->SetGradient(1, Q2Gradient * 1e-3);
+    fMagneticField->SetGradient(2, Q3Gradient * 1e-3);
+    fMagneticField->SetGradient(3, Q4Gradient * 1e-3);
+    fMagneticField->SetQLength(0, GetQ1Length());
+    fMagneticField->SetQLength(1, GetQ2Length());
+    fMagneticField->SetQLength(2, GetQ3Length());
+    fMagneticField->SetQLength(3, GetQ4Length());
+    fMagneticField->SetQDrift(0, GetSourceQ1Distance());
+    fMagneticField->SetQDrift(1, GetQ1Q2Distance());
+    fMagneticField->SetQDrift(2, GetQ2Q3Distance());
+    fMagneticField->SetQDrift(3, GetQ3Q4Distance());
     fFieldMgr = new G4FieldManager();
     fFieldMgr->SetDetectorField(fMagneticField);
     fFieldMgr->CreateChordFinder(fMagneticField);
-    G4ChordFinder* chordFinder = new G4ChordFinder(fMagneticField, 1e-3 * mm, new G4ClassicalRK4(new G4Mag_UsualEqRhs(fMagneticField)));
+    G4ChordFinder *chordFinder = new G4ChordFinder(fMagneticField, 1e-3 * mm, new G4ClassicalRK4(new G4Mag_UsualEqRhs(fMagneticField)));
     fFieldMgr->SetChordFinder(chordFinder);
 
     G4bool forceToAllDaughters = true;
     LogicalHolder->SetFieldManager(fFieldMgr, forceToAllDaughters);
 }
 
-G4VPhysicalVolume *PALLAS_CollSimGeometryConstruction::Construct() {
+G4VPhysicalVolume *PALLAS_CollSimGeometryConstruction::Construct()
+{
     G4GeometryManager::GetInstance()->OpenGeometry();
     G4PhysicalVolumeStore::GetInstance()->Clean();
     G4LogicalVolumeStore::GetInstance()->Clean();
@@ -924,8 +1052,7 @@ G4VPhysicalVolume *PALLAS_CollSimGeometryConstruction::Construct() {
     // Build scint et wrapping volumes*
     //*********************** *********
     CreateWorldAndHolder();
-    //ConstructVerticalCollimator();
-    //ConstructHorizontalCollimator();
+    ConstructQuadrupoleVolume();
     ConstructCollimators();
     ConstructCellulePart();
     ConstructLIFPart();

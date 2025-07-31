@@ -85,6 +85,43 @@ void PALLAS_CollSimMagneticField::GetFieldValue(const G4double point[4], G4doubl
 
         bField[0] = -fitFuncY.Eval(z / 1000) * fitFuncS.Eval(y / 1000) * CLHEP::tesla;
     }
+
+
+    G4double Q1_begin = qdrift[0];
+    G4double Q1_end = Q1_begin + qlength[0];
+    G4double Q2_begin = Q1_end + qdrift[1];
+    G4double Q2_end = Q2_begin + qlength[1];
+    G4double Q3_begin = Q2_end + qdrift[2];
+    G4double Q3_end = Q3_begin + qlength[2];
+    G4double Q4_begin = Q3_end + qdrift[3];
+    G4double Q4_end = Q4_begin + qlength[3];
+
+    if (x > -20 && x < 20 && z > -20 && z < 20)
+    {
+        if (y > Q1_begin && y < Q1_end)
+        {
+            bField[0] = gradients[0] * z / 1000;
+            bField[2] = gradients[0] * x / 1000;
+        }
+
+        if (y > Q2_begin && y < Q2_end)
+        {
+            bField[0] = gradients[1] * z / 1000;
+            bField[2] = gradients[1] * x / 1000;
+        }
+
+        if (y > Q3_begin && y < Q3_end)
+        {
+            bField[0] = gradients[2] * z / 1000;
+            bField[2] = gradients[2] * x / 1000;
+        }
+
+        if (y > Q4_begin && y < Q4_end)
+        {
+            bField[0] = gradients[3] * z / 1000;
+            bField[2] = gradients[3] * x / 1000;
+        }
+    }
 }
 
 void PALLAS_CollSimMagneticField::SetDipoleField(G4double fieldValue)
@@ -102,7 +139,7 @@ void PALLAS_CollSimMagneticField::SetGradient(size_t index, G4double gradient)
     if (index < NumQuadrupoles)
     {
         gradients[index] = gradient;
-        G4cout << "SET Q" << index + 1 << " Gradient : " << gradient << G4endl;
+        G4cout << "SET Q" << index + 1 << " Gradient : " << gradient << " G/m" << G4endl;
     }
 }
 
@@ -110,6 +147,48 @@ G4double PALLAS_CollSimMagneticField::GetGradient(size_t index) const
 {
     if (index < NumQuadrupoles)
         return gradients[index];
+    else
+    {
+        G4cerr << "Error: Invalid quadrupole index " << index << G4endl;
+        return 0.0;
+    }
+}
+
+
+void PALLAS_CollSimMagneticField::SetQLength(size_t index, G4double length)
+{
+    if (index < NumQuadrupoles)
+    {
+        qlength[index] = length;
+        G4cout << "SET QLength" << index + 1 << " Length : " << length << " mm" << G4endl;
+    }
+}
+
+G4double PALLAS_CollSimMagneticField::GetQLength(size_t index) const
+{
+    if (index < NumQuadrupoles)
+        return qlength[index];
+    else
+    {
+        G4cerr << "Error: Invalid quadrupole index " << index << G4endl;
+        return 0.0;
+    }
+}
+
+
+void PALLAS_CollSimMagneticField::SetQDrift(size_t index, G4double drift)
+{
+    if (index < NumQuadrupoles)
+    {
+        qdrift[index] = drift;
+        G4cout << "SET QDrift" << index + 1 << " Length : " << drift << " mm" << G4endl;
+    }
+}
+
+G4double PALLAS_CollSimMagneticField::GetQDrift(size_t index) const
+{
+    if (index < NumQuadrupoles)
+        return qdrift[index];
     else
     {
         G4cerr << "Error: Invalid quadrupole index " << index << G4endl;

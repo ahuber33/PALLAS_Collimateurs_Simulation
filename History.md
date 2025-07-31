@@ -172,5 +172,17 @@
 - Simplification appel des volumes GDML. 1 seule fonction de base pouvant se décliner sur les différents fichiers
     - Fonction GetGDMLVolume(const char* path, const char* VName, G4Material* material)
 
-## Commit #16 le 28/07/2025 [PALLAS_CollSim.0.5.3]    
+## Commit #16 le 28/07/2025 [PALLAS_CollSim.0.5.3]
 - Retrait des Tree information pour étude Mors en vue simplificaiton code pour release Examples
+
+## Commit #17 le 28/07/2025 [PALLAS_CollSim.0.5.4] -- RELEASE TAG Collimators_Study
+- Dernière version avant nettoyage pour application exemple GEANT4.
+- Version tag pour retour et étude collimateurs si nécessaire
+- Automatisation des placements des quadrupoles et des champs quadrupolaires via fichier de config/messenger
+    - Couplage RunAction avec GeometryConstruction pour récupération information
+- Enregistrement des informations globales du messenger dans un Tree spécifique
+- Changement du fichier ONNX (correction Mykyta sur une normalisation de l'énergie des électrons)
+- Modification fichier settings.json et autres (avec CMakeLists égalements) pour pouvoir correctement compiler sur VSCode et avoir une autocomplétion qui fonctionne
+- Création d'un QuadrupoleVolume (vide) afin de pouvoir identifier les particules dans les champs quadrupolaires
+- Modification de vis.mac et vrml.mac afin de prendre en compte les nouvelles fonctions du Messenger
+- Replacement du collimateur vertical au centre (décalage présent avant du au fichier CAD)
