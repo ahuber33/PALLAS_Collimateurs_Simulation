@@ -175,7 +175,7 @@
 ## Commit #16 le 28/07/2025 [PALLAS_CollSim.0.5.3]
 - Retrait des Tree information pour étude Mors en vue simplificaiton code pour release Examples
 
-## Commit #17 le 31/07/2025 [PALLAS_CollSim.0.5.4] -- RELEASE TAG Collimators_Study
+## Commit #17 le 31/07/2025 [PALLAS_CollSim.0.5.4]
 - Dernière version avant nettoyage pour application exemple GEANT4.
 - Version tag pour retour et étude collimateurs si nécessaire
 - Automatisation des placements des quadrupoles et des champs quadrupolaires via fichier de config/messenger
@@ -186,3 +186,6 @@
 - Création d'un QuadrupoleVolume (vide) afin de pouvoir identifier les particules dans les champs quadrupolaires
 - Modification de vis.mac et vrml.mac afin de prendre en compte les nouvelles fonctions du Messenger
 - Replacement du collimateur vertical au centre (décalage présent avant du au fichier CAD)
+
+## Commit #18 le 31/07/2025 [PALLAS_CollSim.0.5.5] -- RELEASE TAG Collimators_Study
+- Modification du README pour être en accord avec modifications Commit #17
